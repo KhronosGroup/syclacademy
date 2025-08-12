@@ -85,14 +85,14 @@ may not match completely.
 | 11 | In Order Queue | [slides][lesson-11-slides] | [exercise][lesson-11-exercise] | [source][lesson-11-source] | [solution][lesson-11-solution] |
 | 12 | Advanced Data Flow | [slides][lesson-12-slides] | [exercise][lesson-12-exercise] | [source][lesson-12-source] | [solution][lesson-12-solution] |
 | 13 | Multiple Devices | [slides][lesson-13-slides] | [exercise][lesson-13-exercise] | [source][lesson-13-source] | [solution][lesson-13-solution] |
-| 14 | Image Convolution | [slides][lesson-15-slides] | [exercise][lesson-15-exercise] |  | [solution][lesson-15-solution] |
-| 15 | Coalesced Global Memory | [slides][lesson-16-slides] | [exercise][lesson-16-exercise] | [source][lesson-16-source] | [solution][lesson-16-solution] |
-| 16 | Vectors | [slides][lesson-17-slides] | [exercise][lesson-17-exercise] | [source][lesson-17-source] | [solution][lesson-17-solution] |
-| 17 | Local Memory Tiling | [slides][lesson-18-slides] | [exercise][lesson-18-exercise] | [source][lesson-18-source] | [solution][lesson-18-solution] |
-| 18 | Further Optimisations | [slides][lesson-19-slides] | [exercise][lesson-19-exercise] | [source][lesson-19-source] | [solution][lesson-19-solution] |
-| 19 | Matrix Transpose | [slides][lesson-20-slides] | [exercise][lesson-20-exercise] | [source][lesson-20-source] | [solution][lesson-20-solution] |
-| 20 | More SYCL Features | [slides][lesson-21-slides] | [exercise][lesson-21-exercise] | [source][lesson-21-source] | [solution][lesson-21-solution] |
-| 21 | Functors | [slides][lesson-22-slides] | [exercise][lesson-22-exercise] | [source][lesson-22-source] | [solution][lesson-22-solution] |
+| 14 | Image Convolution | [slides][lesson-14-slides] | [exercise][lesson-14-exercise] | [source][lesson-14-source] | [solution][lesson-14-solution] |
+| 15 | Coalesced Global Memory | [slides][lesson-15-slides] | [exercise][lesson-15-exercise] | [source][lesson-15-source] | [solution][lesson-15-solution] |
+| 16 | Vectors | [slides][lesson-16-slides] | [exercise][lesson-16-exercise] | [source][lesson-16-source] | [solution][lesson-16-solution] |
+| 17 | Local Memory Tiling | [slides][lesson-17-slides] | [exercise][lesson-17-exercise] | [source][lesson-17-source] | [solution][lesson-17-solution] |
+| 18 | Further Optimisations | [slides][lesson-18-slides] | [exercise][lesson-18-exercise] | [source][lesson-18-source] | [solution][lesson-18-solution] |
+| 19 | Matrix Transpose | [slides][lesson-19-slides] | [exercise][lesson-19-exercise] | [source][lesson-19-source] | [solution][lesson-19-solution] |
+| 20 | More SYCL Features | [slides][lesson-20-slides] | [exercise][lesson-20-exercise] | [source][lesson-20-source] | [solution][lesson-20-solution] |
+| 21 | Functors | [slides][lesson-21-slides] | [exercise][lesson-21-exercise] | [source][lesson-21-source] | [solution][lesson-21-solution] |
 
 ### oneMath
 

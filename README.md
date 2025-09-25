@@ -23,7 +23,7 @@ learning about SYCL below are a list of useful resources:
 To use these materials simply clone this repository including the required submodules.
 
 ```
-git clone --recursive https://github.com/codeplaysoftware/syclacademy.git
+git clone --recursive https://github.com/KhronosGroup/syclacademy.git
 ```
 
 The lectures are written in reveal.js, and can be found in `Lesson_Materials`,

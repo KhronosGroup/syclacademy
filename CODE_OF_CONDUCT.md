@@ -1,6 +1,3 @@
-Copyright 2018-2025 The Khronos Group Inc.
-SPDX-License-Identifier: CC-BY-4.0
-
 # Code of Conduct
 
 A reminder that this repository is managed by the Khronos Group.

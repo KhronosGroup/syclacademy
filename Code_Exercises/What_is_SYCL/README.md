@@ -57,7 +57,7 @@ First fetch the tutorial samples from GitHub.
 Clone this repository ensuring that you include sub-modules.
 
 ```sh
-git clone --recursive https://github.com/codeplaysoftware/syclacademy.git
+git clone --recursive https://github.com/khronosgroup/syclacademy.git
 mkdir build
 cd build
 ```

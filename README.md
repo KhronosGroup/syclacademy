@@ -10,7 +10,7 @@ International" license.
 ## Tutorial Session at Supercomputing 25, St. Louis
 
 * Program & Logistics [Write Highly Parallel, Vendor-Neutral Applications Using C++ and SYCL](https://sc25.conference-program.com/presentation/?id=tut105&sess=sess246)
-* Program Material[pdf](./sc25-materials/SYCL_tutorial.pdf)
+* Program Material [HERE](./sc25-materials/SYCL_tutorial.pdf)
 
 ## Program Schedule
 

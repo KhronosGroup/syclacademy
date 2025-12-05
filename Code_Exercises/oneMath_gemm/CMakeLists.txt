@@ -10,7 +10,7 @@
 
 find_package(oneMath QUIET)
 if (NOT oneMath_FOUND)
-  message(STATUS "oneMath not found: disabling oneMath_gemm target")
+  message(WARNING "oneMath not found: disabling oneMath_gemm target")
   return()
 endif()
 

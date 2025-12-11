@@ -22,7 +22,9 @@ int intel_gpu_selector1(const sycl::device& dev) {
       return 1;
     }
   }
-  return -1;
+  // Fall back to other devices if desired device not available
+  // (return -1 instead to fail instead)
+  return 0;
 }
 
 // Lambda device_selector
@@ -33,7 +35,9 @@ auto intel_gpu_selector2 = [](const sycl::device& dev) {
       return 1;
     }
   }
-  return -1;
+  // Fall back to other devices if desired device not available
+  // (return -1 instead to fail instead)
+  return 0;
 };
 
 int main() {

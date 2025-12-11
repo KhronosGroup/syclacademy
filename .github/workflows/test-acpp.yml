@@ -51,7 +51,9 @@ jobs:
         for f in $FILES
         do
           echo "===== Running $f ======"
-          ACPP_VISIBILITY_MASK="omp" $f
+          cd `dirname $f`
+          ACPP_VISIBILITY_MASK="omp" ./`basename $f`
+          cd ${GITHUB_WORKSPACE}/build
         done
     - name: Run SYCLAcademy solutions (OpenCL backend)
       run: |
@@ -60,5 +62,7 @@ jobs:
         for f in $FILES
         do
           echo "===== Running $f ======"
-          ACPP_VISIBILITY_MASK="ocl" $f
+          cd `dirname $f`
+          ACPP_VISIBILITY_MASK="ocl" ./`basename $f`
+          cd ${GITHUB_WORKSPACE}/build
         done

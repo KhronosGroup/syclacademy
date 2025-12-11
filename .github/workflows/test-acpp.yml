@@ -47,7 +47,7 @@ jobs:
     - name: Run SYCLAcademy solutions (OpenMP backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
-        export FILES=`find . -type f -executable -print | grep -v _source`
+        export FILES=`find . -type f -executable -print | grep -v _source | grep Code_Exercises`
         for f in $FILES
         do
           echo "===== Running $f ======"
@@ -58,7 +58,7 @@ jobs:
     - name: Run SYCLAcademy solutions (OpenCL backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
-        export FILES=`find . -type f -executable -print | grep -v _source`
+        export FILES=`find . -type f -executable -print | grep -v _source | grep Code_Exercises`
         for f in $FILES
         do
           echo "===== Running $f ======"

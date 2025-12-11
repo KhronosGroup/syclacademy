@@ -36,7 +36,7 @@ int main() {
   auto filter = util::generate_filter(util::filter_type::blur, filterWidth);
 
   try {
-    sycl::queue myQueue{sycl::gpu_selector_v};
+    sycl::queue myQueue{sycl::default_selector_v};
 
     std::cout << "Running on "
               << myQueue.get_device().get_info<sycl::info::device::name>()

@@ -25,6 +25,16 @@ int usm_selector(const sycl::device& dev) {
   return -1;
 }
 
+// Prefers same devices as usm_selector, but does
+// not strictly require them.
+int prefer_usm_gpu_selector(const sycl::device& dev) {
+  if (dev.has(sycl::aspect::usm_device_allocations)) {
+    if (dev.has(sycl::aspect::gpu)) return 2;
+    return 1;
+  }
+  return 0;
+}
+
 void test_buffer() {
   constexpr size_t dataSize = 1024;
 
@@ -35,7 +45,7 @@ void test_buffer() {
   }
 
   try {
-    auto gpuQueue = sycl::queue{sycl::gpu_selector_v};
+    auto gpuQueue = sycl::queue{prefer_usm_gpu_selector};
 
     auto bufIn = sycl::buffer{in, sycl::range{dataSize}};
     auto bufInt = sycl::buffer<float>{sycl::range{dataSize}};

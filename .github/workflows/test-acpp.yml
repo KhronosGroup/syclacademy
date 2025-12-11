@@ -32,7 +32,7 @@ jobs:
         sudo apt install libclang-${{matrix.clang}}-dev clang-tools-${{matrix.clang}} libomp-${{matrix.clang}}-dev
     - name: build AdaptiveCpp
       run: |
-        git clone https://github.com/adaptivecpp/adaptivecpp
+        git clone https://github.com/adaptivecpp/adaptivecpp -b v25.10.0
         mkdir -p adaptivecpp/build && cd adaptivecpp/build
         cmake -DCMAKE_CXX_COMPILER=/usr/bin/clang++-${{matrix.clang}} -DCLANG_EXECUTABLE_PATH=/usr/bin/clang++-${{matrix.clang}} -DLLVM_DIR=/usr/lib/llvm-${{matrix.clang}}/cmake -DWITH_OPENCL_BACKEND=ON -DCMAKE_INSTALL_PREFIX=`pwd`/install ..
         make -j2 install
@@ -44,4 +44,21 @@ jobs:
         mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build
         cmake  -DSYCL_ACADEMY_USE_ADAPTIVECPP=ON -DSYCL_ACADEMY_ENABLE_SOLUTIONS=ON -DSYCL_ACADEMY_INSTALL_ROOT=${GITHUB_WORKSPACE}/adaptivecpp/build/install  ..
         make -j2
-
+    - name: Run SYCLAcademy solutions (OpenMP backend)
+      run: |
+        cd ${GITHUB_WORKSPACE}/build
+        export FILES=`find . -type f -executable -print | grep -v _source`
+        for f in $FILES
+        do
+          echo "===== Running $f ======"
+          ACPP_VISIBILITY_MASK="omp" $f
+        done
+    - name: Run SYCLAcademy solutions (OpenCL backend)
+      run: |
+        cd ${GITHUB_WORKSPACE}/build
+        export FILES=`find . -type f -executable -print | grep -v _source`
+        for f in $FILES
+        do
+          echo "===== Running $f ======"
+          ACPP_VISIBILITY_MASK="ocl" $f
+        done

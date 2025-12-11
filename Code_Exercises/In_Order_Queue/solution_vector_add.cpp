@@ -51,8 +51,8 @@ void test_buffer() {
   }
 
   try {
-    auto inOrderQueue =
-        sycl::queue{prefer_usm_gpu_selector, {sycl::property::queue::in_order{}}};
+    auto inOrderQueue = sycl::queue{prefer_usm_gpu_selector,
+                                    {sycl::property::queue::in_order{}}};
 
     auto bufInA = sycl::buffer{inA, sycl::range{dataSize}};
     auto bufInB = sycl::buffer{inB, sycl::range{dataSize}};

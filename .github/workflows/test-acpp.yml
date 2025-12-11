@@ -1,0 +1,47 @@
+name: Test AdaptiveCpp
+
+on: [push, pull_request]
+
+jobs:
+  test-acpp:
+    name: acpp llvm ${{ matrix.clang }}, ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        clang: [20]
+        os: [ubuntu-22.04]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+    - name: Install OpenCL development files
+      run : |
+        sudo apt update
+        sudo apt install ocl-icd-opencl-dev
+    - name: Install OpenCL
+      run: |
+        sudo wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | sudo gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+        sudo apt-get update
+        sudo apt-get install -y intel-oneapi-runtime-opencl-2024 intel-oneapi-runtime-compilers-2024 ocl-icd-libopencl1 ocl-icd-opencl-dev
+    - name: install LLVM
+      run: |
+        wget https://apt.llvm.org/llvm.sh
+        chmod +x llvm.sh
+        sudo ./llvm.sh ${{matrix.clang}}
+        sudo apt install libclang-${{matrix.clang}}-dev clang-tools-${{matrix.clang}} libomp-${{matrix.clang}}-dev
+    - name: build AdaptiveCpp
+      run: |
+        git clone https://github.com/adaptivecpp/adaptivecpp
+        mkdir -p adaptivecpp/build && cd adaptivecpp/build
+        cmake -DCMAKE_CXX_COMPILER=/usr/bin/clang++-${{matrix.clang}} -DCLANG_EXECUTABLE_PATH=/usr/bin/clang++-${{matrix.clang}} -DLLVM_DIR=/usr/lib/llvm-${{matrix.clang}}/cmake -DWITH_OPENCL_BACKEND=ON -DCMAKE_INSTALL_PREFIX=`pwd`/install ..
+        make -j2 install
+    - name: Print detected devices
+      run: |
+        ${GITHUB_WORKSPACE}/adaptivecpp/build/install/bin/acpp-info
+    - name: Build SYCLAcademy
+      run: |
+        mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build
+        cmake  -DSYCL_ACADEMY_USE_ADAPTIVECPP=ON -DSYCL_ACADEMY_ENABLE_SOLUTIONS=ON -DSYCL_ACADEMY_INSTALL_ROOT=${GITHUB_WORKSPACE}/adaptivecpp/build/install  ..
+        make -j2
+

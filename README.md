@@ -97,7 +97,9 @@ may not match completely.
 ### oneMath
 
 The lessons in this table work with oneAPI, but might not work with other
-SYCL implementations.
+SYCL implementations. As a result they are only built by default when doing a
+DPC++ build of SYCL-Academy, but whether to build them can be controlled through the
+`SYCL_ACADEMY_ENABLE_ONEAPI_LESSIONS` CMake option.
 
 | Lesson | Title | Slides | Exercise | Source | Solution |
 |--------|-------|--------|----------|--------|----------|

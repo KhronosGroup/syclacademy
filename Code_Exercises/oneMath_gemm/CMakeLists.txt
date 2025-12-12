@@ -8,6 +8,11 @@
   see <http://creativecommons.org/licenses/by-sa/4.0/>.
 ]]
 
+if (NOT SYCL_ACADEMY_ENABLE_ONEAPI_LESSONS)
+  message(STATUS "SYCL_ACADEMY_ENABLE_ONEAPI_LESSONS not set: disabling oneMath_gemm target")
+  return()
+endif()
+
 find_package(oneMath QUIET)
 if (NOT oneMath_FOUND)
   message(WARNING "oneMath not found: disabling oneMath_gemm target")

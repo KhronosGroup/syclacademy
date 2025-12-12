@@ -27,6 +27,7 @@ project (SYCLAcademy)
 option(SYCL_ACADEMY_USE_DPCPP "Configure to compile with Intel DPC++" OFF)
 option(SYCL_ACADEMY_USE_ADAPTIVECPP "Configure to compile with AdaptiveCpp" OFF)
 option(SYCL_ACADEMY_ENABLE_SOLUTIONS "Include solution source files in the project" OFF)
+option(SYCL_ACADEMY_ENABLE_ONEAPI_LESSONS "Include oneAPI lessons in the build" ${SYCL_ACADEMY_USE_DPCPP})
 
 # Variables
 

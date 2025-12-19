@@ -41,6 +41,8 @@ function( add_sycl_executable prefix source )
   if (SYCL_ACADEMY_USE_ADAPTIVECPP)
     add_sycl_executable_adaptivecpp(${prefix} ${source})
   endif()
+  set(TARGET_NAME "${prefix}_${source}")
+  add_test(NAME "${TARGET_NAME}_test" COMMAND ${TARGET_NAME})
 endfunction()
 
 

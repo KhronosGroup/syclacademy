@@ -47,8 +47,8 @@ jobs:
     - name: Run SYCLAcademy executables (OpenMP backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
-        ACPP_VISIBILITY_MASK="omp" ctest
+        ACPP_VISIBILITY_MASK="omp" ctest || { cat Testing/Temporary/LastTest.log && false; }
     - name: Run SYCLAcademy executables (OpenCL backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
-        ACPP_VISIBILITY_MASK="ocl" ctest --exclude-regex "Enqueueing_a_Kernel*|More_SYCL_Features_reduce_atomic*"
+        ACPP_VISIBILITY_MASK="ocl" ctest --exclude-regex "Enqueueing_a_Kernel*|More_SYCL_Features_reduce_atomic*" || { cat Testing/Temporary/LastTest.log && false; }

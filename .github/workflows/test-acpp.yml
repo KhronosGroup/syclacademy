@@ -44,11 +44,11 @@ jobs:
         mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build
         cmake  -DSYCL_ACADEMY_USE_ADAPTIVECPP=ON -DSYCL_ACADEMY_ENABLE_SOLUTIONS=ON -DSYCL_ACADEMY_INSTALL_ROOT=${GITHUB_WORKSPACE}/adaptivecpp/build/install  ..
         make -j2
-    - name: Run SYCLAcademy executables (OpenMP backend)
+    - name: Run SYCLAcademy solutions (OpenMP backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
         ACPP_VISIBILITY_MASK="omp" ctest || { cat Testing/Temporary/LastTest.log && false; }
-    - name: Run SYCLAcademy executables (OpenCL backend)
+    - name: Run SYCLAcademy solutions (OpenCL backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
         ACPP_VISIBILITY_MASK="ocl" ctest --exclude-regex "Enqueueing_a_Kernel*|More_SYCL_Features_reduce_atomic*" || { cat Testing/Temporary/LastTest.log && false; }

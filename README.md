@@ -47,7 +47,8 @@ Pull Request so that they can be reviewed and merged in a timely manner.
 
 ### List of Contributors
 
-Codeplay Software Ltd., Heidelberg University, Intel, Xilinx and University of Bristol.
+Codeplay Software Ltd., Heidelberg University, Intel, Xilinx, University of Bristol,
+and Stream HPC.
 
 ## Supporting Organizations
 

@@ -159,7 +159,7 @@ Q.wait();
 						<div class="col" data-markdown>
 							* All commands are executed serially
 							* Ease of programming (no race conditions can occur)
-							* Potentialy lower-latency than out-of-order queues
+							* Potentially lower-latency than out-of-order queues
 							* Doesn't allow concurrency, potentially suboptimal performance
 						</div>
 					</div>
@@ -171,7 +171,10 @@ Q.wait();
 					<div class="container">
 						<div class="col">
 							<code class="code-100pc"><pre>
-std::vector<std::pair<sycl::queue, std::function>> queues_tasks;
+using queue_task_pair =
+  std::pair&ltsycl::queue, std::function&gt;;
+std::vector&ltqueue_task_pair&gt queues_tasks;
+
 for (auto [Q, task]: queues_tasks)
   Q.submit(task);
 
@@ -181,7 +184,7 @@ for (auto [Q, _]: queues_tasks)
 						</div>
 						<div class="col" data-markdown>
 							* Manual Scheduling (tasks need to be mapped to queues)
-							* Allow concurency between queues
+							* Allow concurrency between queues
 							* Painful to extract full concurrency
 						</div>
 					</div>
@@ -212,7 +215,7 @@ for (auto [Q, _]: queues_tasks)
 					</div>
 					<div class="container" data-markdown>
 						- Transform the serial in-order scheduling to allow concurrent execution (using an out-of-order queue or multiple in-order queues)
-						- Mesure speedup
+						- Measure speedup
 					</div>
 				</section>
 				<section>

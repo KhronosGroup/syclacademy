@@ -105,8 +105,8 @@ T* malloc_device(size_t count, const queue& syclQueue,  const property_list &pro
 						* A USM device allocation is performed by calling one of the `malloc_device` functions.
 						* Both of these functions allocate the specified region of memory on the `device` associated with the specified `queue`.
 						* The pointer returned is only accessible in a kernel function running on that `device`.
-						* Synchronous exception if the device does not have aspect::usm_device_allocations
-						* This is a blocking operation.
+						* Synchronous exception if the device does not have `aspect::usm_device_allocations`.
+						* This is a synchronous operation where `syclQueue` provides the device and context.
 					</div>
 				</section>
 				<!--Slide 5-->
@@ -121,8 +121,8 @@ void free(void* ptr, queue& syclQueue);
 					</div>
 					<div class="container" data-markdown>
 						* In order to prevent memory leaks USM device allocations must be free by calling the `free` function.
-						* The `queue` must be the same as was used to allocate the memory.
-						* This is a blocking operation.
+						* This is a synchronous operation where `syclQueue` is used to determine the context.
+						* It is unspecified whether `free` is blocking or non-blocking - it should not be relied on for synchronization.
 					</div>
 				</section>
 				<!--Slide 6-->

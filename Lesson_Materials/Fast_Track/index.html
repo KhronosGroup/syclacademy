@@ -340,15 +340,15 @@ gpuQueue.submit([&](handler &cgh){
 void* malloc_device(size_t numBytes, const queue& syclQueue, const property_list &propList = {});
 
 template &lt;typename T&gt;
-T* malloc_device(size_t count, const queue& syclQueue,  const property_list &propList = {});
+T* malloc_device(size_t count, const queue& syclQueue, const property_list &propList = {});
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
 						* A USM device allocation is performed by calling one of the `malloc_device` functions.
 						* Both of these functions allocate the specified region of memory on the `device` associated with the specified `queue`.
 						* The pointer returned is only accessible in a kernel function running on that `device`.
-						* Synchronous exception if the device does not have aspect::usm_device_allocations
-						* This is a blocking operation.
+						* Synchronous exception if the device does not have `aspect::usm_device_allocations`.
+						* This is a synchronous operation.
 					</div>
 				</section>
 				<!--Slide 22-->
@@ -362,9 +362,9 @@ void free(void* ptr, queue& syclQueue);
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
-						* In order to prevent memory leaks USM device allocations must be free by calling the `free` function.
-						* The `queue` must be the same as was used to allocate the memory.
-						* This is a blocking operation.
+						* In order to prevent memory leaks USM device allocations must be freed by calling the `free` function.
+						* The `queue` is used to determine the SYCL context the allocation was made from. More details on context in "Multiple Devices" lesson.
+						* This is a synchronous operation.
 					</div>
 				</section>
 				<!--Slide 23-->

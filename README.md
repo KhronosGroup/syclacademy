@@ -406,7 +406,7 @@ cmake ../ "-GUnix Makefiles" -DSYCL_ACADEMY_USE_DPCPP=ON -DSYCL_ACADEMY_ENABLE_S
 
 [lesson-14-slides]: ./Lesson_Materials/Image_Convolution/
 [lesson-14-exercise]: ./Code_Exercises/Image_Convolution/README.md
-[lesson-14-source]:   ./Code_Exercises/Image_Convolution/source.cpp
+[lesson-14-source]:   ./Code_Exercises/Image_Convolution
 [lesson-14-solution]: ./Code_Exercises/Image_Convolution/reference.cpp
 
 [lesson-15-slides]: ./Lesson_Materials/Coalesced_Global_Memory/

@@ -121,7 +121,8 @@ void free(void* ptr, queue& syclQueue);
 					</div>
 					<div class="container" data-markdown>
 						* In order to prevent memory leaks USM device allocations must be freed by calling the `free` function.
-						* The `queue` is used to determine the SYCL context the allocation was made from. More details on context in "Multiple Devices" lesson.
+						* The `queue` should be the same as was used to allocate the memory.
+						* If a different `queue` is used, then it must match the context used to allocate the memory. More details on SYCL context in "Multiple Devices" lesson.
 						* This is a synchronous operation.
 					</div>
 				</section>

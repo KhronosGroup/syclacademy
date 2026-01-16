@@ -91,7 +91,7 @@ int main() {
 
     /* Synchronous code */
 
-    cgh.parallel_for&lt;add&gt;(bufO.get_range(), [=](id&lt;1&gt; i) {
+    cgh.single_task&lt;add&gt;([=]() {
 
       /* Asynchronous code */
 
@@ -131,7 +131,7 @@ int main() {
   q.submit([&](handler &cgh) {
     /* Synchronous code */
 
-    cgh.single_task&lt;add&gt;([=](id&lt;1&gt; i) {
+    cgh.single_task&lt;add&gt;([=]() {
       /* Asynchronous code */
     });
   }).wait();

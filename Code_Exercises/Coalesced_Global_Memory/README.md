@@ -14,14 +14,13 @@ coalesced global memory access.
 Now that you have a working image convolution kernel you should evaluate whether the
 global memory access patterns in your kernel are coalesced.
 
-Consider two alternative ways to linearize the global id:
+SYCL buffer & accessor objects can be multi-dimensional, and in this image convolution
+example 2d buffer/accessors are used which are operated on in the kernel using a
+`sycl::id<2>` 2d index. This operation will
+[calculate](https://registry.khronos.org/SYCL/specs/sycl-2020/html/sycl-2020.html#sec:multi-dim-linearization)
+the linear address in memory based on the size of the dimensions.
 
-```
-auto rowMajorLinearId    = (idx[1] * width) + idx[0];  // row-major
-auto columnMajorLinearId = (idx[0] * height) + idx[1];  // column-major
-```
-
-Try using both of these and compare the execution time of each.
+Try inverting the dimensions used in the 2d index and compare the execution time.
 
 ## Build and execution hints
 

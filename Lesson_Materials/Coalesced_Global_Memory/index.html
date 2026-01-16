@@ -276,68 +276,6 @@
 					</div>
 				</section>
 				<!--Slide 28-->
-                                <section>
-					<div class="hbox" data-markdown>
-						#### Vec types
-					</div>
-					<div class="container">
-						<code class="code-100pc"><pre>
-auto f4 = sycl::float4{1.0f, 2.0f, 3.0f, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
-						</code></pre>
-					</div>
-					<div class="container">
-						<code class="code-100pc"><pre>
-auto f2 = sycl::float2{2.0f, 3.0f}; // {2.0f, 3.0f}
-auto f4 = sycl::float4{1.0f, f2, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
-						</code></pre>
-					</div>
-					<div class="container">
-						<code class="code-100pc"><pre>
-auto f4 = sycl::float4{0.0f};  // {0.0f, 0.0f, 0.0f, 0.0f}
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* A `vec` can be constructed with any combination of scalar and vector values which add up to the correct number of elements.
-						* A `vec` can also be constructed from a single scalar in which case it will initialize every element to that value.
-					</div>
-				</section>
-				<!--Slide 11-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Vec operators
-					</div>
-					<div class="container">
-						<code class="code-100pc"><pre>
-auto f4a = sycl::float4{1.0f, 2.0f, 3.0f, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
-
-auto f4b = sycl::float4{2.0f}; // {2.0f, 2.0f, 2.0f, 2.0f}
-
-auto f4r = f4a * f4b; // {2.0f, 4.0f, 6.0f, 8.0f}
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* The `vec` class provides a number of operators such as `+`, `-`, `*`, `/` and many more, which perform the operation elemeent-wise.
-					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### Vec sizes
-					</div>
-					<div class="container">
-						<code class="code-100pc"><pre>
-sycl::int2
-sycl::int3 (N.B sizeof(int3) == sizeof(int4))
-sycl::int4 
-sycl::int8 
-sycl::int16</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* Vectors can be made from all char, integer or floating point types.
-						* Using vector types:
-						  * Can make code more readable
-						  * Can give better memory access patterns.
-					</div>
-				</section>
 				<section>
 					<div class="hbox" data-markdown>
 						## Questions

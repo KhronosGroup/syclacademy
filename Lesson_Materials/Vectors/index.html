@@ -62,7 +62,7 @@
 					* Learn about scalar and vector instructions
 					* Learn about horizontal and vertical vectorization
 					* Learn how to write explicit vector code
-					* learn how to use swizzles
+					* Learn how to use swizzles
                 </section>
 				<!--Slide 3-->
 				<section>
@@ -189,7 +189,7 @@ auto f4 = sycl::float4{0.0f};  // {0.0f, 0.0f, 0.0f, 0.0f}
 					</div>
 					<div class="container" data-markdown>
 						* A `vec` can be constructed with any combination of scalar and vector values which add up to the correct number of elements.
-						* A `vec`can also be constructed from a single scalar in which case it will initialize ever element to that value.
+						* A `vec` can also be constructed from a single scalar in which case it will initialize ever element to that value.
 					</div>
 				</section>
 				<!--Slide 11-->
@@ -207,10 +207,30 @@ auto f4r = f4a * f4b; // {2.0f, 4.0f, 6.0f, 8.0f}
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
-						* The `vec` class provides a number of operators such as `+`, `-`, `*`, `/` and many more, which perform the operation elemeent-wise.
+						* The `vec` class provides a number of operators such as `+`, `-`, `*`, `/` and many more, which perform the operation element-wise.
 					</div>
 				</section>
 				<!--Slide 12-->
+				<section>
+					<div class="hbox" data-markdown>
+						#### Vec sizes
+					</div>
+					<div class="container">
+						<code class="code-100pc"><pre>
+sycl::int2
+sycl::int3 (N.B sizeof(int3) == sizeof(int4))
+sycl::int4
+sycl::int8
+sycl::int16</code></pre>
+					</div>
+					<div class="container" data-markdown>
+						* Vectors can be made from all char, integer or floating point types.
+						* Using vector types:
+						  * Can make code more readable.
+						  * Can give better memory access patterns.
+					</div>
+				</section>
+				<!--Slide 13-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Swizzles
@@ -231,7 +251,7 @@ f4.swizzle&lt;1, 2&gt;() = sycl::float2{9.0f, 9.0f}; // f4 becomes {1.0f, 9.0f, 
 						* The `swizzle` function returns a representation of the specified elements of a `vec` which can be used on the lhs or rhs of an expression.
 					</div>
 				</section>
-				<!--Slide 13-->
+				<!--Slide 14-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Simple swizzles
@@ -252,7 +272,7 @@ f4.yz() = sycl::float2{9.0f, 9.0f}; // f4 becomes {1.0f, 9.0f, 9.0f, 4.0f}
 						* If `SYCL_SIMPLE_SWIZZLES` is defined before including `sycl/sycl.hpp` simplified swizzle member functions can also be used in place of `swizzle`.
 					</div>
 				</section>
-				<!--Slide 14-->
+				<!--Slide 15-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Vectorized image convolution performance
@@ -261,13 +281,13 @@ f4.yz() = sycl::float2{9.0f, 9.0f}; // f4 becomes {1.0f, 9.0f, 9.0f, 4.0f}
 						![SYCL](../common-revealjs/images/image_convolution_performance_vectorized.png "SYCL")
 					</div>
 				</section>
-				<!--Slide 15-->
+				<!--Slide 16-->
 				<section>
 					<div class="hbox" data-markdown>
 						## Questions
 					</div>
 				</section>
-				<!--Slide 16-->
+				<!--Slide 17-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Exercise

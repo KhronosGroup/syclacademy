@@ -129,8 +129,8 @@
 					<div class="container" data-markdown>
 						* Both horizontal and vertical vectorization generally achieve the same result.
 						* It can be useful to specify vectorization explicitly, particularly for describing aligned loads and stores.
-						* An important distinction to make is that whether a kernel function uses explicit vector types can impact the mapping of work-items to processing elements.
-						* It's not always a 1:1 mapping.
+						* Explicit vector types can impact the mapping of work-items to processing elements, it's not always a 1:1 mapping.
+						* Explicit vectors may be implemented in a non-vectorized fashion as vectorization already is done across work-items.
 					</div>
 				</section>
 				<!--Slide 8-->
@@ -148,7 +148,6 @@ class vec;
 						* The `vec` class template is used to represent explicit vectors in SYCL.
 						* It has a type which represents the type of elements it stores and a number of elements.
 						* The valid number of elements are 1, 2, 3, 4, 8, 16.
-						* Note that vectors of 3 elements are padded to the size of 4.
 					</div>
 				</section>
 				<!--Slide 9-->
@@ -213,18 +212,19 @@ auto f4r = f4a * f4b; // {2.0f, 4.0f, 6.0f, 8.0f}
 				<!--Slide 12-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Vec sizes
+						#### Vec types
 					</div>
 					<div class="container">
 						<code class="code-100pc"><pre>
 sycl::int2
-sycl::int3 (N.B sizeof(int3) == sizeof(int4))
+sycl::int3
 sycl::int4
 sycl::int8
 sycl::int16</code></pre>
 					</div>
 					<div class="container" data-markdown>
 						* Vectors can be made from all char, integer or floating point types.
+						* Vectors of 3 elements are padded to the alignment of 4 elements.
 						* Using vector types:
 						  * Can make code more readable.
 						  * Can give better memory access patterns.

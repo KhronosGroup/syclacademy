@@ -1,452 +1,414 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../common-revealjs/css/reveal.css" />
+    <link rel="stylesheet" href="../common-revealjs/css/theme/white.css" />
+    <link rel="stylesheet" href="../common-revealjs/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css"
+    />
+    <script>
+      // This is needed when printing the slides to pdf
+      var link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.type = "text/css";
+      link.href = window.location.search.match(/print-pdf/gi)
+        ? "../common-revealjs/css/print/pdf.css"
+        : "../common-revealjs/css/print/paper.css";
+      document.getElementsByTagName("head")[0].appendChild(link);
+    </script>
+    <script>
+      // This is used to display the static images on each slide,
+      // See global-images in this html file and custom.css
+      (function () {
+        if (window.addEventListener) {
+          window.addEventListener(
+            "load",
+            () => {
+              let slides = document.getElementsByClassName("slide-background");
 
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
+              if (slides.length === 0) {
+                slides = document.getElementsByClassName("pdf-page");
+              }
 
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
+              // Insert global images on each slide
+              for (let i = 0, max = slides.length; i < max; i++) {
+                let cln = document
+                  .getElementById("global-images")
+                  .cloneNode(true);
+                cln.removeAttribute("id");
+                slides[i].appendChild(cln);
+              }
 
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
-				<!--Slide 1-->
-				<section class="hbox" data-markdown>
-				    ## Handling Errors and Debugging
-				</section>
-				<!--Slide 2-->
-				<section class="hbox" data-markdown>
-					## Learning Objectives
-					* Learn about how SYCL handles errors
-					* Learn about the difference between synchronous and asynchronous exceptions
-					* Learn how to handle exceptions and retrieve further information
-					* Learn about the host device and how to use it
-				</section>
-				<!--Slide 3-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### SYCL exceptions
-					</div>
-					<div class="section" data-markdown>
-						* In SYCL errors are handled by throwing exceptions.
-						* It is crucial that these errors are handled,
-							otherwise your application could fail in unpredictable ways.
-						* In SYCL there are two kinds of error:
-						  * Synchronous errors (thrown in user thread) .
-						  * Asynchronous errors (thrown by the SYCL scheduler).
-					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### Handling errors
-					</div>
-					<div class="hbox" >
-						<code class="code-60pc"><pre>
+              // Remove top level global images
+              let elem = document.getElementById("global-images");
+              elem.parentElement.removeChild(elem);
+            },
+            false,
+          );
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <div id="global-images" class="global-images">
+          <img src="../common-revealjs/images/sycl_academy.png" />
+          <img src="../common-revealjs/images/sycl_logo.png" />
+          <div class="trademarks">
+            <span
+              >SYCL and the SYCL logo are trademarks of the Khronos Group
+              Inc.</span
+            >
+          </div>
+        </div>
+        <!--Slide 1-->
+        <section class="hbox" data-markdown>
+          ## Handling Errors and Debugging
+        </section>
+        <!--Slide 2-->
+        <section class="hbox" data-markdown>
+          ## Learning Objectives 
+          * Learn about how SYCL handles errors 
+          * Learn about the difference between synchronous and asynchronous exceptions 
+          * Learn how to handle exceptions and retrieve further information 
+          * Learn about the host device and how to use it
+        </section>
+        <!--Slide 3-->
+        <section>
+          <div class="hbox" data-markdown>#### SYCL exceptions</div>
+          <div class="section" data-markdown> [=](exception_list eL) {
+        for (auto e : eL) { std::rethrow_exception(e); 
+      }
+            * In SYCL errors are handled by throwing exceptions. 
+            * It is crucial that these errors are handled, otherwise your application could fail
+            in unpredictable ways.
+            * In SYCL there are two kinds of error: 
+            *Synchronous errors (thrown in user thread). 
+            *Asynchronous errors (thrown by the SYCL scheduler).
+          </div>
+        </section>
+        <!--Slide 4-->
+        <section>
+          <div class="hbox" data-markdown>#### SYCL exceptions</div>
+          <div class="hbox" data-markdown>
+            ![SYCL](../common-revealjs/images/sycl-exceptions.png "SYCL")
+          </div>
+        </section>
+        <!--Slide 5-->
+        <section>
+          <div class="hbox" data-markdown>#### Handling errors</div>
+          <div class="hbox">
+            <pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
+#include &lt;sycl/sycl.hpp&gt;
+using namsepace sycl;
+
 int main() {
   queue q();
 
-  /* Synchronous code */
-
-  q.submit([&](handler &cgh) {
-
-    /* Synchronous code */
-
-    cgh.parallel_for&lt;add&gt;(bufO.get_range(), [=](id&lt;1&gt; i) {
-
-      /* Asynchronous code */
-
-    });
+  <mark>/* Synchronous code */</mark> 
+  q.single_task([=](id&lt;1&gt; i) {
+    <mark>/* Asynchronous code */</mark>
   });
+  <mark>/* Synchronous code */</mark>
+  q.wait();
 }
 						</code></pre>
-					</div>
-					<div class="bottom-bullets" data-markdown>
-					* Kernels run asynchronously on the device, and will throw asynchronous errors.
-					* Everything else runs synchronously on the host, and will throw synchronous errors.
-					</div>
-				</section>
-				<!--Slide 4-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### SYCL exceptions
-					</div>
-					<div class="hbox" data-markdown>
-						![SYCL](../common-revealjs/images/sycl-exceptions.png "SYCL")
-					</div>
-				</section>
-				<!--Slide 5-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Handling errors
-					</div>
-					<div class="hbox" >
-						<code class="code-60pc"><pre>
-class add;
+          </div>
+          <div class="bottom-bullets" data-markdown>
+            * Code on the device runs asynchronously 
+            * If errors are not
+            handled, the application can fail: 
+            * A default async handler that
+            will call `std::terminate` when an asynchronous error is thrown.
+          </div>
+        </section>
+        <!--Slide 6-->
+        <section>
+          <div class="hbox">
+            <pre
+              style="font-size: 0.5em"
+            ><code class="language-cpp" data-trim data-line-numbers="5, 12" data-noescape>
+#include &lt;sycl/sycl.hpp&gt;
+using namespace sycl;
 
 int main() {
-  queue q();
-
-  /* Synchronous code */ 
-
-  q.submit([&](handler &cgh) {
-    /* Synchronous code */
-
-    cgh.single_task&lt;add&gt;([=](id&lt;1&gt; i) {
-      /* Asynchronous code */
+  try {
+    queue gpuQueue(gpu_selector_v); 
+    int* shared = malloc_shared&lt;int&gt;(1024, gpuQueue);   
+    gpuQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
+      shared[i] = i;
     });
-  }).wait();
-}
-						</code></pre>
-					</div>
-					<div class="bottom-bullets" data-markdown>
-					* Code on the device runs asynchronously
-					* If errors are not handled, the application can fail:
-						* SYCL 1.2.1 application will fail silently.
-						* SYCL 2020 provides a default async handler that will call `std::terminate`
-							when an asynchronous error is thrown.
-					</div>
-				</section>
-				<!--Slide 6-->
-				<section>
-					<div class="hbox">
-						<code class="code-60pc"><pre>
-class add;
-
-int main() {
-  std::vector&lt;float&gt; dA{ 7, 5, 16, 8 }, dB{ 8, 16, 5, 7 }, dO{ 0, 0, 0, 0 };
-  <mark>try {</mark>
-    queue gpuQueue(gpu_selector{});
-
-    buffer bufA{dA};
-    buffer bufB{dB};
-    buffer bufO{dO};
-
-    gpuQueue.submit([&](handler &cgh) {
-      auto inA = accessor{bufA, cgh, read_only};
-      auto inB = accessor{bufB, cgh, read_only};
-      auto out = accessor{bufO, cgh, write_only};
-
-      cgh.parallel_for&lt;add&gt;(bufO.get_range(), [=](id&lt;1&gt; i) {
-        out[i] = inA[i] + inB[i];
-      });
-    }).wait();
-
-  <mark>} catch (...) { /* handle errors */ }</mark>
-}
-						</code></pre>
-					</div>
-					<div class="bottom-bullets" data-markdown>
-							* Synchronous errors are typically thrown by SYCL API functions.
-							* In order to handle all SYCL errors you must wrap everything in a try-catch block.
-					</div>
-				</section>
-				<!--Slide 7-->
-				<section>
-					<div class="hbox">
-						<code class="code-60pc"><pre>
-class add;
-
-int main() {
-  std::vector&lt;float&gt; dA{ 7, 5, 16, 8 }, dB{ 8, 16, 5, 7 }, dO{ 0, 0, 0, 0 };
-  try{
-    queue gpuQueue(gpu_selector{}, <mark>async_handler{}</mark>);
-    buffer bufA{dA};
-    buffer bufB{dB};
-    buffer bufO{dO};
-
-    gpuQueue.submit([&](handler &cgh) {
-      auto inA = accessor{bufA, cgh, read_only};
-      auto inB = accessor{bufB, cgh, read_only};
-      auto out = accessor{bufO, cgh, write_only};
-
-      cgh.parallel_for&lt;add&gt;(bufO.get_range(), [=](id&lt;1&gt; i) {
-        out[i] = inA[i] + inB[i];
-      });
-    }).wait();
-  
-    <mark>gpuQueue.throw_asynchronous();</mark>
-  } catch (...) { /* handle errors */
-}
-						</code></pre>
-					</div>
-					<div class="bottom-bullets" data-markdown>
-							* Asynchronous errors errors that may have occurred will be thrown after a command group has been submitted to a `queue`.
-							  * To handle these errors you must provide an async handler when constructing the queue object.
-							* Then you must also call the `throw_asynchronous` or `wait_and_throw` member functions of the `queue` class.
-							* This will pass the exceptions to the async handler in the user thread so they can be thrown.
-					</div>
-				</section>
-				<!--Slide 8-->
-				<section>
-					<div class="hbox">
-						<code class="code-60pc"><pre>
-class add;
-
-int main() {
-  std::vector&lt;float&gt; dA{ 7, 5, 16, 8 }, dB{ 8, 16, 5, 7 }, dO{ 0, 0, 0, 0 };
-  try{
-    queue gpuQueue(gpu_selector{}, <mark>[=](exception_list eL) { 
-      for (auto e : eL) { std::rethrow_exception(e); }
-    }</mark>);
-
-    buffer bufA{dA};
-    buffer bufB{dB};
-    buffer bufO{dO};
-
-    gpuQueue.submit([&](handler &cgh) {
-      auto inA = accessor{bufA, cgh, read_only};
-      auto inB = accessor{bufB, cgh, read_only};
-      auto out = accessor{bufO, cgh, write_only};
-
-      cgh.parallel_for&lt;add&gt;(bufO.get_range(), [=](id&lt;1&gt; i) {
-        out[i] = inA[i] + inB[i];
-      });
-    }).wait();
-
-    gpuQueue.throw_asynchronous();
+    gpuQueue.wait();
   } catch (...) { /* handle errors */ }
 }
 						</code></pre>
-					</div>
-					<div class="bottom-bullets" data-markdown>
-							* The async handler is a C++ lambda or function object that takes as a parameter an ``exception_list``
-							* The exception_list class is a wrapper around a list of ``exception_ptrs`` which can be iterated over
-							* The exception_ptrs can be rethrown by passing them to ``std::rethrow_exception``
-					</div>
-				</section>
-				<!--Slide 9-->
-				<section>
-						<div class="hbox">
-							<code class="code-60pc"><pre>
+          </div>
+          <div class="bottom-bullets" data-markdown>
+            * Synchronous errors are typically thrown by SYCL API functions. 
+            * In order to handle all SYCL errors you must wrap everything in a
+            try-catch block.
+          </div>
+        </section>
+        <!--Slide 7-->
+        <section>
+          <div class="hbox">
+            <pre><code class="language-cpp" data-trim data-line-numbers="6, 11" data-noescape>
+#include &lt;sycl/sycl.hpp&gt;
+using namespace sycl;
+
 int main() {
-  std::vector&lt;float&gt; dA{ 7, 5, 16, 8 }, dB{ 8, 16, 5, 7 }, dO{ 0, 0, 0, 0 };
   try {
-    queue gpuQueue(gpu_selector{}, [=](exception_list eL) {
+    queue gpuQueue(gpu_selector_v, <mark>async_handler{}</mark>);
+    int* shared = malloc_shared&lt;int&gt;(1024, gpuQueue);   
+    gpuQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
+      shared[i] = i;
+    });
+    gpuQueue.wait_and_throw();
+  } catch (...) { /* handle errors */ }
+}
+              </code></pre>
+          </div>
+          <div class="bottom-bullets" data-markdown>
+            * Asynchronous errors that may have occurred will be thrown
+            after a queue has finished executing. 
+            * To handle these errors you must provide an async handler when constructing the
+            queue object. 
+            * Then you must also call the `throw_asynchronous` or
+            `wait_and_throw` member functions of the `queue` class. 
+            * This will
+            pass the exceptions to the async handler in the user thread so they
+            can be thrown.
+          </div>
+        </section>
+        <!--Slide 8-->
+        <section>
+          <div class="hbox">
+            <pre><code class="language-cpp" data-trim data-line-numbers="7-9" data-noescape>
+#include&lt;sycl/sycl.hpp&gt;
+using namespace sycl;
+
+int main() {
+  try {
+    queue gpuQueue(gpu_selector_v, 
+      [=](exception_list eL) {
+        for (auto e : eL) { std::rethrow_exception(e); 
+      }
+    });
+    int* shared = malloc_shared&lt;int&gt;(1024, gpuQueue);
+    gpuQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
+      shared[i] = [i];
+    });
+    gpuQueue.wait_and_throw();
+  } catch (...) { /* handle errors */ }
+}
+						</code></pre>
+          </div>
+          <div class="bottom-bullets" data-markdown>
+            * The async handler is a C++ lambda or function object that takes as a parameter an `exception_list` 
+            * The exception_list class is a wrapper around a list of `exception_ptrs` which can be iterated over 
+            * The exception_ptrs can be rethrown by passing them to `std::rethrow_exception`
+          </div>
+        </section>
+        <!--Slide 9-->
+        <section>
+          <div class="hbox">
+            <pre><code class="language-cpp" data-trim data-line-numbers="12, 13-16" data-noescape>
+#include&lt;sycl/sycl.hpp&gt;
+#include&lt;iostream&gt;
+using namespace sycl;
+
+int main() {
+  try {
+    queue gpuQueue(gpu_selector_v, [=](exception_list eL) {
       for (auto e : eL) { std::rethrow_exception(e); }
     });
-
-    ...
-
-    gpuQueue.throw_asynchronous();
-  } catch (const <mark>std::exception</mark>& e) {
-    <mark>std::cout << “Exception caught: ” << e.what() 
-     << std::endl;</mark>
+    /* ... */
+    gpuQueue.wait_and_throw();
+  } catch (const exception&amp; e) {
+  std::cout &lt;&lt; “Exception caught: ” &lt;&lt; <mark>e.what()</mark> 
+     << std::endl;
   }
 }
 							</code></pre>
-						</div>
-						<div class="bottom-bullets" data-markdown>
-							* Once rethrown and caught, a SYCL exception can provide information about the error
-							* The ``what`` member function will return a string with more details
-						</div>
-				</section>
-				<!--Slide 10-->
-				<section>
-						<div class="hbox">
-							<code class="code-60pc"><pre>
+          </div>
+          <div class="bottom-bullets" data-markdown>
+            * Once rethrown and caught, a SYCL exception can provide information
+            about the error 
+            * The ``what`` member function will return a string with more details
+          </div>
+        </section>
+        <!--Slide 10-->
+        <section>
+          <div class="hbox">
+            <pre><code class="language-cpp" data-trim data-line-numbers="15-16">
+#include&lt;sycl/sycl.hpp&gt;
+#include&lt;iostream&gt;
+
+using namespace sycl;
+
 int main() {
-  std::vector&lt;float&gt; dA{ 7, 5, 16, 8 }, dB{ 8, 16, 5, 7 }, dO{ 0, 0, 0, 0 };
   try {
-    queue gpuQueue(gpu_selector{}, [=](exception_list eL) {
+    queue gpuQueue(gpu_selector_v, [=](exception_list eL) {
       for (auto e : eL) { std::rethrow_exception(e); }
     });
 
-    ...
-
-    gpuQueue.throw_asynchronous();
-  } catch (const <mark>sycl::exception</mark>& e) {
-    std::cout << “Exception caught: ” << e.what();
-    <mark>std:: cout << “ With OpenCL error code: ”</mark> 
-     <mark><< e.get_cl_code() << std::endl;</mark>
+    /* ... */
+    gpuQueue.wait_and_throw();
+  } catch (const exception&amp; e) {
+    std::cout &lt;&lt; “Exception caught: ” &lt;&lt; e.what();
+    std::cout &lt;&lt; “ With OpenCL error code: ” &lt;&lt; e.get_cl_code() &lt;&lt; std::endl;
   }
 }
 							</code></pre>
-						</div>
-						<div class="bottom-bullets" data-markdown>
-              * In SYCL 1.2.1, if the exception has an OpenCL error code associated with it
-              this can be retrieved by calling the `get_cl_code` member function
-              * If there is no OpenCL error code this will return `CL_SUCCESS`
-              * SYCL 2020 provides the `error_category_for` templated free function
-                that allows checking for the category of the exception
-                depending on the backend used (e.g. `backend::opencl`),
-                and `e.code().value()` will correspond to the backend error code.
-						</div>
-				</section>
-				<!--Slide 11-->
-				<section>
-						<div class="hbox">
-							<code class="code-60pc"><pre>
-int main() {
-  std::vector&lt;float&gt; dA{ 7, 5, 16, 8 }, dB{ 8, 16, 5, 7 }, dO{ 0, 0, 0, 0 };
+          </div>
+          <div class="bottom-bullets" data-markdown>
+            * If there is no OpenCL error code this will return `CL_SUCCESS` 
+            * SYCL 2020 provides the `error_category_for` templated free function
+            that allows checking for the category of the exception depending on
+            the backend used (e.g. `backend::opencl`), and `e.code().value()`
+            will correspond to the backend error code.
+          </div>
+        </section>
+        <!--Slide 11-->
+        <section>
+          <div class="hbox">
+            <pre><code class="language-cpp" data-trim data-line-numbers="8, 12-15" data-noescape>
+#include&lt;sycl/sycl.hpp&gt;
+using namespace sycl;
 
-  queue gpuQueue(gpu_selector{}, [=](exception_list eL) {
+int main() {
+  queue gpuQueue(gpu_selector_v, [=](exception_list eL) {
     for (auto e : eL) { std::rethrow_exception(e); }
   });
-  context gpuContext = gpuQueue.get_context();
-
   try {
-    ...
+    /* ... */
     gpuQueue.wait_and_throw();
-  } catch (const sycl::exception& e) {
-    <mark>if (e.has_context()) {</mark>
-      <mark>if (e.get_context() == gpuContext) {</mark>
-        <mark>/* handle error */</mark>
-      <mark>}</mark>
-    <mark>}</mark>
+  } catch (const sycl::exception&amp; e) {
+    if (<mark>e.has_context()</mark>) {
+      if (<mark>e.get_context()</mark> == gpuQueue.get_context()) {
+       /* handle error */
+      }
+    }
   }
 }
 							</code></pre>
-						</div>
-						<div class="bottom-bullets" data-markdown>
-							* The `has_context` member function will tell you if there is a SYCL context associated with the error
-							* If that returns true then the `get_context` member function will return the associated SYCL context object
-						</div>
-				</section>
-				<!--Slide 12-->
-				<section>
-					<div class="hbox" data-markdown>
-						## Exception Types
-					</div>
-				</section>
-				<!--Slide 13-->
-				<section>
-					<div class="hbox" data-markdown>
-						* In SYCL 1.2.1 there are a number of different exception types that inherit from `std::exception`
-						  * E.g. `runtime_error`, `kernel_error`
-						* SYCL 2020 only has a single `sycl::exception` type
-							which provides different error codes
-							* E.g. `errc::runtime`, `errc::kernel`
-					</div>
-				</section>
-				<!--Slide 14-->
-				<section>
-					<div class="hbox" data-markdown>
-						## Debugging SYCL Kernel Functions
-					</div>
-				</section>
-				<!--Slide 15-->
-				<section>
-					<div class="hbox" data-markdown>
-						* Every SYCL 1.2.1 implementation is required to provide a host device
-						  * This device executes native C++ code but is guaranteed to emulate the SYCL execution and memory model
-						* This means you can debug a SYCL kernel function by switching to the host device and using a standard C++ debugger
-						  * For example gdb
-					</div>
-				</section>
-				<!--Slide 16-->
-				<section>
-					<div class="hbox" data-markdown>
-						* SYCL 2020 only guarantees that a device will always be available,
-							and users can query the `host_debuggable` device aspect
-							to check whether they can use the same functionality
-							as the SYCL 1.2.1 host device
-					</div>
-				</section>
-				<!--Slide 17-->
-				<section>
-					<div class="hbox">
-						<code class="code-60pc"><pre>
-class add;
+          </div>
+          <div class="bottom-bullets" data-markdown>
+            * The `has_context` exception member function will tell you if there is a SYCL
+            context associated with the error 
+            * If that returns true then the
+            `get_context` member function will return the associated SYCL
+            context object
+          </div>
+        </section>
+        <!--Slide 12-->
+        <section>
+          <div class="hbox" data-markdown>## Exception Types</div>
+        </section>
+        <!--Slide 13-->
+        <section>
+          <div class="hbox" data-markdown>
+            * SYCL 2020 only has a single `sycl::exception` type which provides
+            different error codes * E.g. `errc::runtime`, `errc::kernel`
+          </div>
+        </section>
+        <!--Slide 14-->
+        <section>
+          <div class="hbox" data-markdown>
+            ## Debugging SYCL Kernel Functions
+          </div>
+        </section>
+        <!--Slide 15-->
+        <section>
+          <div class="hbox" data-markdown>
+            * Every SYCL 1.2.1 implementation is required to provide a host
+            device 
+              * This device executes native C++ code but is guaranteed to
+            emulate the SYCL execution and memory model 
+              * This means you can debug a SYCL kernel function by switching to the host device and
+            using a standard C++ debugger * For example gdb
+          </div>
+        </section>
+        <!--Slide 16-->
+        <section>
+          <div class="hbox" data-markdown>
+            * SYCL 2020 only guarantees that a device will always be available,
+            and users can query the `host_debuggable` device aspect to check
+            whether they can use the same functionality as the SYCL 1.2.1 host
+            device
+          </div>
+        </section>
+        <!--Slide 17-->
+        <section>
+          <div class="hbox">
+            <pre><code class="language-cpp" data-trim data-line-numbers="6" data-noescape>
+#include&lt;sycl/sycl.hpp&gt;
+using namespace sycl;
 
 int main() {
-  std::vector&lt;float&gt; dA{ 7, 5, 16, 8 }, dB{ 8, 16, 5, 7 }, dO{ 0, 0, 0, 0 };
-  try{
-    queue <mark>hostQueue(aspect_selector&lt;aspect::host_debuggable&gt;()</mark>, async_handler{});
-
-    buffer bufA{dA};
-    buffer bufB{dB};
-    buffer bufO{dO};
-
-    hostQueue.submit([&](handler &cgh) {
-      auto inA = accessor{bufA, cgh, read_only};
-      auto inB = accessor{bufB, cgh, read_only};
-      auto out = accessor{bufO, cgh, write_only};
-
-      cgh.parallel_for&lt;add&gt;(bufO.get_range(), [=](id&lt;1&gt; i) {
-        out[i] = inA[i] + inB[i];
-      });
+  try {
+    queue hostQueue(<mark>cpu_selector_v</mark>, async_handler{}); 
+    int* shared = malloc_shared&lt;int&gt;(1024, hostQueue);
+    hostQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
+      shared[i] = i;
     });
     hostQueue.wait_and_throw();
   } catch (...) { /* handle errors */ }
 }
+
 						</code></pre>
-					</div>
-					<div class="bottom-bullets" data-markdown>
-						* Any SYCL application can be debugged on the host device by switching the queue for a host queue
-						* Replacing the device selector for the `aspect_selector`
-							will ensure that the queue submits all work to the device
-							with the requested aspects,
-							in this case a host debuggable device
-						* In SYCL 1.2.1, `host_selector` would be used instead, deprecated in SYCL 2020
-					</div>
-				</section>
-				<!--Slide 17-->
-				<section>
-					<div class="hbox" data-markdown>
-						## Questions
-					</div>
-				</section>
-				<!--Slide 18-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Exercise
-					</div>
-					<div class="container" data-markdown>
-						Code_Exercises/Handling_Errors/source
-					</div>
-					<div class="container" data-markdown>
-						Add error handling to a SYCL application for both synchronous and asynchronous errors.
-					</div>
-				</section>
-			</div>
-		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize();
-			Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+          </div>
+          <div class="bottom-bullets" data-markdown>
+            * Any SYCL application can be debugged on the host device by
+            switching the queue for a host queue 
+            * Replacing the device selector
+            for the `aspect_selector` will ensure that the queue submits all
+            work to the device with the requested aspects, in this case a host
+            debuggable device
+          </div>
+        </section>
+        <!--Slide 17-->
+        <section>
+          <div class="hbox" data-markdown>## Questions</div>
+        </section>
+        <!--Slide 18-->
+        <section>
+          <div class="hbox" data-markdown>#### Exercise</div>
+          <div class="container" data-markdown>
+            Code_Exercises/Handling_Errors/source
+          </div>
+          <div class="container" data-markdown>
+            Add error handling to a SYCL application for both synchronous and
+            asynchronous errors.
+          </div>
+        </section>
+      </div>
+    </div>
+    <style>
+      .reveal section pre code {
+        font-size: 0.7em !important;
+      }
+
+      mark {
+        background-color: lightblue;
+      }
+    </style>
+    <script src="../common-revealjs/js/reveal.js"></script>
+    <script src="../common-revealjs/plugin/markdown/marked.js"></script>
+    <script src="../common-revealjs/plugin/markdown/markdown.js"></script>
+    <script src="../common-revealjs/plugin/notes/notes.js"></script>
+    <script src="../common-revealjs/plugin/highlight/highlight.js"></script>
+
+    <script>
+      Reveal.initialize({
+        plugins: [RevealHighlight, RevealMarkdown, RevealNotes],
+      });
+      Reveal.configure({ slideNumber: true });
+    </script>
+  </body>
 </html>

@@ -125,7 +125,9 @@ int main(){
 
   int* devA = malloc_device&lt;int&gt;(hostA.size(), gpuQueue);
 
-  gpuQueue.memcpy(devA, hostA.data(), hostA.size())<mark>.wait();</mark>
+  auto e = gpuQueue.memcpy(devA, hostA.data(), hostA.size());
+
+  <mark>e.wait();</mark>
 
   gpuQueue.parallel_for(hostA.size(), [=](id&lt;1&gt; idx){
     devA[idx]++;
@@ -134,8 +136,9 @@ int main(){
 							</code></pre>
 						</div>
 						<div class="col" data-markdown>
-							* Calling `wait` on an `event` object returned from functions such as `memcpy` or the `queue` shortcuts will wait for that specific command to complete.
-							* Again this is how we have synchronized in our examples so far.
+					    * Calling `wait` on an `event` object returned from enqueuing a command group will wait for the commands from that command group to complete.
+					    * This is how we have synchronized in our examples so far.
+              * This effectively creates a blocking operations that will complete in place by immediately synchronizing.	
 						</div>
 					</div>
 				</section>

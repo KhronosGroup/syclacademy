@@ -6,6 +6,10 @@
 		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
 		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
 		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css"
+    />
 		<script>
 			// This is needed when printing the slides to pdf
 			var link = document.createElement( 'link' );
@@ -95,11 +99,11 @@
 				<!--Slide 7-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Using an out-of-order queue (USM)
+						#### Using an out-of-order queue
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<pre><code class="language-cpp" data-trim data-line-numbers>
 sycl::queue Q;
 for (std::function task: tasks)
   Q.submit(task);
@@ -114,22 +118,22 @@ Q.wait();
 				</section>
 				<section>
 					<div class="hbox" data-markdown>
-						#### Using an out-of-order queue (USM): how to handle dependencies?
+						#### Using an out-of-order queue: how to handle dependencies?
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<pre><code class="language-cpp" data-trim data-line-numbers>
 sycl::queue Q;
 auto e1 = Q.submit(taskA);
-auto e2 = Q.submit([&](sycl::handle &cgh) {
+auto e2 = Q.submit([&amp;](sycl::handle &amp;cgh) {
 	cgh.depends_on(e1);
 	taskB();
 }
-auto e3 = Q.submit([&](sycl::handle &cgh) {
+auto e3 = Q.submit([&amp;](sycl::handle &amp;cgh) {
 	cgh.depends_on(e1);
 	taskC();
 }
-Q.submit([&](sycl::handle &cgh) {
+Q.submit([&amp;](sycl::handle &amp;cgh) {
 	cgh.depends_on({e2,e3});
 	taskD();
 }.wait();
@@ -145,11 +149,11 @@ Q.submit([&](sycl::handle &cgh) {
 				<!--Slide 7-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Using an in-order queue (USM)
+						#### Using an in-order queue
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<pre><code class="language-cpp" data-trim data-line-numbers>
 sycl::queue Q{sycl::property::queue::in_order};
 for (std::function task: tasks)
   Q.submit(task);
@@ -170,10 +174,10 @@ Q.wait();
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<pre><code class="language-cpp" data-trim data-line-numbers>
 using queue_task_pair =
-  std::pair&ltsycl::queue, std::function&gt;;
-std::vector&ltqueue_task_pair&gt queues_tasks;
+  std::pair&lt;sycl::queue, std::function&amp;gt;
+std::vector&lt;queue_task_pair&gt; queues_tasks;
 
 for (auto [Q, task]: queues_tasks)
   Q.submit(task);
@@ -238,9 +242,12 @@ for (auto [Q, _]: queues_tasks)
 		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
 		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
 		<script src="../common-revealjs/plugin/notes/notes.js"></script>
+    <script src="../common-revealjs/plugin/highlight/highlight.js"></script>
 		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
+      Reveal.initialize({
+        plugins: [RevealHighlight, RevealMarkdown, RevealNotes],
+      });
+      Reveal.configure({ slideNumber: true });
 		</script>
 	</body>
 </html>

@@ -105,13 +105,13 @@
           <div class="hbox">
             <pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
 #include &lt;sycl/sycl.hpp&gt;
-using namsepace sycl;
+using namespace sycl;
 
 int main() {
-  queue q();
+  queue q;
 
   <mark>/* Synchronous code */</mark> 
-  q.single_task([=](id&lt;1&gt; i) {
+  q.single_task([=]() {
     <mark>/* Asynchronous code */</mark>
   });
   <mark>/* Synchronous code */</mark>
@@ -201,7 +201,7 @@ int main() {
     });
     int* shared = malloc_shared&lt;int&gt;(1024, gpuQueue);
     gpuQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
-      shared[i] = [i];
+      shared[i] = i;
     });
     gpuQueue.wait_and_throw();
   } catch (...) { /* handle errors */ }
@@ -230,7 +230,7 @@ int main() {
     /* ... */
     gpuQueue.wait_and_throw();
   } catch (const exception&amp; e) {
-  std::cout &lt;&lt; “Exception caught: ” &lt;&lt; <mark>e.what()</mark> 
+  std::cout &lt;&lt; "Exception caught: " &lt;&lt; <mark>e.what()</mark> 
      << std::endl;
   }
 }
@@ -260,8 +260,7 @@ int main() {
     /* ... */
     gpuQueue.wait_and_throw();
   } catch (const exception&amp; e) {
-    std::cout &lt;&lt; “Exception caught: ” &lt;&lt; e.what();
-    std::cout &lt;&lt; “ With OpenCL error code: ” &lt;&lt; e.get_cl_code() &lt;&lt; std::endl;
+    std::cout &lt;&lt; "Exception caught: " &lt;&lt; e.what();
   }
 }
 							</code></pre>
@@ -270,8 +269,7 @@ int main() {
             * If there is no OpenCL error code this will return `CL_SUCCESS` 
             * SYCL 2020 provides the `error_category_for` templated free function
             that allows checking for the category of the exception depending on
-            the backend used (e.g. `backend::opencl`), and `e.code().value()`
-            will correspond to the backend error code.
+            the backend used.
           </div>
         </section>
         <!--Slide 11-->

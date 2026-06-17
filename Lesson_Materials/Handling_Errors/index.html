@@ -239,13 +239,13 @@ int main() {
           <div class="bottom-bullets" data-markdown>
             * Once rethrown and caught, a SYCL exception can provide information
             about the error 
-            * The ``what`` member function will return a string with more details
+            * The `what` member function will return a string with more details
           </div>
         </section>
         <!--Slide 10-->
         <section>
           <div class="hbox">
-            <pre><code class="language-cpp" data-trim data-line-numbers="15-16">
+            <pre><code class="language-cpp" data-trim data-line-numbers="15">
 #include&lt;sycl/sycl.hpp&gt;
 #include&lt;iostream&gt;
 
@@ -266,6 +266,7 @@ int main() {
 							</code></pre>
           </div>
           <div class="bottom-bullets" data-markdown>
+            * In SYCL 1.2.1, if the exception has an OpenCL error code associated with it this can be retrieved by calling the get_cl_code member function
             * If there is no OpenCL error code this will return `CL_SUCCESS` 
             * SYCL 2020 provides the `error_category_for` templated free function
             that allows checking for the category of the exception depending on

@@ -438,10 +438,7 @@ q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
 						#### Accessing Data
 					</div>
 					<div class="container" data-markdown>
-					*  The subscript operator can take an **id**
-					* Nested subscript operators can be called for each dimension taking a **size_t**
-					  * E.g. a 3-dimensional accessor: acc[x][y][z] = …
-					</div>
+										</div>
 				</section>
 				<!--Slide 23-->
 				<section>
@@ -479,9 +476,12 @@ gpuQueue.wait();
 							</code></pre>
 						</div>
 						<div class="col-right-2" data-markdown>
+							*  The subscript operator can take an **id**
 							* Here we access the data by
 							passing in the `id` passed to the SYCL kernel
-							function.
+							function into the subscript operator.
+							* Nested subscript operators can be called for each dimension taking a **size_t**
+							  * E.g. a 3-dimensional accessor: acc[x][y][z] = …
 						</div>
 					</div>
 				</section>
@@ -522,7 +522,7 @@ gpuQueue.wait();
 		<script src="../common-revealjs/plugin/notes/notes.js"></script>
     <script src="../common-revealjs/plugin/highlight/highlight.js"></script>
 		<script>
-	Reveal.initialize({
+      Reveal.initialize({
         plugins: [RevealHighlight, RevealMarkdown, RevealNotes],
       });
       Reveal.configure({ slideNumber: true });

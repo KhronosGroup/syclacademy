@@ -125,8 +125,7 @@ int main(){
 
   int* devA = malloc_device&lt;int&gt;(hostA.size(), gpuQueue);
 
-  auto e = gpuQueue.memcpy(devA, hostA.data(), hostA.size());
-
+  <mark>auto e</mark> = gpuQueue.memcpy(devA, hostA.data(), hostA.size());
   <mark>e.wait();</mark>
 
   gpuQueue.parallel_for(hostA.size(), [=](id&lt;1&gt; idx){

@@ -79,18 +79,14 @@
           * Learn about the host device and how to use it
         </section>
         <!--Slide 3-->
-        <section>
-          <div class="hbox" data-markdown>#### SYCL exceptions</div>
-          <div class="section" data-markdown> [=](exception_list eL) {
-        for (auto e : eL) { std::rethrow_exception(e); 
-      }
-            * In SYCL errors are handled by throwing exceptions. 
-            * It is crucial that these errors are handled, otherwise your application could fail
-            in unpredictable ways.
-            * In SYCL there are two kinds of error: 
-            *Synchronous errors (thrown in user thread). 
-            *Asynchronous errors (thrown by the SYCL scheduler).
-          </div>
+        <section class="hbox" data-markdown>
+          ## SYCL exceptions
+          * In SYCL errors are handled by throwing exceptions. 
+          * It is crucial that these errors are handled, otherwise your application could fail
+          in unpredictable ways.
+          * In SYCL there are two kinds of error: 
+          * Synchronous errors (thrown in user thread). 
+          * Asynchronous errors (thrown by the SYCL scheduler).
         </section>
         <!--Slide 4-->
         <section>
@@ -266,8 +262,6 @@ int main() {
 							</code></pre>
           </div>
           <div class="bottom-bullets" data-markdown>
-            * In SYCL 1.2.1, if the exception has an OpenCL error code associated with it this can be retrieved by calling the get_cl_code member function
-            * If there is no OpenCL error code this will return `CL_SUCCESS` 
             * SYCL 2020 provides the `error_category_for` templated free function
             that allows checking for the category of the exception depending on
             the backend used.
@@ -313,7 +307,8 @@ int main() {
         <section>
           <div class="hbox" data-markdown>
             * SYCL 2020 only has a single `sycl::exception` type which provides
-            different error codes * E.g. `errc::runtime`, `errc::kernel`
+            different error codes 
+            * E.g. `errc::runtime`, `errc::kernel`
           </div>
         </section>
         <!--Slide 14-->
@@ -325,24 +320,13 @@ int main() {
         <!--Slide 15-->
         <section>
           <div class="hbox" data-markdown>
-            * Every SYCL 1.2.1 implementation is required to provide a host
-            device 
-              * This device executes native C++ code but is guaranteed to
-            emulate the SYCL execution and memory model 
-              * This means you can debug a SYCL kernel function by switching to the host device and
-            using a standard C++ debugger * For example gdb
-          </div>
-        </section>
-        <!--Slide 16-->
-        <section>
-          <div class="hbox" data-markdown>
             * SYCL 2020 only guarantees that a device will always be available,
             and users can query the `host_debuggable` device aspect to check
             whether they can use the same functionality as the SYCL 1.2.1 host
             device
           </div>
         </section>
-        <!--Slide 17-->
+        <!--Slide 16-->
         <section>
           <div class="hbox">
             <pre><code class="language-cpp" data-trim data-line-numbers="6" data-noescape>

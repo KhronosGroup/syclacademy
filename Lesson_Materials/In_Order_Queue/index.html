@@ -1,179 +1,184 @@
 ﻿<!DOCTYPE html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
 
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
+	<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
+	<link rel="stylesheet" href="../common-revealjs/css/custom.css">
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css" />
+	<script>
+		// This is needed when printing the slides to pdf
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+	<script>
+		// This is used to display the static images on each slide,
+		// See global-images in this html file and custom.css
+		(function () {
+			if (window.addEventListener) {
+				window.addEventListener('load', () => {
+					let slides = document.getElementsByClassName("slide-background");
 
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
+					if (slides.length === 0) {
+						slides = document.getElementsByClassName("pdf-page")
+					}
 
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
+					// Insert global images on each slide
+					for (let i = 0, max = slides.length; i < max; i++) {
+						let cln = document.getElementById("global-images").cloneNode(true);
+						cln.removeAttribute("id");
+						slides[i].appendChild(cln);
+					}
+
+					// Remove top level global images
+					let elem = document.getElementById("global-images");
+					elem.parentElement.removeChild(elem);
+				}, false);
+			}
+		})();
+	</script>
+
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<div id="global-images" class="global-images">
+				<img src="../common-revealjs/images/sycl_academy.png" />
+				<img src="../common-revealjs/images/sycl_logo.png" />
+				<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
+			</div>
+			<!--Slide 1-->
+			<section class="hbox">
+				<div class="hbox" data-markdown>
+					## Queues (In and Out of Order)
 				</div>
-				<!--Slide 1-->
-				<section class="hbox">
-					<div class="hbox" data-markdown>
-						## Queues (In and Out of Order)
+			</section>
+			<!--Slide 2-->
+			<section class="hbox" data-markdown>
+				## Learning Objectives
+				* Learn about out-of-order and in-order execution
+				* Learn about how to use in-order queues for maximal performance
+			</section>
+			<!--Slide 3-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Out-of-order execution
+				</div>
+				<div class="container">
+					<div class="col" data-markdown>
+						![SYCL](../common-revealjs/images/out_of_order_execution.svg "SYCL")
 					</div>
-				</section>
-				<!--Slide 2-->
-				<section class="hbox" data-markdown>
-					## Learning Objectives
-					* Learn about out-of-order and in-order execution
-					* Learn about how to use in-order queues for maximal performance
-        </section>
-				<!--Slide 3-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Out-of-order execution
+					<div class="col" data-markdown>
+						* SYCL `queue`s are by default out-of-order.
+						* This means commands are allowed to be overlapped, re-ordered, and executed concurrently,
+						providing dependencies are honoured to ensure consistency.
 					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/out_of_order_execution.svg "SYCL")
-						</div>
-						<div class="col" data-markdown>
-							* SYCL `queue`s are by default out-of-order.
-							* This means commands are allowed to be overlapped, re-ordered, and executed concurrently, providing dependencies are honoured to ensure consistency.
-						</div>
+				</div>
+			</section>
+			<!--Slide 4-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### In-order execution
+				</div>
+				<div class="container">
+					<div class="col" data-markdown>
+						![SYCL](../common-revealjs/images/in_order_execution.svg "SYCL")
 					</div>
-				</section>
-				<!--Slide 4-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### In-of-order execution
+					<div class="col" data-markdown>
+						* SYCL `queue`s can be configured to be in-order.
+						* This mean commands must execute strictly in the order they were enqueued.
 					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/in_order_execution.svg "SYCL")
-						</div>
-						<div class="col" data-markdown>
-							* SYCL `queue`s can be configured to be in-order.
-							* This mean commands must execute strictly in the order they were enqueued.
-						</div>
-					</div>
-				</section>
-				<!--Slide 7-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Using an out-of-order queue (USM)
-					</div>
-					<div class="container">
-						<div class="col">
-							<code class="code-100pc"><pre>
+				</div>
+			</section>
+			<!--Slide 5-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Using an out-of-order queue
+				</div>
+				<div class="container">
+					<div class="col">
+						<pre><code class="language-cpp" data-trim data-line-numbers>
 sycl::queue Q;
 for (std::function task: tasks)
   Q.submit(task);
 Q.wait();
 							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* All commands can execute concurrently if hardware allows it
-							* See exercise for real world data
-						</div>
 					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### Using an out-of-order queue (USM): how to handle dependencies?
+					<div class="col" data-markdown>
+						* All commands can execute concurrently if hardware allows it
+						* See exercise for real world data
 					</div>
-					<div class="container">
-						<div class="col">
-							<code class="code-100pc"><pre>
+				</div>
+			</section>
+			<section>
+				<div class="hbox" data-markdown>
+					#### Using an out-of-order queue: how to handle dependencies?
+				</div>
+				<div class="container">
+					<div class="col">
+						<pre><code class="language-cpp" data-trim data-line-numbers>
 sycl::queue Q;
 auto e1 = Q.submit(taskA);
-auto e2 = Q.submit([&](sycl::handle &cgh) {
+auto e2 = Q.submit([&amp;](sycl::handle &amp;cgh) {
 	cgh.depends_on(e1);
 	taskB();
 }
-auto e3 = Q.submit([&](sycl::handle &cgh) {
+auto e3 = Q.submit([&amp;](sycl::handle &amp;cgh) {
 	cgh.depends_on(e1);
 	taskC();
 }
-Q.submit([&](sycl::handle &cgh) {
+Q.submit([&amp;](sycl::handle &amp;cgh) {
 	cgh.depends_on({e2,e3});
 	taskD();
 }.wait();
 							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Define an ordering manually (error prone)
-							* Scheduling done automatically (maximize concurrency)
-							* Dynamic scheduling (potentially higher latency overhead than manually crafted scheduling)
-						</div>
 					</div>
-				</section>
-				<!--Slide 7-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Using an in-order queue (USM)
+					<div class="col" data-markdown>
+						* Define an ordering manually (error prone)
+						* Scheduling done automatically (maximize concurrency)
+						* Dynamic scheduling (potentially higher latency overhead than manually crafted scheduling)
 					</div>
-					<div class="container">
-						<div class="col">
-							<code class="code-100pc"><pre>
+				</div>
+			</section>
+			<!--Slide 6-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Using an in-order queue
+				</div>
+				<div class="container">
+					<div class="col">
+						<pre><code class="language-cpp" data-trim data-line-numbers>
 sycl::queue Q{sycl::property::queue::in_order};
 for (std::function task: tasks)
   Q.submit(task);
 Q.wait();
 							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* All commands are executed serially
-							* Ease of programming (no race conditions can occur)
-							* Potentially lower-latency than out-of-order queues
-							* Doesn't allow concurrency, potentially suboptimal performance
-						</div>
 					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### Using an out-of-order queue to enable concurrency in kernel execution (USM)
+					<div class="col" data-markdown>
+						* All commands are executed serially
+						* Ease of programming (no race conditions can occur)
+						* Potentially lower-latency than out-of-order queues
+						* Doesn't allow concurrency, potentially suboptimal performance
 					</div>
-					<div class="container">
-						<div class="col">
-							<code class="code-100pc"><pre>
+				</div>
+			</section>
+			<section>
+				<div class="hbox" data-markdown>
+					#### Using an out-of-order queue to enable concurrency in kernel execution (USM)
+				</div>
+				<div class="container">
+					<div class="col">
+						<pre><code class="language-cpp" data-trim data-line-numbers>
 using queue_task_pair =
-  std::pair&ltsycl::queue, std::function&gt;;
-std::vector&ltqueue_task_pair&gt queues_tasks;
+  std::pair&lt;sycl::queue, std::function&gt;;
+std::vector&lt;queue_task_pair&gt; queues_tasks;
 
 for (auto [Q, task]: queues_tasks)
   Q.submit(task);
@@ -181,66 +186,73 @@ for (auto [Q, task]: queues_tasks)
 for (auto [Q, _]: queues_tasks)
   Q.wait();
 							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Manual Scheduling (tasks need to be mapped to queues)
-							* Allow concurrency between queues
-							* Painful to extract full concurrency
-						</div>
 					</div>
-				</section>
-				<!--Slide 8-->
-				<section>
-					<div class="hbox" data-markdown>
-						## Note on buffer/accessors
-						* Best of Both worlds
-						* Buffer / Accessors automatically handle dependencies for you (no need for `depends_on`)
-						* Hence, using in or out-of-order queues with buffer/accessors will not change the semantics of your program!
-						* Can use out-of-order without any drawbacks.
+					<div class="col" data-markdown>
+						* Manual Scheduling (tasks need to be mapped to queues)
+						* Allow concurrency between queues
+						* Painful to extract full concurrency
 					</div>
-				</section>
-				<!--Slide 8-->
-				<section>
-					<div class="hbox" data-markdown>
-						## Questions
-					</div>
-				</section>
-				<!--Slide 17-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Exercise
-					</div>
-					<div class="container" data-markdown>
-						Code_Exercises/In_Order_Queue/source_queue_benchmarking.cpp
-					</div>
-					<div class="container" data-markdown>
-						- Transform the serial in-order scheduling to allow concurrent execution (using an out-of-order queue or multiple in-order queues)
-						- Measure speedup
-					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### Exercise
-					</div>
-					<div class="container" data-markdown>
-						Code_Exercises/In_Order_Queue/source_vector_add.cpp
-					</div>
-					<div class="container" data-markdown>
-						![SYCL](../common-revealjs/images/in_order_diamond_data_flow.svg "SYCL")
-					</div>
-					<div class="container" data-markdown>
-						Take the diamond data flow graph we implemented in the last exercise and convert it to use an in-order `queue`.
-					</div>
-				</section>
-			</div>
+				</div>
+			</section>
+			<!--Slide 7-->
+			<section>
+				<div class="hbox" data-markdown>
+					## Note on buffer/accessors
+					* Best of Both worlds
+					* Buffer / Accessors automatically handle dependencies for you (no need for `depends_on`)
+					* Hence, using in or out-of-order queues with buffer/accessors will not change the semantics of your
+					program!
+					* Can use out-of-order without any drawbacks.
+				</div>
+			</section>
+			<!--Slide 8-->
+			<section>
+				<div class="hbox" data-markdown>
+					## Questions
+				</div>
+			</section>
+			<!--Slide 9-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Exercise
+				</div>
+				<div class="container" data-markdown>
+					Code_Exercises/In_Order_Queue/source_queue_benchmarking.cpp
+				</div>
+				<div class="container" data-markdown>
+					- Transform the serial in-order scheduling to allow concurrent execution (using an out-of-order
+					queue or multiple in-order queues)
+					- Measure speedup
+				</div>
+			</section>
+			<section>
+				<div class="hbox" data-markdown>
+					#### Exercise
+				</div>
+				<div class="container" data-markdown>
+					Code_Exercises/In_Order_Queue/source_vector_add.cpp
+				</div>
+				<div class="container" data-markdown>
+					![SYCL](../common-revealjs/images/in_order_diamond_data_flow.svg "SYCL")
+				</div>
+				<div class="container" data-markdown>
+					Take the diamond data flow graph we implemented in the last exercise and convert it to use an
+					in-order `queue`.
+				</div>
+			</section>
 		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+	</div>
+	<script src="../common-revealjs/js/reveal.js"></script>
+	<script src="../common-revealjs/plugin/markdown/marked.js"></script>
+	<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
+	<script src="../common-revealjs/plugin/notes/notes.js"></script>
+	<script src="../common-revealjs/plugin/highlight/highlight.js"></script>
+	<script>
+		Reveal.initialize({
+			plugins: [RevealHighlight, RevealMarkdown, RevealNotes],
+		});
+		Reveal.configure({ slideNumber: true });
+	</script>
+</body>
+
 </html>

@@ -2,6 +2,8 @@
 # Michael Lance
 # June 2026
 
+# ------------------------------------------------------------------------------------------
+
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -12,27 +14,32 @@ base_path = Path("../Lesson_Materials/")
 out_base = Path("out")
 
 # ------------------------------------------------------------------------------------------
+# Custom parser class
+
 
 class CodeExtractor(HTMLParser):
-    def __init__(self):
+    def __init__(self, lesson_name: str):
         super().__init__(convert_charrefs=True)
+
         self.code_blocks = []
         self.is_code = False
         self.is_mark = False
+        self.lesson_name = lesson_name
 
     def handle_starttag(self, tag, attrs):
-        match tag.lower(): 
-            case 'code':
-                self.is_code = True 
-            case 'mark':
+        match tag.lower():
+            case "code":
+                self.is_code = True
+            case "mark":
                 self.is_mark = True
-            case 'pre':
-                # TODO: check how to get file name into here
+            case "pre":
                 if self.is_code:
-                    print("invalid tag arrangemnt in file")
+                    print(
+                        f"\033[93m[WARNING] misalligned <code> and <pre> tags in lesson {self.lesson_name} line num: {self.getpos()} \033[0m"
+                    )
             case _:
                 if self.is_code:
-                    msg = f"Mark is the only tag allowed in a codeblock! line num: {self.getpos()} tag: {tag}"
+                    msg = f"<mark> annotations are the only tags allowed in <code> blocks! Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag}"
                     raise Exception(msg)
 
     def handle_data(self, data):
@@ -42,14 +49,15 @@ class CodeExtractor(HTMLParser):
             self.code_blocks[-1] += data
 
     def handle_endtag(self, tag):
-        if tag.lower() == 'code':
+        if tag.lower() == "code":
             self.is_code = False
             self.is_mark = False
+
 
 # ------------------------------------------------------------------------------------------
 
 
-print("Checking all code examples compile with icpx")
+print("Extracting code blocks for compilation testing")
 for lesson in base_path.glob("*/"):
     print(f"processing lesson: {lesson}...")
 
@@ -59,7 +67,7 @@ for lesson in base_path.glob("*/"):
         continue
 
     with open(in_path, "r", encoding="utf-8") as file:
-        parser = CodeExtractor()
+        parser = CodeExtractor(lesson.name)
 
         parser.feed(file.read())
         out_path = out_base / lesson.name

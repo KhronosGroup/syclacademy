@@ -479,9 +479,9 @@ gpuQueue.wait();
 							*  The subscript operator can take an **id**
 							* Here we access the data by
 							passing in the `id` passed to the SYCL kernel
-							function into the subscript operator.
-							* Nested subscript operators can be called for each dimension taking a **size_t**
-							  * E.g. a 3-dimensional accessor: acc[x][y][z] = …
+							function into the subscript operator
+							* `.get_id(dim)` takes a **size_t** to get the index for a single dimension
+							  * E.g. a 3D item: `itm.get_id(0)`, `itm.get_id(1)`, `itm.get_id(2)` for x, y, z
 						</div>
 					</div>
 				</section>

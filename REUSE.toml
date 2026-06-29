@@ -1,0 +1,40 @@
+version = 1
+SPDX-PackageName = "syclacademy"
+SPDX-PackageSupplier = "The Khronos Group, Inc."
+SPDX-PackageDownloadLocation = "https://github.com/KhronosGroup/syclacademy"
+
+[[annotations]]
+precedence = "closest"
+path = [
+    "Lesson_Materials/common-revealjs/**",
+]
+SPDX-FileCopyrightText = "Hakim El Hattab"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+precedence = "closest"
+path = [
+    "Lesson_Materials/common-revealjs/css/theme/source/serif.scss",
+    "Lesson_Materials/common-revealjs/css/theme/source/serif.scss",
+    "Lesson_Materials/common-revealjs/css/theme/source/simple.scss",
+    "Lesson_Materials/common-revealjs/css/theme/serif.css",
+    "Lesson_Materials/common-revealjs/css/theme/simple.css",
+]
+SPDX-FileCopyrightText = "Owen Versteeg"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+precedence = "closest"
+path = [
+    "Lesson_Materials/common-revealjs/plugin/markdown/marked.js",
+]
+SPDX-FileCopyrightText = "Christopher Jeffrey"
+SPDX-License-Identifier = "MIT"
+
+[[annotations]]
+precedence = "closest"
+path = [
+    "Lesson_Materials/common-revealjs/lib/font/source-sans-pro",
+]
+SPDX-FileCopyrightText = "OFL-1.1"
+SPDX-License-Identifier = "Adobe Systems Incorporated"

@@ -19,7 +19,7 @@ out_base = Path("out")
 
 class CodeExtractor(HTMLParser):
     def __init__(self, lesson_name: str):
-        super().__init__(convert_charrefs=True)
+        super().__init__()
 
         self.code_blocks = []
         self.is_code = False
@@ -61,7 +61,7 @@ print("Extracting code blocks for compilation testing")
 for lesson in base_path.glob("*/"):
     print(f"processing lesson: {lesson}...")
 
-    in_path = base_path / f"{lesson.name}" / "index.html"
+    in_path = base_path / lesson.name / "index.html"
 
     if not in_path.exists():
         continue

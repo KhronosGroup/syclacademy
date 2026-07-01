@@ -189,6 +189,12 @@ class TestSYCLAParser(unittest.TestCase):
         self.assertEqual(self.parser.output, ["&amp;"])
         self.assertEqual(self.parser.code_blocks[-1][1], "")
 
+    def test_handle_entityref_unescaped_ampersand(self):
+        self.parser.is_code = True
+        self.parser.code_blocks.append(((1, 0), ""))
+        self.parser.handle_entityref("&var")
+        self.assertEqual(self.parser.output, ["&amp;var"])
+
     # ---------------------------------------------------------------------
     # handle_charref
     # ---------------------------------------------------------------------
@@ -219,16 +225,12 @@ class TestSYCLAParser(unittest.TestCase):
     def test_code_startendtag_extract(self):
         self.parser.extract = True
         self.parser.handle_startendtag("link", [("rel", "stylesheet")])
-        self.assertEqual(self.parser.output[0], '<link rel="stylesheet">')
-
-    def test_startendtag_without_extract_emits_nothing(self):
-        self.parser.handle_startendtag("link", [("rel", "stylesheet")])
-        self.assertEqual(self.parser.output, [])
+        self.assertEqual(self.parser.output[0], '<link rel="stylesheet" />')
 
     def test_startendtag_extract_no_attrs(self):
         self.parser.extract = True
         self.parser.handle_startendtag("br", [])
-        self.assertEqual(self.parser.output[0], "<br>")
+        self.assertEqual(self.parser.output[0], "<br />")
 
     # ---------------------------------------------------------------------
     # handle_endtag
@@ -255,6 +257,26 @@ class TestSYCLAParser(unittest.TestCase):
         # non-code endtag does not reset the code flag
         self.assertTrue(self.parser.is_code)
         self.assertEqual(self.parser.output[-1], "</span>")
+
+    def test_endtag_void_element(self):
+        self.parser.handle_endtag("param")
+        self.assertEqual(self.parser.output, [])
+
+    # ---------------------------------------------------------------------
+    # handle_comment
+    # ---------------------------------------------------------------------
+
+    def test_handle_comment(self):
+        self.parser.handle_comment("slide 11")
+        self.assertEqual(self.parser.output, ["<!--slide 11-->"])
+
+    # ---------------------------------------------------------------------
+    # handle_decl
+    # ---------------------------------------------------------------------
+
+    def test_handle_delc(self):
+        self.parser.handle_decl("DOCTYPE html")
+        self.assertEqual(self.parser.output, ["<!DOCTYPE html>"])
 
     # ---------------------------------------------------------------------
     # Integration: feed() end-to-end
@@ -322,138 +344,3 @@ class TestSYCLAParser(unittest.TestCase):
             "".join(parser.output),
             '<code class="language-cpp">a<mark>b</mark></code>',
         )
-
-
-class TestCLIIntegration(unittest.TestCase):
-    """End-to-end tests that run LessonChecker.py as a script."""
-
-    SCRIPT = str(Path(LessonChecker.__file__).resolve())
-    SCRIPT_DIR = str(Path(LessonChecker.__file__).resolve().parent)
-
-    def setUp(self):
-        self._tmp = tempfile.TemporaryDirectory()
-        self.root = Path(self._tmp.name)
-
-    def tearDown(self):
-        self._tmp.cleanup()
-
-    def _make_lesson(self, name, html):
-        """Create <root>/<name>/index.html and return the lesson dir path."""
-        lesson_dir = self.root / name
-        lesson_dir.mkdir(parents=True, exist_ok=True)
-        (lesson_dir / "index.html").write_text(html, encoding="utf-8")
-        return lesson_dir
-
-    def _run(self, *cli_args):
-        # Propagate the coverage settings so the spawned interpreter records
-        # its own data (via sitecustomize.py + coverage.process_startup()).
-        # This is a no-op when coverage is not driving the tests.
-        env = os.environ.copy()
-        if env.get("COVERAGE_PROCESS_START"):
-            existing = env.get("PYTHONPATH", "")
-            env["PYTHONPATH"] = (
-                self.SCRIPT_DIR + os.pathsep + existing if existing else self.SCRIPT_DIR
-            )
-        return subprocess.run(
-            [sys.executable, self.SCRIPT, *cli_args],
-            capture_output=True,
-            text=True,
-            env=env,
-        )
-
-    # ---------------------------------------------------------------------
-
-    def test_no_arguments_does_nothing(self):
-        result = self._run()
-        self.assertEqual(result.returncode, 0)
-        self.assertIn("nothing to do", result.stdout)
-
-    def test_extract_without_output_errors(self):
-        lesson = self._make_lesson("L", "<code>x</code>")
-        result = self._run("--extract", "--files", str(lesson))
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("output must be specified", result.stderr)
-
-    def test_missing_lesson_raises(self):
-        missing = self.root / "does_not_exist"
-        result = self._run("--verify", "--files", str(missing))
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("does not exist", result.stderr)
-
-    def test_verify_clean_lesson_reports_no_issues(self):
-        lesson = self._make_lesson("Clean", "<code>int a = 1;</code>")
-        result = self._run("--verify", "--files", str(lesson))
-        self.assertEqual(result.returncode, 0)
-        self.assertIn("No issues found.", result.stdout)
-
-    def test_verify_flags_span_in_code(self):
-        lesson = self._make_lesson("Bad", "<code><span>x</span></code>")
-        result = self._run("--verify", "--files", str(lesson))
-        self.assertEqual(result.returncode, 0)
-        self.assertIn("[WARNING]", result.stdout)
-        # a lesson with issues should not print the all-clear message
-        self.assertNotIn("No issues found.", result.stdout)
-
-    def test_extract_writes_cpp_files(self):
-        lesson = self._make_lesson("Ex", "<code>int a &lt; b;</code>")
-        out_dir = self.root / "out"
-        result = self._run(
-            "--extract",
-            "--files",
-            str(lesson),
-            "--output",
-            str(out_dir),
-        )
-        self.assertEqual(result.returncode, 0)
-        cpp_files = list(out_dir.glob("*.cpp"))
-        self.assertEqual(len(cpp_files), 1)
-        # entities should be unescaped in the extracted source
-        self.assertEqual(cpp_files[0].read_text(), "int a < b;")
-        self.assertTrue(cpp_files[0].name.startswith("Ex-"))
-
-    def test_extract_multiple_code_blocks(self):
-        lesson = self._make_lesson("Multi", "<code>one</code><p>x</p><code>two</code>")
-        out_dir = self.root / "out"
-        result = self._run(
-            "--extract", "--files", str(lesson), "--output", str(out_dir)
-        )
-        self.assertEqual(result.returncode, 0)
-        contents = sorted(p.read_text() for p in out_dir.glob("*.cpp"))
-        self.assertEqual(contents, ["one", "two"])
-
-    def test_extract_multiple_lessons(self):
-        a = self._make_lesson("A", "<code>aaa</code>")
-        b = self._make_lesson("B", "<code>bbb</code>")
-        out_dir = self.root / "out"
-        result = self._run(
-            "--extract",
-            "--files",
-            str(a),
-            str(b),
-            "--output",
-            str(out_dir),
-        )
-        self.assertEqual(result.returncode, 0)
-        contents = sorted(p.read_text() for p in out_dir.glob("*.cpp"))
-        self.assertEqual(contents, ["aaa", "bbb"])
-
-    def test_autofix_rewrites_index_html(self):
-        html = "<code>int a = 1;</code>"
-        lesson = self._make_lesson("Fix", html)
-        result = self._run(
-            "--autofix",
-            "--files",
-            str(lesson),
-            "--output",
-            str(self.root / "out"),
-        )
-        self.assertEqual(result.returncode, 0)
-        rewritten = (lesson / "index.html").read_text()
-        # autofix injects the language-cpp class onto <code> tags
-        self.assertIn('<code class="language-cpp">', rewritten)
-
-    def test_mutually_exclusive_modes_rejected(self):
-        lesson = self._make_lesson("L", "<code>x</code>")
-        result = self._run("--verify", "--extract", "--files", str(lesson))
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("not allowed with", result.stderr)

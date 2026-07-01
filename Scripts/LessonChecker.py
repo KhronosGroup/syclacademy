@@ -119,7 +119,13 @@ class SYCLAParser(HTMLParser):
         self.output.append(data)
 
     def handle_entityref(self, name):
-        raw_entity = f"&{name};"
+
+        match name:
+            case "lt" | "gt" | "amp":
+                raw_entity = f"&{name};"
+
+            case _:
+                raw_entity = f"&amp;{name.strip('&')}"
 
         self.output.append(raw_entity)
 

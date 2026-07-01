@@ -139,14 +139,13 @@ class SYCLAParser(HTMLParser):
             self.code_blocks[-1] = (pos, e_data + converted_char)
 
     def handle_startendtag(self, tag, attrs):
-        if self.extract:
-            attrd = dict(attrs)
-            tags = [tag] + [
-                f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
-                for k, v in attrd.items()
-            ]
+        attrd = dict(attrs)
+        tags = [tag] + [
+            f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
+            for k, v in attrd.items()
+        ]
 
-            self.output.append(f"<{' '.join(tags)}>")
+        self.output.append(f"<{' '.join(tags)} />")
 
     def handle_endtag(self, tag):
         if tag.lower() in self.VOID_ELEMENTS:
@@ -157,6 +156,12 @@ class SYCLAParser(HTMLParser):
             self.is_mark = False
 
         self.output.append(f"</{tag}>")
+
+    def handle_comment(self, data):
+        self.output.append(f"<!--{data}-->")
+
+    def handle_decl(self, decl):
+        self.output.append(f"<!{decl}>")
 
 
 # ------------------------------------------------------------------------------------------

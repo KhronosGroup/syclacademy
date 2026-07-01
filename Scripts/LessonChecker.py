@@ -122,7 +122,7 @@ class SYCLAParser(HTMLParser):
             case _:
                 self.parser_error = True
                 print(
-                    f"\033[93m[{'FIXING' if self.fix else 'ERROR'}] Impropperly escaped entity ref! Violation in lesson {self.lesson_name} line num: {self.getpos()} ref: {name} \033[0m"
+                    f"\033[93m[{self.msg_action}] Impropperly escaped entity ref! Violation in lesson {self.lesson_name} line num: {self.getpos()} ref: {name} \033[0m"
                 )
                 raw_entity = f"&amp;{name}"
 
@@ -146,7 +146,7 @@ class SYCLAParser(HTMLParser):
         if tag.lower() in self.VOID_ELEMENTS:
             self.parser_error = True
             print(
-                f"\033[93m[{'FIXING' if self.fix else 'ERROR'}] Self closing tag does not require an endtag Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag} \033[0m"
+                f"\033[93m[{self.msg_action}] Self closing tag does not require an endtag Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag} \033[0m"
             )
             return
 

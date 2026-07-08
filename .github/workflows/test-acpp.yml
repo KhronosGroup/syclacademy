@@ -14,23 +14,40 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
-    - name: Install OpenCL development files
-      run : |
-        sudo apt update
-        sudo apt install ocl-icd-opencl-dev
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.14"
+    - name: Keep downloaded apt packages
+      run: echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee /etc/apt/apt.conf.d/keep-cache
+    - name: Cache apt packages
+      uses: actions/cache@v4
+      with:
+        path: /var/cache/apt/archives
+        key: ${{ runner.os }}-apt-clang${{ matrix.clang }}-${{ hashFiles('.github/workflows/test-acpp.yml') }}
+        restore-keys: |
+          ${{ runner.os }}-apt-clang${{ matrix.clang }}-
+          ${{ runner.os }}-apt-
     - name: Install OpenCL
       run: |
         sudo wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | sudo gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
         echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
         sudo apt-get update
-        sudo apt-get install -y intel-oneapi-runtime-opencl-2024 intel-oneapi-runtime-compilers-2024 ocl-icd-libopencl1 ocl-icd-opencl-dev
+        sudo apt-get install -y intel-oneapi-runtime-opencl-2024 intel-oneapi-runtime-compilers-2024 ocl-icd-libopencl1 ocl-icd-opencl-dev cmake ninja-build build-essential git
     - name: install LLVM
       run: |
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh ${{matrix.clang}}
         sudo apt install libclang-${{matrix.clang}}-dev clang-tools-${{matrix.clang}} libomp-${{matrix.clang}}-dev
+    - name: cache AdaptiveCPP build
+      id: cache-adaptivecpp
+      uses: actions/cache@v4
+      with: 
+        path: ${{ github.workspace }}/adaptivecpp/build/install
+        key: ${{ runner.os }}-adaptivecpp-v25.10.0-clang${{ matrix.clang }}
     - name: build AdaptiveCpp
+      if: steps.cache-adaptivecpp.outputs.cache-hit != 'true'
       run: |
         git clone https://github.com/adaptivecpp/adaptivecpp -b v25.10.0
         mkdir -p adaptivecpp/build && cd adaptivecpp/build
@@ -44,6 +61,21 @@ jobs:
         mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build
         cmake  -DSYCL_ACADEMY_USE_ADAPTIVECPP=ON -DSYCL_ACADEMY_ENABLE_SOLUTIONS=ON -DSYCL_ACADEMY_INSTALL_ROOT=${GITHUB_WORKSPACE}/adaptivecpp/build/install  ..
         make -j2
+    - name: Extract and compile lesson code blocks
+      run: |
+        ACPP="${GITHUB_WORKSPACE}/adaptivecpp/build/install/bin/acpp"
+        OUT="${GITHUB_WORKSPACE}/lesson_snippets"
+        LESSON="Lesson_Materials/Handling_Errors/index.html"
+        python ./Scripts/LessonChecker.py --extract -o "${OUT}" "${LESSON}"
+        status=0
+        for src in "${OUT}"/*.cpp; do
+          echo "Compiling ${src}"
+          if ! "${ACPP}" "${src}" -o "${src}.out"; then
+            echo "::error::Failed to compile lesson code block ${src}"
+            status=1
+          fi
+        done
+        exit $status
     - name: Run SYCLAcademy solutions (OpenMP backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
@@ -51,4 +83,4 @@ jobs:
     - name: Run SYCLAcademy solutions (OpenCL backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
-        ACPP_VISIBILITY_MASK="ocl" ctest --exclude-regex "Enqueueing_a_Kernel*|More_SYCL_Features_reduce_atomic*" || { cat Testing/Temporary/LastTest.log && false; }
+        ACPP_VISIBILITY_MASK="ocl" ctest --exclude-regex "Enq"

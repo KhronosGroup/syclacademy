@@ -18,4 +18,4 @@ jobs:
       working-directory: Scripts
       run: |
         python -m coverage run --source=LessonChecker -m unittest test_LessonChecker -v
-        python -m coverage report -m --fail-under=90
+        python -m coverage report -m --fail-under=100

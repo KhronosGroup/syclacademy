@@ -40,6 +40,8 @@ jobs:
         chmod +x llvm.sh
         sudo ./llvm.sh ${{matrix.clang}}
         sudo apt install libclang-${{matrix.clang}}-dev clang-tools-${{matrix.clang}} libomp-${{matrix.clang}}-dev
+    - name: Make apt archives readable for cache save
+      run: sudo chmod -R a+rX /var/cache/apt/archives
     - name: cache AdaptiveCPP build
       id: cache-adaptivecpp
       uses: actions/cache@v4

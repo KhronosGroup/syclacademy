@@ -82,6 +82,10 @@ jobs:
           fi
         done
         exit $status
+    - name: Run lesson code blocks (OpenCL backend)
+      run: |
+        cd ${GITHUB_WORKSPACE}/lesson_snippets
+        ACPP_VISIBILITY_MASK="ocl" ctest
     - name: Run SYCLAcademy solutions (OpenMP backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build

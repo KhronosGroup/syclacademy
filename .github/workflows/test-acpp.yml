@@ -20,6 +20,10 @@ jobs:
         python-version: "3.14"
     - name: Keep downloaded apt packages
       run: echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee /etc/apt/apt.conf.d/keep-cache
+    - name: Take ownership of apt archives for cache restore
+      run: |
+        sudo mkdir -p /var/cache/apt/archives/partial
+        sudo chown -R "$(id -u):$(id -g)" /var/cache/apt/archives
     - name: Cache apt packages
       uses: actions/cache@v4
       with:

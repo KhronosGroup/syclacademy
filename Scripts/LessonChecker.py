@@ -193,6 +193,8 @@ if __name__ == "__main__":  # pragma: no cover
 
     out_base = Path(args.output or "")
 
+    verify_failed = False
+
     for lesson in args.files:
         print(f"processing lesson: {lesson}...")
         l_path = Path(lesson)
@@ -206,8 +208,11 @@ if __name__ == "__main__":  # pragma: no cover
             parser = SYCLAParser(lesson, args.extract, args.verify, args.autofix)
             parser.feed(file.read())
 
-            if args.verify and not parser.parser_error:
-                print("No issues found.")
+            if args.verify:
+                if parser.parser_error:
+                    verify_failed = True
+                else:
+                    print("No issues found.")
 
             if args.extract:
                 out_base.mkdir(parents=True, exist_ok=True)
@@ -224,3 +229,6 @@ if __name__ == "__main__":  # pragma: no cover
 
                 with open(write_back_path, "w") as out:
                     out.write(parser.get_output())
+
+    if verify_failed:
+        sys.exit(1)

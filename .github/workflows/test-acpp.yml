@@ -3,8 +3,21 @@ name: Test AdaptiveCpp
 on: [push, pull_request]
 
 jobs:
+  validate-lessons:
+    name: Validate Handling_Errors lesson
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.14"
+    - name: Validate lesson HTML
+      run: python ./Scripts/LessonChecker.py --verify Lesson_Materials/Handling_Errors/index.html
+
   test-acpp:
     name: acpp llvm ${{ matrix.clang }}, ${{ matrix.os }}
+    needs: validate-lessons
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

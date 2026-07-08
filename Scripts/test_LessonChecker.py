@@ -123,7 +123,7 @@ def make_test_method(case_data):
         args = argparse.Namespace(
             extract=case_data["extract"],
             verify=case_data["verify"],
-            fix=case_data["fix"]
+            autofix=case_data["fix"]
         )
         
         output, code, error = LessonChecker.verify_html(

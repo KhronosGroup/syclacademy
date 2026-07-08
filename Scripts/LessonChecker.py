@@ -122,8 +122,8 @@ class SYCLAParser(HTMLParser):
             case _:
                 self.parser_error = True
                 print(
-                    f"\033[93m[{self.msg_action}] Impropperly escaped entity ref! Violation in lesson {self.lesson_name} line num: {self.getpos()} ref: {name} \033[0m"
-                                    )
+                    f"\033[93m[{self.msg_action}] Impropperly escaped entity ref! Violation in lesson {self.lesson_name} line num: {self.getpos()} ref: {name} \033[0m")
+
                 raw_entity = f"&amp;{name}"
 
         self.output.append(raw_entity)
@@ -206,7 +206,7 @@ if __name__ == "__main__":  # pragma: no cover
             parser = SYCLAParser(lesson, args.extract, args.verify, args.autofix)
             parser.feed(file.read())
 
-            if not parser.parser_error:
+            if args.verify and not parser.parser_error:
                 print("No issues found.")
 
             if args.extract:

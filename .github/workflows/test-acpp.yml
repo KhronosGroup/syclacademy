@@ -74,12 +74,18 @@ jobs:
         LESSON="Lesson_Materials/Handling_Errors/index.html"
         python ./Scripts/LessonChecker.py --extract -o "${OUT}" "${LESSON}"
         status=0
+        # (re)generate the CTest test list so ctest can run the compiled snippets
+        TESTFILE="${OUT}/CTestTestfile.cmake"
+        : > "${TESTFILE}"
         for src in "${OUT}"/*.cpp; do
           echo "Compiling ${src}"
           if ! "${ACPP}" "${src}" -o "${src}.out"; then
             echo "::error::Failed to compile lesson code block ${src}"
             status=1
+            continue
           fi
+          name="$(basename "${src}" .cpp)"
+          echo "add_test(${name} \"${src}.out\")" >> "${TESTFILE}"
         done
         exit $status
     - name: Run lesson code blocks (OpenCL backend)

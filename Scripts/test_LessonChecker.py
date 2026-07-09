@@ -2,9 +2,6 @@ import argparse
 import unittest
 import LessonChecker
 
-class TestSYCLAParser(unittest.TestCase):
-    pass
-
 test_cases = [
     {
         "name": "detect_swapped_code_pre",
@@ -91,7 +88,7 @@ test_cases = [
     },
     {
         "name": "fix_mismatched_pre_code",
-        "body": "<code><pre></code></pre>", 
+        "body": "<code><pre></code></pre>",
         "extract": False,
         "verify": False,
         "fix": True,
@@ -115,34 +112,41 @@ test_cases = [
         "fix": True,
         "expected_return": True,
         "expected_output": '<pre><code class="language-cpp">#include&lt;sycl/sycl.hpp&gt;</code></pre>',
-    }
+    },
 ]
+
 
 def make_test_method(case_data):
     def test_method(self):
         args = argparse.Namespace(
             extract=case_data["extract"],
             verify=case_data["verify"],
-            autofix=case_data["fix"]
+            autofix=case_data["fix"],
         )
-        
-        output, code, error = LessonChecker.verify_html(
-            lesson="test_lesson", 
-            file_str=case_data["body"], 
-            args=args
+
+        output, codes, error = LessonChecker.verify_html(
+            lesson="test_lesson", file_str=case_data["body"], args=args
         )
-        
+
         self.assertEqual(error, case_data["expected_return"])
-        
+
         if case_data["extract"] and "expected_code" in case_data:
-            self.assertEqual(code[0][1], case_data["expected_code"])
-            
+            # Assume only one code block per test
+            self.assertEqual(len(codes), 1)
+
+            code = codes.pop()
+            self.assertEqual(code[1], case_data["expected_code"])
+
         if case_data["fix"] and "expected_output" in case_data:
             self.assertEqual(output, case_data["expected_output"])
-        
+
     return test_method
+
+
+class TestSYCLAParser(unittest.TestCase):
+    pass
+
 
 for case in test_cases:
     test_method_name = f"test_{case['name']}"
     setattr(TestSYCLAParser, test_method_name, make_test_method(case))
-

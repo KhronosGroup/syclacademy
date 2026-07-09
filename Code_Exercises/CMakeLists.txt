@@ -42,9 +42,12 @@ function( add_sycl_executable prefix source )
     add_sycl_executable_adaptivecpp(${prefix} ${source})
   endif()
 
-  # Add ctest target for lesson solution & reference executables only,
-  # as lesson source executables are not guaranteed to be valid SYCL.
-  if (source STREQUAL "solution" OR source STREQUAL "reference")
+  # Add ctest target for lesson solution & reference executables, and for the
+  # code snippets extracted from the HTML lessons (see Lesson_Snippets below).
+  # Plain lesson source executables are skipped as they are not guaranteed to be
+  # valid SYCL.
+  if (source STREQUAL "solution" OR source STREQUAL "reference"
+      OR prefix STREQUAL "Lesson_Snippets")
     set(TARGET_NAME "${prefix}_${source}")
     add_test(NAME "${TARGET_NAME}_test" COMMAND ${TARGET_NAME})
   endif()
@@ -74,3 +77,4 @@ add_subdirectory(Matrix_Transpose)
 add_subdirectory(Functors)
 add_subdirectory(oneMath_gemm)
 add_subdirectory(More_SYCL_Features)
+add_subdirectory(Lesson_Snippets)

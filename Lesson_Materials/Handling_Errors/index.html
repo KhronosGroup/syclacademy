@@ -134,7 +134,7 @@ using namespace sycl;
 
 int main() {
   try {
-    queue q(); 
+    queue q; 
     int* shared = malloc_shared&lt;int&gt;(1024, q);   
     q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;

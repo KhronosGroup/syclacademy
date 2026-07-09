@@ -96,15 +96,11 @@ jobs:
         mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build
         cmake  -DSYCL_ACADEMY_USE_ADAPTIVECPP=ON -DSYCL_ACADEMY_ENABLE_SOLUTIONS=ON -DSYCL_ACADEMY_INSTALL_ROOT=${GITHUB_WORKSPACE}/adaptivecpp/build/install  ..
         make -j2
-    - name: Run lesson code blocks (OpenCL backend)
-      run: |
-        cd ${GITHUB_WORKSPACE}/build
-        ACPP_VISIBILITY_MASK="ocl" ctest --tests-regex "Lesson_Snippets"
     - name: Run SYCLAcademy solutions (OpenMP backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
-        ACPP_VISIBILITY_MASK="omp" ctest --exclude-regex "Lesson_Snippets" || { cat Testing/Temporary/LastTest.log && false; }
+        ACPP_VISIBILITY_MASK="omp" ctest
     - name: Run SYCLAcademy solutions (OpenCL backend)
       run: |
         cd ${GITHUB_WORKSPACE}/build
-        ACPP_VISIBILITY_MASK="ocl" ctest --exclude-regex "Enq|Lesson_Snippets"
+        ACPP_VISIBILITY_MASK="ocl" ctest 

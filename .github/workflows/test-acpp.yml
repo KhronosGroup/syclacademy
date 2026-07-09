@@ -39,8 +39,7 @@ jobs:
       run: |
         wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/apt.llvm.org.asc > /dev/null
         echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-${{matrix.clang}} main" | sudo tee /etc/apt/sources.list.d/llvm.list
-    - name: Refresh apt package index
-      run: sudo apt-get update
+        sudo apt-get update
     - name: Install OpenCL and LLVM packages
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:

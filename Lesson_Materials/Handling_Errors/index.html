@@ -134,7 +134,7 @@ using namespace sycl;
 
 int main() {
   try {
-    queue q(gpu_selector_v); 
+    queue q(); 
     int* shared = malloc_shared&lt;int&gt;(1024, q);   
     q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;
@@ -159,7 +159,7 @@ using namespace sycl;
 
 int main() {
   try {
-    queue q(gpu_selector_v, <mark>async_handler{}</mark>);
+    queue q(<mark>async_handler{}</mark>);
     int* shared = malloc_shared&lt;int&gt;(1024, q);   
     q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;
@@ -190,8 +190,7 @@ using namespace sycl;
 
 int main() {
   try {
-    queue q(gpu_selector_v, 
-      [=](exception_list eL) {
+    queue q([=](exception_list eL) {
         for (auto e : eL) { std::rethrow_exception(e); 
       }
     });
@@ -220,7 +219,7 @@ using namespace sycl;
 
 int main() {
   try {
-    queue q(gpu_selector_v, [=](exception_list eL) {
+    queue q([=](exception_list eL) {
       for (auto e : eL) { std::rethrow_exception(e); }
     });
     /* ... */
@@ -249,7 +248,7 @@ using namespace sycl;
 
 int main() {
   try {
-    queue q(gpu_selector_v, [=](exception_list eL) {
+    queue q([=](exception_list eL) {
       for (auto e : eL) { std::rethrow_exception(e); }
     });
 
@@ -335,7 +334,7 @@ using namespace sycl;
 
 int main() {
   try {
-    queue q(<mark>cpu_selector_v</mark>, async_handler{}); 
+    queue q(<mark>default_selector_v</mark>, async_handler{}); 
     int* shared = malloc_shared&lt;int&gt;(1024, q);
     q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;

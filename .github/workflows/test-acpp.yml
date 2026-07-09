@@ -53,6 +53,7 @@ jobs:
           build-essential
           git
           clang-${{matrix.clang}}
+          lld-${{matrix.clang}}
           libclang-${{matrix.clang}}-dev
           clang-tools-${{matrix.clang}}
           libomp-${{matrix.clang}}-dev

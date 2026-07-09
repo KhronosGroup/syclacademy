@@ -26,11 +26,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        submodules: 'recursive'
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.14"
+        submodules: 'recursive' 
     - name: Add Intel OpenCL apt repository
       run: |
         sudo wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB | sudo gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
@@ -75,6 +71,10 @@ jobs:
     - name: Print detected devices
       run: |
         ${GITHUB_WORKSPACE}/adaptivecpp/build/install/bin/acpp-info
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.14"
     - name: Extract lesson code blocks
       run: |
         SNIPPETS="${GITHUB_WORKSPACE}/Code_Exercises/Lesson_Snippets"

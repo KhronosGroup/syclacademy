@@ -44,8 +44,6 @@ function( add_sycl_executable prefix source )
 
   # Add ctest target for lesson solution & reference executables, and for the
   # code snippets extracted from the HTML lessons (see Lesson_Snippets below).
-  # Plain lesson source executables are skipped as they are not guaranteed to be
-  # valid SYCL.
   if (source STREQUAL "solution" OR source STREQUAL "reference"
       OR prefix STREQUAL "Lesson_Snippets")
     set(TARGET_NAME "${prefix}_${source}")

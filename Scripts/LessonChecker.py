@@ -49,7 +49,7 @@ class SYCLAParser(HTMLParser):
     def __init__(self, lesson_name: str, extract: bool, verify: bool, fix: bool):
         super().__init__(convert_charrefs=False)
 
-        self.code_blocks: list[tuple[tuple[int, int], str]] = []
+        self.code_blocks: list[tuple[int, str]] = []
         self.output: list[str] = []
         self.is_code = False
         self.is_mark = False
@@ -69,14 +69,14 @@ class SYCLAParser(HTMLParser):
             case "code":
                 self.is_code = True
                 attrd["class"] = "language-cpp"
-                self.code_blocks.append((self.getpos(), ""))
+                self.code_blocks.append((self.getpos()[0], ""))
             case "mark":
                 self.is_mark = True
             case "pre":
                 if self.is_code:
                     self.parser_error = True
                     print(
-                        f"\033[93m[{self.msg_action}] misalligned <code> and <pre> tags in lesson {self.lesson_name} line num: {self.getpos()} \033[0m"
+                        f"\033[93m[{self.msg_action}] misalligned <code> and <pre> tags in lesson {self.lesson_name} line num: {self.getpos()[0]} \033[0m"
                     )
 
                     if "code" in self.output[-1]:
@@ -143,14 +143,14 @@ class SYCLAParser(HTMLParser):
         self.output.append(f"<{' '.join(tags)} />")
 
     def handle_endtag(self, tag):
-        if tag.lower() in self.VOID_ELEMENTS:
+        if tag in self.VOID_ELEMENTS:
             self.parser_error = True
             print(
                 f"\033[93m[{self.msg_action}] Self closing tag does not require an endtag Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag} \033[0m"
             )
             return
 
-        if tag.lower() == "code":
+        if tag == "code":
             self.is_code = False
             self.is_mark = False
 
@@ -218,7 +218,7 @@ if __name__ == "__main__":  # pragma: no cover
                 out_base.mkdir(parents=True, exist_ok=True)
 
                 for pos, code in parser.code_blocks:
-                    name = f"{out_base}/{l_path.parent.name}-{pos[0]}-{pos[1]}.cpp"
+                    name = f"{out_base}/{l_path.parent.name}-l{pos}.cpp"
 
                     print(f"Exporting script: {name}")
                     with open(name, "w") as out:

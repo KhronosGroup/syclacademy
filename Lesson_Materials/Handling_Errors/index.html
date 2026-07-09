@@ -334,7 +334,7 @@ using namespace sycl;
 
 int main() {
   try {
-    queue q(<mark>default_selector_v</mark>, async_handler{}); 
+    queue q(<mark>cpu_selector_v</mark>, async_handler{}); 
     int* shared = malloc_shared&lt;int&gt;(1024, q);
     q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;

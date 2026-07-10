@@ -200,7 +200,6 @@ if __name__ == "__main__":  # pragma: no cover
     for lesson in args.files:
         print(f"processing lesson: {lesson}...")
         l_path = Path(lesson)
-        print(f"l_path: {l_path.parent.name}")
 
         if not l_path.exists():
             msg = f'Lesson "{lesson}" does not exist!'
@@ -221,11 +220,11 @@ if __name__ == "__main__":  # pragma: no cover
                 out_base.mkdir(parents=True, exist_ok=True)
 
                 for pos, code in parser.code_blocks:
-                    name = f"{l_path.parent.name}-l{pos}.cpp" 
+                    name = f"{l_path.parent.name}-l{pos}" 
 
                     cmake_executables += f"add_sycl_executable(Lesson_Snippets {name})\n"
 
-                    wpath = f"{out_base}/{l_path.parent.name}-l{pos}.cpp"
+                    wpath = f"{out_base}/{name}.cpp"
 
                     print(f"Exporting script: {wpath}")
                     with open(wpath, "w") as out:

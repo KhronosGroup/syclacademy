@@ -78,19 +78,9 @@ jobs:
     - name: Extract lesson code blocks
       run: |
         SNIPPETS="${GITHUB_WORKSPACE}/Code_Exercises/Lesson_Snippets"
-        LESSON="Lesson_Materials/Handling_Errors/index.html"
-        # Extract the snippets into the Lesson_Snippets directory so the cmake
-        # build below picks them up alongside the lessons. These files are not
-        # committed; they only exist on the runner.
-        python ./Scripts/LessonChecker.py --extract -o "${SNIPPETS}" "${LESSON}"
-        # Generate the CMakeLists that builds and tests each extracted snippet
-        # through the same add_sycl_executable path as the other lessons.
-        {
-          for src in "${SNIPPETS}"/*.cpp; do
-            name="$(basename "${src}" .cpp)"
-            echo "add_sycl_executable(Lesson_Snippets ${name})"
-          done
-        } > "${SNIPPETS}/CMakeLists.txt"
+        LESSONS="Lesson_Materials/Handling_Errors/index.html"
+
+        python ./Scripts/LessonChecker.py --extract -o "${SNIPPETS}" "${LESSONS}"
     - name: Build SYCLAcademy
       run: |
         mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build

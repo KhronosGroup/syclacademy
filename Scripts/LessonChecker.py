@@ -191,8 +191,10 @@ if __name__ == "__main__":  # pragma: no cover
     if args.extract and not args.output:
         raise Exception("Error: An output must be specified with -o or --output")
 
-    out_base = Path(args.output or "")
 
+    out_base = Path(args.output or "")
+    cmake_executables = ""
+    
     verify_failed = False
 
     for lesson in args.files:
@@ -205,6 +207,7 @@ if __name__ == "__main__":  # pragma: no cover
             raise Exception(msg)
 
         with open(l_path, "r", encoding="utf-8") as file:
+            # use verify_html here 
             parser = SYCLAParser(lesson, args.extract, args.verify, args.autofix)
             parser.feed(file.read())
 
@@ -218,11 +221,18 @@ if __name__ == "__main__":  # pragma: no cover
                 out_base.mkdir(parents=True, exist_ok=True)
 
                 for pos, code in parser.code_blocks:
-                    name = f"{out_base}/{l_path.parent.name}-l{pos}.cpp"
+                    name = f"{l_path.parent.name}-l{pos}.cpp" 
 
-                    print(f"Exporting script: {name}")
-                    with open(name, "w") as out:
+                    cmake_executables += f"add_sycl_executable(Lesson_Snippets {name})\n"
+
+                    wpath = f"{out_base}/{l_path.parent.name}-l{pos}.cpp"
+
+                    print(f"Exporting script: {wpath}")
+                    with open(wpath, "w") as out:
                         out.write(code)
+
+            with open(f"{out_base}/CMakeLists.txt", "w") as cmake:
+                cmake.write(cmake_executables)
 
             if args.autofix:
                 write_back_path = l_path

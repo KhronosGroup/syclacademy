@@ -74,6 +74,7 @@ class SYCLAParser(HTMLParser):
     COLORS = {Mode.VERIFY: YELLOW, Mode.AUTOFIX: GREEN}
 
     def __post_init__(self):
+        # call the constructor for the parent class
         # Tell the HTMLParser base class to not convert character references
         super().__init__(convert_charrefs=False)
 
@@ -127,6 +128,7 @@ class SYCLAParser(HTMLParser):
                     return
 
             case _:
+                # Any other unescaped
                 if self.is_code:
                     self.parser_error = True
                     self._warn(
@@ -149,6 +151,13 @@ class SYCLAParser(HTMLParser):
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + data)
 
+        if data == "&":
+            self.parser_error = True
+            self._warn(
+                f"Unescaped &! Violation in lesson {self.lesson_name} line num: {self.getpos()}"
+            )
+            data = "&amp;"
+
         self.output.append(data)
 
     def handle_entityref(self, name):
@@ -156,7 +165,6 @@ class SYCLAParser(HTMLParser):
         match name:
             case "lt" | "gt" | "amp":
                 raw_entity = f"&{name};"
-
             case _:
                 self.parser_error = True
                 self._warn(

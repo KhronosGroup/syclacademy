@@ -9,7 +9,7 @@ test_cases = [
         "extract": False,
         "verify": True,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": True,
     },
     {
@@ -18,7 +18,7 @@ test_cases = [
         "extract": False,
         "verify": True,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": True,
     },
     {
@@ -27,7 +27,7 @@ test_cases = [
         "extract": False,
         "verify": True,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": False,
     },
     {
@@ -36,7 +36,7 @@ test_cases = [
         "extract": False,
         "verify": True,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": False,
     },
     {
@@ -45,7 +45,7 @@ test_cases = [
         "extract": False,
         "verify": True,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": False,
     },
     {
@@ -54,7 +54,7 @@ test_cases = [
         "extract": False,
         "verify": True,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": True,
     },
     {
@@ -63,7 +63,7 @@ test_cases = [
         "extract": False,
         "verify": True,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": False,
     },
     {
@@ -72,7 +72,7 @@ test_cases = [
         "extract": False,
         "verify": True,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": False,
     },
     {
@@ -81,7 +81,7 @@ test_cases = [
         "extract": True,
         "verify": False,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": False,
         "expected_code": "int main() { return 0; }",
     },
@@ -91,7 +91,7 @@ test_cases = [
         "extract": True,
         "verify": False,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": True,
         "expected_code": "&evt",
     },
@@ -101,7 +101,7 @@ test_cases = [
         "extract": True,
         "verify": False,
         "fix": False,
-        "slient": True,
+        "silent": True,
         "expected_return": False,
         "expected_code": "#include<sycl/sycl.hpp>",
     },
@@ -111,7 +111,7 @@ test_cases = [
         "extract": False,
         "verify": False,
         "fix": True,
-        "slient": True,
+        "silent": True,
         "expected_return": True,
         "expected_output": '<pre><code class="language-cpp"></code></pre>',
     },
@@ -121,7 +121,7 @@ test_cases = [
         "extract": False,
         "verify": False,
         "fix": True,
-        "slient": True,
+        "silent": True,
         "expected_return": True,
         "expected_output": '<pre><code class="language-cpp">&amp;evt</code></pre>',
     },
@@ -131,9 +131,19 @@ test_cases = [
         "extract": False,
         "verify": False,
         "fix": True,
-        "slient": False,
+        "silent": False,
         "expected_return": True,
         "expected_output": '<pre><code class="language-cpp">#include&lt;sycl/sycl.hpp&gt;</code></pre>',
+    },
+    {
+        "name": "fix_improper_escaped_ampersand",
+        "body": '<pre><code class="language-cpp">&</code></pre>',
+        "extract": False,
+        "verify": False,
+        "fix": False,
+        "silent": False,
+        "expected_return": True,
+        "expected_output": '<pre><code class="language-cpp">&amp;</code></pre>',
     },
 ]
 
@@ -144,7 +154,7 @@ def make_test_method(case_data):
             extract=case_data["extract"],
             verify=case_data["verify"],
             autofix=case_data["fix"],
-            silent=case_data["slient"],
+            silent=case_data["silent"],
         )
 
         output, codes, error = LessonChecker.verify_html(

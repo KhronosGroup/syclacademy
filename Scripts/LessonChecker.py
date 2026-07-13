@@ -1,15 +1,16 @@
 # SYCL academy lesson checker and code extractor
 # Michael Lance
-# June 2026
+# July 2026
 
 # ------------------------------------------------------------------------------------------
 
 import html
 from html.parser import HTMLParser
+from dataclasses import dataclass, field
+from enum import IntFlag, auto
 from pathlib import Path
 import argparse
 import sys
-from typing import cast
 
 # ------------------------------------------------------------------------------------------
 # Config
@@ -24,12 +25,36 @@ opgroup.add_argument("-a", "--autofix", action="store_true")
 
 aparser.add_argument("files", nargs=argparse.REMAINDER)
 aparser.add_argument("-o", "--output")
+aparser.add_argument("-s", "--silent", action="store_true")
+
+# ANSI color codes for output
+RED = "\033[31m"
+GREEN = "\033[32m"
+YELLOW = "\033[33m"
+RESET = "\033[0m"
 
 # ------------------------------------------------------------------------------------------
 
 
+class Mode(IntFlag):
+    NONE = -1
+    EXTRACT = auto()
+    VERIFY = auto()
+    AUTOFIX = auto()
+    SILENT = auto()
+
+
+@dataclass
 class SYCLAParser(HTMLParser):
-    VOID_ELEMENTS = {
+    lesson_name: str
+    mode: Mode
+    code_blocks: list[tuple[int, str]] = field(default_factory=list)
+    output: list[str] = field(default_factory=list)
+    is_code: bool = False
+    is_mark: bool = False
+    parser_error: bool = False
+
+    SELF_CLOSING_TAGS = {
         "area",
         "base",
         "br",
@@ -46,48 +71,62 @@ class SYCLAParser(HTMLParser):
         "wbr",
     }
 
-    def __init__(self, lesson_name: str, extract: bool, verify: bool, fix: bool):
+    COLORS = {Mode.VERIFY: YELLOW, Mode.AUTOFIX: GREEN}
+
+    def __post_init__(self):
+        # Tell the HTMLParser base class to not convert character references
         super().__init__(convert_charrefs=False)
 
-        self.code_blocks: list[tuple[int, str]] = []
-        self.output: list[str] = []
-        self.is_code = False
-        self.is_mark = False
-        self.parser_error = False
-        self.lesson_name = lesson_name
+    @property
+    def msg_action(self):
+        return "FIXING" if (self.mode & Mode.AUTOFIX) == Mode.AUTOFIX else "ERROR"
 
-        self.extract = extract
-        self.verify = verify
-        self.fix = fix
+    def _encode_attrs(self, tag, attrs):
+        tags = [tag] + [
+            f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
+            for k, v in attrs
+        ]
 
-        self.msg_action = "FIXING" if self.fix else "ERROR"
+        if tag in self.SELF_CLOSING_TAGS:
+            return f"<{' '.join(tags)}/>"
+        else:
+            return f"<{' '.join(tags)}>"
+
+    def _warn(self, message):
+        if self.mode & Mode.SILENT:
+            return
+
+        if self.mode & (Mode.AUTOFIX | Mode.VERIFY):
+            print(f"{self.COLORS[self.mode]}[{self.msg_action}] {message} {RESET}")
 
     def handle_starttag(self, tag, attrs):
-        attrd = dict(attrs)
-
         match tag:
             case "code":
                 self.is_code = True
-                attrd["class"] = "language-cpp"
+                if ("class", "language-cpp") not in attrs:
+                    attrs.append(("class", "language-cpp"))
+
                 self.code_blocks.append((self.getpos()[0], ""))
+
             case "mark":
                 self.is_mark = True
-            case "pre":
-                if self.is_code:
-                    self.parser_error = True
-                    print(
-                        f"\033[93m[{self.msg_action}] misalligned <code> and <pre> tags in lesson {self.lesson_name} line num: {self.getpos()[0]} \033[0m"
-                    )
 
-                    if "code" in self.output[-1]:
+            case "pre" if self.is_code:
 
-                        self.output.insert(-1, "<pre>")
-                        return
+                self.parser_error = True
+                self._warn(
+                    f"misalligned <code> and <pre> tags in lesson {self.lesson_name} line num: {self.getpos()[0]}"
+                )
+
+                if "code" in self.output[-1]:
+                    self.output.insert(-1, "<pre>")
+                    return
+
             case _:
                 if self.is_code:
                     self.parser_error = True
-                    print(
-                        f"\033[93m[{self.msg_action}] <mark> annotations are the only tags allowed in <code> blocks! Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag} \033[0m"
+                    self._warn(
+                        f"<mark> annotations are the only tags allowed in <code> blocks! Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag}"
                     )
                     self.convert_charrefs = False
 
@@ -95,19 +134,14 @@ class SYCLAParser(HTMLParser):
                     raw_tag = self.get_starttag_text()
 
                     self.output.append(
-                        f"&lt;{cast(str, raw_tag).lstrip("<").rstrip(">")}&gt;"
+                        f"&lt;{raw_tag.lstrip("<").rstrip(">")}&gt;"  # pyright: ignore
                     )
                     return
 
-        tags = [tag] + [
-            f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
-            for k, v in attrd.items()
-        ]
-
-        self.output.append(f"<{' '.join(tags)}>")
+        self.output.append(self._encode_attrs(tag, attrs))
 
     def handle_data(self, data):
-        if self.is_code and self.extract:
+        if self.is_code and Mode.EXTRACT in self.mode:
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + data)
 
@@ -121,32 +155,32 @@ class SYCLAParser(HTMLParser):
 
             case _:
                 self.parser_error = True
-                print(
-                    f"\033[93m[{self.msg_action}] Impropperly escaped entity ref! Violation in lesson {self.lesson_name} line num: {self.getpos()} ref: {name} \033[0m")
+                self._warn(
+                    f"Impropperly escaped entity ref! Violation in lesson {self.lesson_name} line num: {self.getpos()} ref: {name}"
+                )
 
                 raw_entity = f"&amp;{name}"
 
         self.output.append(raw_entity)
 
-        if self.is_code and self.extract:
+        if self.is_code and Mode.EXTRACT in self.mode:
             converted_char = html.unescape(raw_entity)
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + converted_char)
 
     def handle_startendtag(self, tag, attrs):
-        attrd = dict(attrs)
         tags = [tag] + [
             f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
-            for k, v in attrd.items()
+            for k, v in attrs
         ]
 
         self.output.append(f"<{' '.join(tags)} />")
 
     def handle_endtag(self, tag):
-        if tag in self.VOID_ELEMENTS:
+        if tag in self.SELF_CLOSING_TAGS:
             self.parser_error = True
-            print(
-                f"\033[93m[{self.msg_action}] Self closing tag does not require an endtag Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag} \033[0m"
+            self._warn(
+                f"Self closing tag does not require an endtag Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag}"
             )
             return
 
@@ -165,17 +199,31 @@ class SYCLAParser(HTMLParser):
     def get_output(self):
         return "".join(self.output)
 
-    def get_codeblocks(self):
-        return self.code_blocks
 
 # ------------------------------------------------------------------------------------------
 
 
 def verify_html(lesson, file_str, args) -> tuple[str, list, bool]:
-    parser = SYCLAParser(lesson, args.extract, args.verify, args.autofix)
+    if not any([args.extract, args.autofix, args.verify]):
+        print("No arguments provided. There is nothing to do.")
+        sys.exit(1)
+
+    mode = Mode.NONE
+
+    if args.verify:
+        mode = Mode.VERIFY
+    elif args.autofix:
+        mode = Mode.AUTOFIX
+    elif args.extract:
+        mode = Mode.EXTRACT
+
+    if args.silent:
+        mode |= Mode.SILENT
+
+    parser = SYCLAParser(lesson, mode)
     parser.feed(file_str)
 
-    return parser.get_output(), parser.get_codeblocks(), parser.parser_error
+    return parser.get_output(), parser.code_blocks, parser.parser_error
 
 
 # ------------------------------------------------------------------------------------------
@@ -184,17 +232,12 @@ def verify_html(lesson, file_str, args) -> tuple[str, list, bool]:
 if __name__ == "__main__":  # pragma: no cover
     args = aparser.parse_args()
 
-    if not any([args.extract, args.autofix, args.verify]):
-        print("No arguments provided. There is nothing to do.")
-        sys.exit()
-
     if args.extract and not args.output:
         raise Exception("Error: An output must be specified with -o or --output")
 
-
     out_base = Path(args.output or "")
     cmake_executables = ""
-    
+
     verify_failed = False
 
     for lesson in args.files:
@@ -206,12 +249,11 @@ if __name__ == "__main__":  # pragma: no cover
             raise Exception(msg)
 
         with open(l_path, "r", encoding="utf-8") as file:
-            # use verify_html here 
-            parser = SYCLAParser(lesson, args.extract, args.verify, args.autofix)
-            parser.feed(file.read())
+
+            output, code_blocks, error = verify_html(lesson, file.read(), args)
 
             if args.verify:
-                if parser.parser_error:
+                if error:
                     verify_failed = True
                 else:
                     print("No issues found.")
@@ -219,10 +261,12 @@ if __name__ == "__main__":  # pragma: no cover
             if args.extract:
                 out_base.mkdir(parents=True, exist_ok=True)
 
-                for pos, code in parser.code_blocks:
-                    name = f"{l_path.parent.name}-l{pos}" 
+                for pos, code in code_blocks:
+                    name = f"{l_path.parent.name}-l{pos}"
 
-                    cmake_executables += f"add_sycl_executable(Lesson_Snippets {name})\n"
+                    cmake_executables += (
+                        f"add_sycl_executable(Lesson_Snippets {name})\n"
+                    )
 
                     wpath = f"{out_base}/{name}.cpp"
 
@@ -237,7 +281,7 @@ if __name__ == "__main__":  # pragma: no cover
                 write_back_path = l_path
 
                 with open(write_back_path, "w") as out:
-                    out.write(parser.get_output())
+                    out.write(output)
 
     if verify_failed:
         sys.exit(1)

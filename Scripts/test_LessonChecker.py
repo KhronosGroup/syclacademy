@@ -30,7 +30,7 @@ test_cases = [
     {
         "name": "parse_start_end_tag",
         "body": "<div><img /></div>",
-        "extract": True,
+        "extract": False,
         "verify": True,
         "fix": False,
         "expected_return": False,
@@ -38,7 +38,7 @@ test_cases = [
     {
         "name": "parse_self_closing_tag",
         "body": "<html><head><link></link></head><html>",
-        "extract": True,
+        "extract": False,
         "verify": True,
         "fix": False,
         "expected_return": True,
@@ -122,10 +122,11 @@ def make_test_method(case_data):
             extract=case_data["extract"],
             verify=case_data["verify"],
             autofix=case_data["fix"],
+            silent=True,
         )
 
         output, codes, error = LessonChecker.verify_html(
-            lesson="test_lesson", file_str=case_data["body"], args=args
+            "test_lesson", case_data["body"], args
         )
 
         self.assertEqual(error, case_data["expected_return"])

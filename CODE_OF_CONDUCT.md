@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 The Khronos Group Inc.
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
 # Code of Conduct
 
 A reminder that this repository is managed by the Khronos Group.

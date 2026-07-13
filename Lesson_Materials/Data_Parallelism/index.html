@@ -6,6 +6,10 @@
 		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
 		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
 		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css"
+    />
 		<script>
 			// This is needed when printing the slides to pdf
 			var link = document.createElement( 'link' );
@@ -100,11 +104,11 @@
 					<div class="container">
 						<div class="col">
 							Sequential CPU code
-							<code><pre>
+							<pre><code class="language-cpp" data-trim data-line-numbers>
 void calc(const int in[], int out[]) {
   // all iterations are run in the same
   // thread in a loop
-  for (int i = 0; i < 1024; i++){
+  for (int i = 0; i &lt; 1024; i++){
     out[i] = in[i] * in[i];
   }
 }
@@ -116,7 +120,7 @@ calc(in, out);
 						</div>
 						<div class="col">
 							Parallel SPMD code
-							<code><pre>
+							<pre><code class="language-cpp" data-trim data-line-numbers>
 void calc(const int in[], int out[], int id) {
   // function is described in terms of
   // a single iteration
@@ -126,8 +130,6 @@ void calc(const int in[], int out[], int id) {
 // parallel_for invokes calc multiple
 // times in parallel
 parallel_for(calc, in, out, 1024);
-
-
 							</code></pre>
 						</div>
 					</div>
@@ -140,7 +142,7 @@ parallel_for(calc, in, out, 1024);
 					<div class="container">
 						<div class="col-left" data-markdown>
 							* In SYCL kernel functions are executed by 
-							 **work- items**.
+							 **work-items**.
 							* You can think of a work-item as a thread of 
 							execution.
 							* Each work-item will execute a SYCL kernel function from start to end.
@@ -161,7 +163,7 @@ parallel_for(calc, in, out, 1024);
 					<div class="container">
 						<div class="col" data-markdown>
 							* SYCL kernel functions are invoked within an **nd-range**
-							* An nd-range has a number of work-groups and subsequently a number of work-items
+							* An nd-range contains a number of work-groups which are made up of a number of work-items
 							* Work-groups always have the same number of work-items
 						</div>
 						<div class="col" data-markdown>
@@ -176,7 +178,7 @@ parallel_for(calc, in, out, 1024);
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							* The nd-range describes an **iteration space**: how it is composed in terms of work-groups and work-items
+							* The nd-range describes an **iteration space** composed in terms of work-groups and work-items
 							* An nd-range can be 1, 2 or 3 dimensions
 							* An nd-range has two components
 							  * The **global-range** describes the total number of work-items in each dimension
@@ -299,8 +301,8 @@ parallel_for(calc, in, out, 1024);
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
-cgh.<mark>parallel_for</mark>&lt;my_kernel&gt;(<mark>nd_range{{1024, 16}, {32, 4}}</mark>,
+							<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
+q.<mark>parallel_for</mark>(<mark>nd_range{{1024, 16}, {32, 4}}</mark>,
                           [=](<mark>nd_item&lt;2&gt; item)</mark>{
   // SYCL kernel function is executed 
   // on a range of work-items
@@ -327,8 +329,8 @@ cgh.<mark>parallel_for</mark>&lt;my_kernel&gt;(<mark>nd_range{{1024, 16}, {32, 4
 					<div class="container">
 						<div style="font-size: 90%; display: grid; grid-template-columns: 45% 55%; grid-template-rows: 1fr 1fr 1fr;">
 							<div style="margin: auto 0; vertical-align: middle;">
-								<code><pre>
-cgh.parallel_for&lt;kernel&gt;((<mark>nd_range&lt;1&gt;{1024,32}</mark>,
+								<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
+q.parallel_for(<mark>nd_range&lt;1&gt;{1024,32}</mark>,
   [=](<mark>nd_item&lt;1&gt; ndItem</mark>){
     /* kernel function code */
     id globalId = ndItem.get_global_id();
@@ -341,8 +343,8 @@ cgh.parallel_for&lt;kernel&gt;((<mark>nd_range&lt;1&gt;{1024,32}</mark>,
 								* An `nd_item` parameter represents the global and local range and index
 							</div>
 							<div style="margin: auto 0; vertical-align: middle;">
-								<code><pre>
-cgh.parallel_for&lt;kernel&gt;(<mark>range&lt;1&gt;{1024}</mark>,
+								<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
+q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
   [=](<mark>item&lt;1&gt; item</mark>){
     /* kernel function code */
     id globalId = item.get_id();
@@ -354,8 +356,8 @@ cgh.parallel_for&lt;kernel&gt;(<mark>range&lt;1&gt;{1024}</mark>,
 								* An `item` parameter represents the global range and the index within the global range
 							</div>
 							<div style="margin: auto 0; vertical-align: middle;">
-								<code><pre>
-cgh.parallel_for&lt;kernel&gt;(<mark>range&lt;1&gt;{1024}</mark>,
+								<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
+q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
   [=](<mark>id&lt;1&gt; globalId</mark>){
     /* kernel function code */
 });
@@ -433,88 +435,57 @@ cgh.parallel_for&lt;kernel&gt;(<mark>range&lt;1&gt;{1024}</mark>,
 				<!--Slide 22-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Accessing Data With Accessors
+						#### Accessing Data
 					</div>
 					<div class="container" data-markdown>
-					* There are a few different ways to access the data represented by an accessor
-					  *  The subscript operator can take an **id**
-					    * Must be the same dimensionality of the accessor
-					    * For dimensions > 1, linear address is calculated in row major
-					* Nested subscript operators can be called for each dimension taking a **size_t**
-					  * E.g. a 3-dimensional accessor: acc[x][y][z] = …
-					* A pointer to memory can be retrieved by calling **get_pointer**
-					  * This returns a raw pointer to the data
-					</div>
+										</div>
 				</section>
 				<!--Slide 23-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Accessing Data With Accessors
+						#### Accessing Data
 					</div>
 					<div class="container">
 						<div class="col-left-3">
-							<code><pre>
-buffer&ltfloat, 1&gt bufA(dA.data(), range&lt1&gt(dA.size()));
-buffer&ltfloat, 1&gt bufB(dB.data(), range&lt1&gt(dB.size()));
-buffer&ltfloat, 1&gt bufO(dO.data(), range&lt1&gt(dO.size()));
+							<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
+#include&lt;sycl/sycl.hpp&gt;
+#include&lt;vector&gt;
 
-gpuQueue.submit([&](handler &cgh){
-  sycl::accessor inA{bufA, cgh, sycl::read_only};
-  sycl::accessor inB{bufB, cgh, sycl::read_only};
-  sycl::accessor out{bufO, cgh, sycl::write_only};
-  cgh.parallel_for&ltadd&gt(range&lt1&gt(dA.size()),
+int main() {
+std::vector&lt;float&gt; hA{ 3.14 4.38 6.9, 10.2 }, hB{ 6.5, 11.4, 0.2, 9.12 };
+
+queue gpuQueue(gpu_selector{});
+
+float* dA = malloc_shared&lt;float&gt;(hA.size(), gpuQueue);
+float* dB = malloc_shared&lt;float&gt;(hB.size(), gpuQueue);
+float* out = malloc_shared&lt;float&gt;(hA.size(), gpuQueue);
+
+event cpy_evt_1 = gpuQueue.copy(hA.data(), dA, hA.size());
+event cpy_evt_2 = gpuQueue.copy(hB.data(), dB, hB.size());
+
+gpuQueue.parallel_for(range&lt1&gt(dA.size()) {cpy_evt_1, cpy_evt_2},
     [=](id&lt1&gt i){
     <mark>out[i] = inA[i] + inB[i];</mark>
-  });
 });
+
+gpuQueue.wait();
+
+/* ... */
+
+}
 							</code></pre>
 						</div>
 						<div class="col-right-2" data-markdown>
-							* Here we access the data of the `accessor` by
+							*  The subscript operator can take an **id**
+							* Here we access the data by
 							passing in the `id` passed to the SYCL kernel
-							function.
+							function into the subscript operator
+							* `.get_id(dim)` takes a **size_t** to get the index for a single dimension
+							  * E.g. a 3D item: `itm.get_id(0)`, `itm.get_id(1)`, `itm.get_id(2)` for x, y, z
 						</div>
 					</div>
 				</section>
-				<!--Slide 24-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Accessing Data With Accessors
-					</div>
-					<div class="container">
-						<div class="col-left-3">
-							<code><pre>
-buffer&ltfloat, 1&gt bufA(dA.data(), range&lt1&gt(dA.size()));
-buffer&ltfloat, 1&gt bufB(dB.data(), range&lt1&gt(dB.size()));
-buffer&ltfloat, 1&gt bufO(dO.data(), range&lt1&gt(dO.size()));
-
-gpuQueue.submit([&](handler &cgh){
-  sycl::accessor inA{bufA, cgh, sycl::read_only};
-  sycl::accessor inB{bufB, cgh, sycl::read_only};
-  sycl::accessor out{bufO, cgh, sycl::write_only};
-  cgh.parallel_for&ltadd&gt(rng, [=](item&lt3&gt i){
-    <mark>auto ptrA = inA.get_pointer();</mark>
-    <mark>auto ptrB = inB.get_pointer();</mark>
-    <mark>auto ptrO = out.get_pointer();</mark>
-    <mark>auto linearId = i.get_linear_id();</mark>
-
-    <mark>ptrA[linearId] = ptrB[linearId] + ptrO[linearId]; </mark>
-  });
-});
-							</code></pre>
-						</div>
-						<div class="col-right-2" data-markdown>
-							* Here we retrieve the underlying pointer for each
-							of the `accessor`s.
-							* We then access the pointer using the linearized
-							`id` by calling the `get_linear_id` member function
-							on the `item`.
-							* Again this linearization is calculated in
-							row-major order.
-						</div>
-					</div>
-				</section>
-				<!--Slide 17-->
+							<!--Slide 17-->
 				<section class="hbox" data-markdown>
 					## Questions
 				</section>
@@ -536,13 +507,25 @@ gpuQueue.submit([&](handler &cgh){
 				</section>
 			</div>
 		</div>
+    <style>
+      .reveal section pre code {
+        font-size: 0.7em !important;
+      }
+
+      mark {
+        background-color: lightblue;
+      }
+    </style>
 		<script src="../common-revealjs/js/reveal.js"></script>
 		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
 		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
 		<script src="../common-revealjs/plugin/notes/notes.js"></script>
+    <script src="../common-revealjs/plugin/highlight/highlight.js"></script>
 		<script>
-	Reveal.initialize();
-	Reveal.configure({ slideNumber: true });
+      Reveal.initialize({
+        plugins: [RevealHighlight, RevealMarkdown, RevealNotes],
+      });
+      Reveal.configure({ slideNumber: true });
 		</script>
 	</body>
 </html>

@@ -6,6 +6,10 @@
 		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
 		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
 		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css"
+    />
 		<script>
 			// This is needed when printing the slides to pdf
 			var link = document.createElement( 'link' );
@@ -105,105 +109,68 @@
 				<!--Slide 6-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Synchronizing with kernel functions (buffers/accessors)
+						#### Synchronizing with kernel functions
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
-buf = sycl::buffer(data, sycl::range{1024});
+							<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
+#include&lt;sycl/sycl.hpp&gt;
+#include&lt;vector&gt;
 
-gpuQueue.submit([&](sycl::handler &cgh){
-  auto acc = sycl::accessor{buf, cgh};
-      
-  cgh.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx){
-    acc[idx] = /* some computation */
-  });
-})<mark>.wait();</mark>
+using namespace sycl;
+
+int main(){
+  std::vector&lt;int&gt; hostA = { 1, 5, 66, 14, 55, 11, 12 }; 
+  queue gpuQueue(gpu_selector_v);
+
+  int* devA = malloc_device&lt;int&gt;(hostA.size(), gpuQueue);
+
+  <mark>auto e</mark> = gpuQueue.memcpy(devA, hostA.data(), hostA.size());
+  <mark>e.wait();</mark>
+
+  gpuQueue.parallel_for(hostA.size(), [=](id&lt;1&gt; idx){
+    devA[idx]++;
+  })<mark>.wait();</mark>
+}
 							</code></pre>
 						</div>
 						<div class="col" data-markdown>
-							* Calling `wait` on an `event` object returned from enqueuing a command group will wait for the commands from that command group to complete.
-							* This is how we have synchronized in our examples so far.
-							* This effectively creates a blocking operations that will complete in place by immediately synchronizing.
-						</div>
-					</div>
-				</section>
-				<!--Slide 7-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Synchronizing with kernel functions (buffers/accessors)
-					</div>
-					<div class="container">
-						<div class="col">
-							<code class="code-100pc"><pre>
-buf = sycl::buffer(data, sycl::range{1024});
-
-gpuQueue.submit([&](sycl::handler &cgh){
-  auto acc = sycl::accessor{buf, cgh};
-      
-  cgh.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx){
-    acc[idx] = /* some computation */
-  });
-});
-
-<mark>gpuQueue.wait();</mark>
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Calling `wait` or `wait_and_throw` on a `queue` will wait for all commands enqueued to it to complete.
-							* Note that command groups do not create commands to copy data back to the host application.
-						</div>
-					</div>
-				</section>
-				<!--Slide 8-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Synchronizing with kernel functions (USM)
-					</div>
-					<div class="container">
-						<div class="col">
-							<code class="code-100pc"><pre>
-auto devicePtr   = usm_wrapper&lt;int&gt;(
-  malloc_device&lt;int&gt;(1024, gpuQueue));
-
-gpuQueue.memcpy(devicePtr, data, sizeof(int))<mark>.wait();</mark>
-
-gpuQueue.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-  [=](sycl::id&lt;1&gt; idx){
-  devicePtr[idx] = /* some computation */
-})<mark>.wait();</mark>
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Calling `wait` on an `event` object returned from functions such as `memcpy` or the `queue` shortcuts will wait for that specific command to complete.
-							* Again this is how we have synchronized in our examples so far.
+					    * Calling `wait` on an `event` object returned from enqueuing a command group will wait for the commands from that command group to complete.
+					    * This is how we have synchronized in our examples so far.
+              * This effectively creates a blocking operations that will complete in place by immediately synchronizing.	
 						</div>
 					</div>
 				</section>
 				<!--Slide 9-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Synchronizing with kernel functions (USM)
+						#### Synchronizing with kernel functions
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
-auto devicePtr   = usm_wrapper&lt;int&gt;(
-  malloc_device&lt;int&gt;(1024, gpuQueue));
+							<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
+#include&lt;sycl/sycl.hpp&gt;
+#include&lt;vector&gt;
 
-gpuQueue.memcpy(devicePtr, data, sizeof(int));
+using namespace sycl;
 
-<mark>gpuQueue.wait();</mark>
+int main(){ 
+  std::vector&lt;int&gt; hostA = { 1, 5, 66, 14, 55, 11, 12 };
+  queue gpuQueue(gpu_selector_v);
 
-gpuQueue.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-  [=](sycl::id&lt;1&gt; idx){
-  devicePtr[idx] = /* some computation */
-});
+  int* devA = malloc_device&lt;int&gt;(hostA.size(), gpuQueue));
 
-<mark>gpuQueue.wait();</mark>
-							</code></pre>
+  gpuQueue.memcpy(devA, hostA.data(), hostA.size());
+
+  <mark>gpuQueue.wait();</mark>
+
+  gpuQueue.parallel_for(hostA.size(), [=](id&lt;1&gt; idx){
+    devA[idx]++;
+  });
+
+  <mark>gpuQueue.wait();</mark>
+}
+              </code></pre>
 						</div>
 						<div class="col" data-markdown>
 							* Again calling `wait` or `wait_and_throw` on a `queue` will wait for all commands enqueued to it to complete.
@@ -220,23 +187,20 @@ gpuQueue.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
 						There are multiple ways ways to synchronize with data, but it differs depending on the data management model you are using.
 					</div>
 					<div class="container" data-markdown>
-						* When using the USM data management model you can synchronize the same way you would for kernel functions, calling `wait` on an `event` or the `queue`.
-						* When using the buffer/access data management model command groups don't automatically copy data back so there are other ways to synchronize with the data.
-						  * Creating a `host_accessor`.
-						  * Destroying the `buffer`.
+						* you can synchronize the same way you would for kernel functions, calling `wait` on an `event` or the `queue`.
 					</div>
 				</section>
 				<!--Slide 11-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Synchronizing with data (USM)
+						#### Synchronizing with data 
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
 gpuQueue.memcpy(data, devicePtr, sizeof(int))<mark>.wait();</mark>
-							</code></pre>
-							<code class="code-100pc"><pre>
+							</pre></code>
+							<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
 gpuQueue.memcpy(data, devicePtr, sizeof(int));
 <mark>gpuQueue.wait();</mark>
 							</code></pre>
@@ -248,68 +212,6 @@ gpuQueue.memcpy(data, devicePtr, sizeof(int));
 					</div>
 				</section>
 				<!--Slide 12-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Synchronizing with data (buffer/accessor)
-					</div>
-					<div class="container">
-						<div class="col">
-							<code class="code-100pc"><pre>
-buf = sycl::buffer(data, sycl::range{1024});
-
-gpuQueue.submit([&](sycl::handler &cgh){
-  auto acc = sycl::accessor{buf, cgh};
-									  
-  cgh.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx){
-    acc[idx] = /* some computation */
-  });
-});
-
-{
-  <mark>auto hostAcc = buf.get_host_access();</mark>
-
-  <mark>hostAcc[/* some index */] = /* some computation */</mark>
-}
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* A `host_accessor` gives immediate access to the data managed by a `buffer` in the host application.
-							* This will wait for any kernel functions accessing the `buffer` to complete and then copying the data back to the host.
-							* It will also block any other `accessor` accessing a `buffer` until it is destroyed.
-							* Note that the data managed by the `buffer` may not be copied back to the original address on the host, in this case `data`.
-						</div>
-					</div>
-				</section>
-				<!--Slide 13-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Synchronizing with data (buffer/accessor)
-					</div>
-					<div class="container">
-						<div class="col">
-							<code class="code-100pc"><pre>
-<mark>{</mark>
-  buf = sycl::buffer(data, sycl::range{1024});
-
-  gpuQueue.submit([&](sycl::handler &cgh){
-    auto acc = sycl::accessor{buf, cgh};
-									  
-    cgh.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-      [=](sycl::id&lt;1&gt; idx){
-      acc[idx] = /* some computation */
-    });
-  });
-<mark>}</mark>
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* A `buffer` will also synchronize the data it manages on destruction.
-							* It will wait for any kernel functions accessing it to complete and copy the data back to the origin address before completing destruction.
-						</div>
-					</div>
-				</section>
-				<!--Slide 14-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Synchronizing with errors
@@ -339,13 +241,25 @@ gpuQueue.submit([&](sycl::handler &cgh){
 				</section>
 			</div>
 		</div>
+    <style>
+      .reveal section pre code {
+        font-size: 0.7em !important;
+      }
+
+      mark {
+        background-color: lightblue;
+      }
+    </style>
 		<script src="../common-revealjs/js/reveal.js"></script>
 		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
 		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
 		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
-		</script>
+    <script src="../common-revealjs/plugin/highlight/highlight.js"></script>
+	  <script>
+      Reveal.initialize({
+        plugins: [RevealHighlight, RevealMarkdown, RevealNotes],
+      });
+      Reveal.configure({ slideNumber: true });
+    </script>	
 	</body>
 </html>

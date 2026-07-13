@@ -81,6 +81,10 @@ class SYCLAParser(HTMLParser):
     def msg_action(self):
         return "FIXING" if (self.mode & Mode.AUTOFIX) == Mode.AUTOFIX else "ERROR"
 
+    @property
+    def output_joined(self):
+        return "".join(self.output)
+
     def _encode_attrs(self, tag, attrs):
         tags = [tag] + [
             f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
@@ -169,12 +173,7 @@ class SYCLAParser(HTMLParser):
             self.code_blocks[-1] = (pos, e_data + converted_char)
 
     def handle_startendtag(self, tag, attrs):
-        tags = [tag] + [
-            f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
-            for k, v in attrs
-        ]
-
-        self.output.append(f"<{' '.join(tags)} />")
+        self.output.append(self._encode_attrs(tag, attrs))
 
     def handle_endtag(self, tag):
         if tag in self.SELF_CLOSING_TAGS:
@@ -195,9 +194,6 @@ class SYCLAParser(HTMLParser):
 
     def handle_decl(self, decl):
         self.output.append(f"<!{decl}>")
-
-    def get_output(self):
-        return "".join(self.output)
 
 
 # ------------------------------------------------------------------------------------------
@@ -223,7 +219,7 @@ def verify_html(lesson, file_str, args) -> tuple[str, list, bool]:
     parser = SYCLAParser(lesson, mode)
     parser.feed(file_str)
 
-    return parser.get_output(), parser.code_blocks, parser.parser_error
+    return parser.output_joined, parser.code_blocks, parser.parser_error
 
 
 # ------------------------------------------------------------------------------------------

@@ -79,7 +79,7 @@ class SYCLAParser(HTMLParser):
 
     @property
     def msg_action(self):
-        return "FIXING" if (self.mode & Mode.AUTOFIX) == Mode.AUTOFIX else "ERROR"
+        return "FIXING" if self.mode & Mode.AUTOFIX else "ERROR"
 
     @property
     def output_joined(self):
@@ -200,12 +200,8 @@ class SYCLAParser(HTMLParser):
 
 
 def verify_html(lesson, file_str, args) -> tuple[str, list, bool]:
-    if not any([args.extract, args.autofix, args.verify]):
-        print("No arguments provided. There is nothing to do.")
-        sys.exit(1)
 
     mode = Mode.NONE
-
     if args.verify:
         mode = Mode.VERIFY
     elif args.autofix:
@@ -227,6 +223,10 @@ def verify_html(lesson, file_str, args) -> tuple[str, list, bool]:
 
 if __name__ == "__main__":  # pragma: no cover
     args = aparser.parse_args()
+
+    if not any([args.extract, args.autofix, args.verify]):
+        print("No arguments provided. There is nothing to do.")
+        sys.exit(1)
 
     if args.extract and not args.output:
         raise Exception("Error: An output must be specified with -o or --output")

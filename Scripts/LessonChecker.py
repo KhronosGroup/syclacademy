@@ -212,7 +212,6 @@ def verify_html(lesson, file_str, args) -> tuple[str, list, bool]:
 
     for key, value in vars(args).items():
         if value and key not in {"files", "output"}:
-            print(key)
             mode |= getattr(Mode, key.upper())
 
     parser = SYCLAParser(lesson, mode)

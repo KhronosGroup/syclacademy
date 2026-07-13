@@ -19,6 +19,7 @@ aparser = argparse.ArgumentParser()
 
 opgroup = aparser.add_mutually_exclusive_group()
 
+# Autofix and extract operations are always performed, these flags control whether its written to disk
 opgroup.add_argument("-v", "--verify", action="store_true")
 opgroup.add_argument("-e", "--extract", action="store_true")
 opgroup.add_argument("-a", "--autofix", action="store_true")
@@ -37,7 +38,7 @@ RESET = "\033[0m"
 
 
 class Mode(IntFlag):
-    NONE = -1
+    NONE = 0
     EXTRACT = auto()
     VERIFY = auto()
     AUTOFIX = auto()
@@ -87,21 +88,21 @@ class SYCLAParser(HTMLParser):
         return "".join(self.output)
 
     def _encode_attrs(self, tag, attrs):
-        tags = [tag] + [
+        tag_attrs = [tag] + [
             f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
             for k, v in attrs
         ]
 
         if tag in self.SELF_CLOSING_TAGS:
-            return f"<{' '.join(tags)}/>"
+            return f"<{' '.join(tag_attrs)}/>"
         else:
-            return f"<{' '.join(tags)}>"
+            return f"<{' '.join(tag_attrs)}>"
 
     def _warn(self, message):
         if self.mode & Mode.SILENT:
             return
 
-        if self.mode & (Mode.AUTOFIX | Mode.VERIFY):
+        if bool(self.mode & (Mode.AUTOFIX | Mode.VERIFY)):
             print(f"{self.COLORS[self.mode]}[{self.msg_action}] {message} {RESET}")
 
     def handle_starttag(self, tag, attrs):
@@ -134,7 +135,6 @@ class SYCLAParser(HTMLParser):
                     self._warn(
                         f"<mark> annotations are the only tags allowed in <code> blocks! Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag}"
                     )
-                    self.convert_charrefs = False
 
                     # Fetch the original case of the impropperly escaped code
                     raw_tag = self.get_starttag_text()
@@ -147,7 +147,7 @@ class SYCLAParser(HTMLParser):
         self.output.append(self._encode_attrs(tag, attrs))
 
     def handle_data(self, data):
-        if self.is_code and Mode.EXTRACT in self.mode:
+        if self.is_code and bool(self.mode & Mode.EXTRACT):
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + data)
 
@@ -175,7 +175,7 @@ class SYCLAParser(HTMLParser):
 
         self.output.append(raw_entity)
 
-        if self.is_code and Mode.EXTRACT in self.mode:
+        if self.is_code and bool(self.mode & Mode.EXTRACT):
             converted_char = html.unescape(raw_entity)
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + converted_char)
@@ -208,17 +208,12 @@ class SYCLAParser(HTMLParser):
 
 
 def verify_html(lesson, file_str, args) -> tuple[str, list, bool]:
-
     mode = Mode.NONE
-    if args.verify:
-        mode = Mode.VERIFY
-    elif args.autofix:
-        mode = Mode.AUTOFIX
-    elif args.extract:
-        mode = Mode.EXTRACT
 
-    if args.silent:
-        mode |= Mode.SILENT
+    for key, value in vars(args).items():
+        if value and key not in {"files", "output"}:
+            print(key)
+            mode |= getattr(Mode, key.upper())
 
     parser = SYCLAParser(lesson, mode)
     parser.feed(file_str)

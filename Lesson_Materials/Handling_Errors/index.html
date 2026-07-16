@@ -126,9 +126,8 @@ int main() {
         <!--Slide 6-->
         <section>
           <div class="hbox">
-            <pre
-              style="font-size: 0.5em"
-            ><code class="language-cpp" data-trim data-line-numbers="5, 12" data-noescape>
+            <pre><code class="language-cpp" 
+            data-trim data-line-numbers="5, 13" data-noescape>
 #include &lt;sycl/sycl.hpp&gt;
 using namespace sycl;
 
@@ -139,10 +138,11 @@ int main() {
     q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;
     });
-    q.wait();
+    q.wait_and_throw();
+    free(shared, q);
   } catch (...) { /* handle errors */ }
 }
-						</code></pre>
+            </code></pre>
           </div>
           <div class="bottom-bullets" data-markdown>
             * Synchronous errors are typically thrown by SYCL API functions. 
@@ -165,6 +165,7 @@ int main() {
       shared[i] = i;
     });
     q.wait_and_throw();
+    free(shared, q);
   } catch (...) { /* handle errors */ }
 }
               </code></pre>
@@ -199,6 +200,7 @@ int main() {
       shared[i] = i;
     });
     q.wait_and_throw();
+    free(shared, q);
   } catch (...) { /* handle errors */ }
 }
 						</code></pre>
@@ -340,6 +342,7 @@ int main() {
       shared[i] = i;
     });
     q.wait_and_throw();
+    free(shared, q);
   } catch (...) { /* handle errors */ }
 }
 

@@ -134,12 +134,12 @@ using namespace sycl;
 
 int main() {
   try {
-    queue gpuQueue(gpu_selector_v); 
-    int* shared = malloc_shared&lt;int&gt;(1024, gpuQueue);   
-    gpuQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
+    queue q; 
+    int* shared = malloc_shared&lt;int&gt;(1024, q);   
+    q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;
     });
-    gpuQueue.wait();
+    q.wait();
   } catch (...) { /* handle errors */ }
 }
 						</code></pre>
@@ -159,12 +159,12 @@ using namespace sycl;
 
 int main() {
   try {
-    queue gpuQueue(gpu_selector_v, <mark>async_handler{}</mark>);
-    int* shared = malloc_shared&lt;int&gt;(1024, gpuQueue);   
-    gpuQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
+    queue q(<mark>async_handler{}</mark>);
+    int* shared = malloc_shared&lt;int&gt;(1024, q);   
+    q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;
     });
-    gpuQueue.wait_and_throw();
+    q.wait_and_throw();
   } catch (...) { /* handle errors */ }
 }
               </code></pre>
@@ -190,16 +190,15 @@ using namespace sycl;
 
 int main() {
   try {
-    queue gpuQueue(gpu_selector_v, 
-      [=](exception_list eL) {
+    queue q([=](exception_list eL) {
         for (auto e : eL) { std::rethrow_exception(e); 
       }
     });
-    int* shared = malloc_shared&lt;int&gt;(1024, gpuQueue);
-    gpuQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
+    int* shared = malloc_shared&lt;int&gt;(1024, q);
+    q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;
     });
-    gpuQueue.wait_and_throw();
+    q.wait_and_throw();
   } catch (...) { /* handle errors */ }
 }
 						</code></pre>
@@ -220,11 +219,11 @@ using namespace sycl;
 
 int main() {
   try {
-    queue gpuQueue(gpu_selector_v, [=](exception_list eL) {
+    queue q([=](exception_list eL) {
       for (auto e : eL) { std::rethrow_exception(e); }
     });
     /* ... */
-    gpuQueue.wait_and_throw();
+    q.wait_and_throw();
   } catch (const exception&amp; e) {
   std::cout &lt;&lt; "Exception caught: " &lt;&lt; <mark>e.what()</mark> 
      << std::endl;
@@ -249,12 +248,12 @@ using namespace sycl;
 
 int main() {
   try {
-    queue gpuQueue(gpu_selector_v, [=](exception_list eL) {
+    queue q([=](exception_list eL) {
       for (auto e : eL) { std::rethrow_exception(e); }
     });
 
     /* ... */
-    gpuQueue.wait_and_throw();
+    q.wait_and_throw();
   } catch (const exception&amp; e) {
     std::cout &lt;&lt; "Exception caught: " &lt;&lt; e.what();
   }
@@ -275,15 +274,15 @@ int main() {
 using namespace sycl;
 
 int main() {
-  queue gpuQueue(gpu_selector_v, [=](exception_list eL) {
+  queue q([=](exception_list eL) {
     for (auto e : eL) { std::rethrow_exception(e); }
   });
   try {
     /* ... */
-    gpuQueue.wait_and_throw();
+    q.wait_and_throw();
   } catch (const sycl::exception&amp; e) {
     if (<mark>e.has_context()</mark>) {
-      if (<mark>e.get_context()</mark> == gpuQueue.get_context()) {
+      if (<mark>e.get_context()</mark> == q.get_context()) {
        /* handle error */
       }
     }
@@ -335,12 +334,12 @@ using namespace sycl;
 
 int main() {
   try {
-    queue hostQueue(<mark>cpu_selector_v</mark>, async_handler{}); 
-    int* shared = malloc_shared&lt;int&gt;(1024, hostQueue);
-    hostQueue.parallel_for(1024, [=](id&lt;1&gt; i) {
+    queue q(<mark>cpu_selector_v</mark>, async_handler{}); 
+    int* shared = malloc_shared&lt;int&gt;(1024, q);
+    q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;
     });
-    hostQueue.wait_and_throw();
+    q.wait_and_throw();
   } catch (...) { /* handle errors */ }
 }
 

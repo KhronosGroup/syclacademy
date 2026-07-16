@@ -1,0 +1,21 @@
+name: Test Lesson Extractor
+
+on: [push, pull_request]
+
+jobs:
+  unit-tests:
+    name: LessonChecker unit tests + coverage
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.14"
+    - name: Install coverage
+      run: pip install coverage
+    - name: Run unit tests with coverage gate
+      working-directory: Scripts
+      run: |
+        python -m coverage run --source=LessonChecker -m unittest test_LessonChecker -v
+        python -m coverage report -m --fail-under=100

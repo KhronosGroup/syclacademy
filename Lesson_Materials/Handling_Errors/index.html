@@ -126,9 +126,7 @@ int main() {
         <!--Slide 6-->
         <section>
           <div class="hbox">
-            <pre
-              style="font-size: 0.5em"
-            ><code class="language-cpp" data-trim data-line-numbers="5, 12" data-noescape>
+            <pre><code class="language-cpp" data-trim data-line-numbers="5, 12" data-noescape>
 #include &lt;sycl/sycl.hpp&gt;
 using namespace sycl;
 
@@ -139,10 +137,11 @@ int main() {
     q.parallel_for(1024, [=](id&lt;1&gt; i) {
       shared[i] = i;
     });
-    q.wait();
+    q.wait_and_throw();
   } catch (...) { /* handle errors */ }
+  free(shared, q);
 }
-						</code></pre>
+            </code></pre>
           </div>
           <div class="bottom-bullets" data-markdown>
             * Synchronous errors are typically thrown by SYCL API functions. 
@@ -166,6 +165,7 @@ int main() {
     });
     q.wait_and_throw();
   } catch (...) { /* handle errors */ }
+  free(shared, q);
 }
               </code></pre>
           </div>
@@ -200,6 +200,7 @@ int main() {
     });
     q.wait_and_throw();
   } catch (...) { /* handle errors */ }
+  free(shared, q);
 }
 						</code></pre>
           </div>
@@ -228,6 +229,7 @@ int main() {
   std::cout &lt;&lt; "Exception caught: " &lt;&lt; <mark>e.what()</mark> 
      << std::endl;
   }
+  free(shared, q);
 }
 							</code></pre>
           </div>
@@ -257,6 +259,7 @@ int main() {
   } catch (const exception&amp; e) {
     std::cout &lt;&lt; "Exception caught: " &lt;&lt; e.what();
   }
+  free(shared, q);
 }
 							</code></pre>
           </div>
@@ -287,6 +290,7 @@ int main() {
       }
     }
   }
+  free(shared, q);
 }
 							</code></pre>
           </div>
@@ -341,6 +345,7 @@ int main() {
     });
     q.wait_and_throw();
   } catch (...) { /* handle errors */ }
+  free(shared, q);
 }
 
 						</code></pre>

@@ -1,5 +1,4 @@
 .vscode/settings.json
 build*
 .vscode
-node_modules/
 

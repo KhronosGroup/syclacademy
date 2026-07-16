@@ -1,55 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
-
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
-
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
-
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-	</head>
-
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../node_modules/reveal.js/dist/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/reveal.js/dist/theme/white.css"
+    />
+    <link rel="stylesheet" href="../../Static/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="../../node_modules/highlight.js/styles/atom-one-light.css"
+    />
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
 				<!--Slide 1-->
 				<section class="hbox" data-markdown>
 					## Managing Data
@@ -87,7 +59,7 @@
 						    * Some computation on the GPU.
 						    * Migration of the result back to the CPU.
 					</div>
-					<img src="../common-revealjs/images/gpu_cpu_memory.png" height="400">
+					<img src="../../Static/images/gpu_cpu_memory.png" height="400">
 				</section>
 				<!--Slide 3A-->
 				<section>
@@ -98,7 +70,7 @@
 						* Memory transfers between CPU and GPU are a bottleneck.
 						* We want to minimize these transfers, when possible.
 					</div>
-					<img src="../common-revealjs/images/gpu_cpu_memory.png" height="400">
+					<img src="../../Static/images/gpu_cpu_memory.png" height="400">
 				</section>
 				<!--Slide 3B-->
 				<section>
@@ -204,7 +176,7 @@ sycl::free(shared_ptr, myQueue);
 							* This will only happen once the SYCL runtime knows the data needs to be accessed and where it needs to be accessed
 						</div>
 						<div class="col" data-markdown>
-							![Buffer Host Memory](../common-revealjs/images/buffer-hostmemory.png "Buffer Host Memory")
+							![Buffer Host Memory](../../Static/images/buffer-hostmemory.png "Buffer Host Memory")
 						</div>
 					</div>
 				</section>
@@ -219,7 +191,7 @@ sycl::free(shared_ptr, myQueue);
 							* There are a range of different types of accessor which provide different ways to access data
 						</div>
 						<div class="col" data-markdown>
-							![Buffer Host Memory Accessor](../common-revealjs/images/buffer-hostmemory-accessor.png "Buffer Host Memory Accessor")
+							![Buffer Host Memory Accessor](../../Static/images/buffer-hostmemory-accessor.png "Buffer Host Memory Accessor")
 						</div>
 					</div>
 				</section>
@@ -234,7 +206,7 @@ sycl::free(shared_ptr, myQueue);
 							* This connects the buffer that is being accessed, the way in which it’s being accessed and the device that the command group is being submitted to
 						</div>
 						<div class="col" data-markdown>
-							![Buffer Host Memory Accessor CG](../common-revealjs/images/buffer-hostmemory-accessor-cg.png "Buffer Host Memory Accessor CG")
+							![Buffer Host Memory Accessor CG](../../Static/images/buffer-hostmemory-accessor-cg.png "Buffer Host Memory Accessor CG")
 						</div>
 					</div>
 				</section>
@@ -250,7 +222,7 @@ sycl::free(shared_ptr, myQueue);
 							* If the most recent copy of the data is already on the device then the runtime will not copy again
 						</div>
 						<div class="col" data-markdown>
-							![Buffer Host Memory Accessor CG Device](../common-revealjs/images/buffer-hostmemory-accessor-cg-device.png "Buffer Host Memory Accessor CG Device")
+							![Buffer Host Memory Accessor CG Device](../../Static/images/buffer-hostmemory-accessor-cg-device.png "Buffer Host Memory Accessor CG Device")
 						</div>
 					</div>
 				</section>
@@ -265,7 +237,7 @@ sycl::free(shared_ptr, myQueue);
 							* When the buffer object is destroyed it will wait for any outstanding work that is accessing the data to complete and then copy back to the original host memory
 						</div>
 						<div class="col" data-markdown>
-							![Buffer Destroyed](../common-revealjs/images/buffer-destroyed.png "Buffer Destroyed")
+							![Buffer Destroyed](../../Static/images/buffer-destroyed.png "Buffer Destroyed")
 						</div>
 					</div>
 				</section>
@@ -461,13 +433,5 @@ gpuQueue.submit([&](handler &cgh){
 				</section>
 			</div>
 		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-      Reveal.initialize({});
-      Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+  </body>
 </html>

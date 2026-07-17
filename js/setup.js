@@ -77,10 +77,23 @@
 
   injectGlobalImages();
 
-  // Plugins register themselves as globals when their UMD scripts load.
-  Reveal.addEventListener("ready", distributeGlobalImages);
-  Reveal.initialize({
-    plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
-    slideNumber: true,
-  });
+  function initReveal() {
+    // Plugins register themselves as globals when their UMD scripts load.
+    Reveal.addEventListener("ready", distributeGlobalImages);
+    Reveal.initialize({
+      plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      slideNumber: true,
+      highlight: {
+        beforeHighlight: function (hljs) {
+          hljs.addPlugin(mergeHTMLPlugin);
+        },
+      },
+    });
+  }
+
+  // Load the merge-html plugin (exposes global `mergeHTMLPlugin`), then init.
+  var merge = document.createElement("script");
+  merge.src = "../../js/revealjs/plugin/merge-html.js";
+  merge.onload = initReveal;
+  document.head.appendChild(merge);
 })();

@@ -279,7 +279,7 @@ auto gpuDevice = device(gpu_selector_v);
 					</div>
 					<div class="container">
 						<div class="col-left-3">
-							<code><pre>
+							<code data-noescape><pre>
 buffer&ltfloat, 1&gt bufA(dA.data(), range&lt1&gt(dA.size())); 
 buffer&ltfloat, 1&gt bufB(dB.data(), range&lt1&gt(dB.size())); 
 buffer&ltfloat, 1&gt bufO(dO.data(), range&lt1&gt(dO.size()));
@@ -433,21 +433,21 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 							
 cgh.parallel_for&ltkernel&gt(<mark>range&lt1&gt(1024)</mark>, 
   [=](<mark>id&lt1&gt idx</mark>){
     /* kernel function code */
 });
 							</code></pre>
-							<code><pre>
+							<code data-noescape><pre>
 							
 cgh.parallel_for&ltkernel&gt(<mark>range&lt1&gt(1024)</mark>, 
   [=](<mark>item&lt1&gt item</mark>){
     /* kernel function code */
 });
 							</code></pre>
-							<code><pre>
+							<code data-noescape><pre>
 							
 cgh.parallel_for&ltkernel&gt(nd_range&lt1&gt(<mark>range&lt1&gt(1024), 
   range&lt1&gt(32))</mark>,[=](<mark>nd_item&lt1&gt ndItem</mark>){

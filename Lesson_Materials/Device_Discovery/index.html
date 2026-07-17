@@ -217,7 +217,7 @@ auto chosenDevice = device(default_selector_v);
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code><pre>
+						<code data-noescape><pre>
 <mark>int my_gpu_selector(const device& dev) {</mark>
 
 <mark>}</mark>
@@ -234,7 +234,7 @@ auto chosenDevice = device(default_selector_v);
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code><pre>
+						<code data-noescape><pre>
 int my_gpu_selector(const device& dev) {
   <mark>if (dev.is_gpu()){</mark>
     <mark>return 1;</mark>
@@ -256,7 +256,7 @@ int my_gpu_selector(const device& dev) {
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code><pre>
+						<code data-noescape><pre>
 int my_gpu_selector(const device& dev) {
   if (dev.is_gpu()){
     return 1;

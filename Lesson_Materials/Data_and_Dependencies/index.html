@@ -154,7 +154,7 @@ gpuQueue.wait();
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<code class="code-100pc" data-noescape><pre>
 <mark>sycl::buffer buf {data, sycl::range{1024}};</mark>
 
 gpuQueue.submit([&](sycl::handler &cgh) {
@@ -193,7 +193,7 @@ gpuQueue.wait();
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<code class="code-100pc" data-noescape><pre>
 sycl::buffer buf {data, sycl::range{1024}};
 
 gpuQueue.submit([&](sycl::handler &cgh) {
@@ -231,7 +231,7 @@ gpuQueue.wait();
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<code class="code-100pc" data-noescape><pre>
 buf = sycl::buffer(data, sycl::range{1024});
 
 gpuQueue.submit([&](sycl::handler &cgh) {
@@ -307,7 +307,7 @@ sycl::free(devicePtr, gpuQueue);
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<code class="code-100pc" data-noescape><pre>
 auto devicePtr =
   sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 
@@ -342,7 +342,7 @@ auto devicePtr =
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<code class="code-100pc" data-noescape><pre>
 auto devicePtr =
   sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 
@@ -395,7 +395,7 @@ sycl::free(devicePtr, gpuQueue);
 					</div>
 					<div class="container">
 						<div class="col">
-							<code class="code-100pc"><pre>
+							<code class="code-100pc" data-noescape><pre>
 sycl::buffer bufA {dataA, sycl::range{1024}};
 sycl::buffer bufB {dataB, sycl::range{1024}};
 
@@ -434,7 +434,7 @@ gpuQueue.wait();
 						#### Concurrent data flow with USM
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<code class="code-100pc" data-noescape><pre>
 auto devicePtrA = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 auto devicePtrB = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 
@@ -468,7 +468,7 @@ sycl::free(devicePtrB, gpuQueue);
 						#### Concurrent data flow with USM
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<code class="code-100pc" data-noescape><pre>
 auto devicePtrA = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 auto devicePtrB = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 

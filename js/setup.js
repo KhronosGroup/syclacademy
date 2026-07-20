@@ -4,10 +4,11 @@
 // slides also work when opened directly from the file system), then includes
 // this script last:
 //
-//   <script src="../../js/revealjs/reveal.js"></script>
-//   <script src="../../js/revealjs/plugin/markdown.js"></script>
-//   <script src="../../js/revealjs/plugin/highlight.js"></script>
-//   <script src="../../js/revealjs/plugin/notes.js"></script>
+//   <script src="../../node_modules/reveal.js/dist/reveal.js"></script>
+//   <script src="../../node_modules/reveal.js/dist/plugin/markdown.js"></script>
+//   <script src="../../node_modules/reveal.js/dist/plugin/highlight.js"></script>
+//   <script src="../../node_modules/reveal.js/dist/plugin/notes.js"></script>
+//   <script src="../../js/plugins/merge-html.js"></script>
 //   <script src="../../js/setup.js"></script>
 //
 // This file removes the per-lesson duplication of the shared slide styling,

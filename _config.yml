@@ -1,0 +1,5 @@
+# Jekyll drops node_modules from the published site by default (it's in Jekyll's
+# built-in exclude list), which 404s the reveal.js files the slides load from
+# node_modules/reveal.js/dist. Re-include it so GitHub Pages publishes it.
+include:
+  - node_modules

@@ -1,0 +1,23 @@
+{
+  "name": "syclacademy",
+  "version": "1.0.0",
+  "description": "Learning materials for SYCL]",
+  "homepage": "https://github.com/KhronosGroup/syclacademy#readme",
+  "bugs": {
+    "url": "https://github.com/KhronosGroup/syclacademy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KhronosGroup/syclacademy.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "reveal.js": "^6.0.1"
+  }
+}

@@ -1,61 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
-
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
-
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
-
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		<style>
-		/* Custom styling for the highlighted code */
-		.highlight {
-			color: red;
-			font-weight: bold;
-		}
-		</style>
-	</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../Static/css/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/theme/white.css"
+    />
+    <link rel="stylesheet" href="../../Static/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/atom-one-light.css"
+    />
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/plugins/merge-html.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
 				<!--Slide 1-->
 				<section class="hbox">
 					<div class="hbox" data-markdown>
@@ -260,12 +227,12 @@ q.parallel_for([=](sycl::item&lt;1&gt; it) {
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code>
+							<pre><code data-noescape>
 q.parallel_for([=](sycl::item&lt;1&gt; it) {
   sycl::atomic_ref&lt;T,
           sycl::memory_order_relaxed,
-          sycl::memory_scope_<span class="highlight">work_group</span>,
-          <span class="highlight">sycl::access::address_space::local_space</span>&gt;
+          sycl::memory_scope_<mark>work_group</mark>,
+          <mark>sycl::access::address_space::local_space</mark>&gt;
             (a[0])
             .fetch_add(it.get_global_linear_id());
 });
@@ -321,13 +288,13 @@ q.parallel_for([=](sycl::item&lt;1&gt; it) {
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code>
+							<pre><code data-noescape>
 q.submit([&amp;](sycl::handler &amp;cgh) {
   // Output of reduction will be in ptr
   auto sumReduction = sycl::reduction(ptr,
                         sycl::plus&lt;T&gt;());
-  cgh.parallel_for(myNd, <span class="highlight">sumReduction</span>,
-      [=](sycl::nd_item&lt;1&gt; item, <span class="highlight">auto &amp;sum</span>) {
+  cgh.parallel_for(myNd, <mark>sumReduction</mark>,
+      [=](sycl::nd_item&lt;1&gt; item, <mark>auto &amp;sum</mark>) {
          sum += devA[item.get_global_linear_id()];
   });
 });
@@ -348,14 +315,14 @@ q.submit([&amp;](sycl::handler &amp;cgh) {
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code>
+							<pre><code data-noescape>
 q.submit([&amp;](sycl::handler &amp;cgh) {
   // Output of reduction will be in ptr
   auto maxReduction = sycl::reduction(ptr,
-                        <span class="highlight">sycl::maximum</span>&lt;T&gt;());
+                        <mark>sycl::maximum</mark>&lt;T&gt;());
   cgh.parallel_for(myNd, maxReduction,
-      [=](sycl::nd_item&lt;1&gt; item, <span class="highlight">auto &amp;myMax</span>) {
-         myMax.<span class="highlight">combine</span>(devA[item.get_global_linear_id()]);
+      [=](sycl::nd_item&lt;1&gt; item, <mark>auto &amp;myMax</mark>) {
+         myMax.<mark>combine</mark>(devA[item.get_global_linear_id()]);
   });
 });
 							</code></pre>
@@ -386,13 +353,5 @@ q.submit([&amp;](sycl::handler &amp;cgh) {
 				</section>
 			</div>
 		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+  </body>
 </html>

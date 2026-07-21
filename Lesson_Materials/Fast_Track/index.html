@@ -1,55 +1,28 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
-
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
-
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
-
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		
-	</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../Static/css/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/theme/white.css"
+    />
+    <link rel="stylesheet" href="../../Static/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/atom-one-light.css"
+    />
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/plugins/merge-html.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
 				<!--Slide 1-->
 				<section class="hbox">
 					<div class="hbox" data-markdown>
@@ -72,7 +45,7 @@
 						#### What is SYCL?
 					</div>
 					<div class="container" data-markdown>
-						![SYCL](../common-revealjs/images/sycl_and_cpp.png "SYCL")
+						![SYCL](../../Static/images/sycl_and_cpp.png "SYCL")
 					</div>
 					<div class="hbox" data-markdown>
 						SYCL is a single source, high-level, standard C++ programming model, that can target a range of heterogeneous platforms
@@ -86,7 +59,7 @@
 					<div class="container" data-markdown>
 						A first example of SYCL code.
 					</div>
-					<object class="r-stretch" data="../common-revealjs/images/sycl_first_sample_code.svg"></object>
+					<object class="r-stretch" data="../../Static/images/sycl_first_sample_code.svg"></object>
 				</section>
 				<!--Slide 5-->
 				<section>
@@ -126,7 +99,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/image_convolution_definition.png "SYCL")
+							![SYCL](../../Static/images/image_convolution_definition.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* A filter of a given size is applied as a stencil to the position of each pixel in the input image.
@@ -158,7 +131,7 @@
 						  * CPU, GPU, FPGA, and other kinds of accelerators.
 					</div>
 					<div class="col" data-markdown>
-						![SYCL](../common-revealjs/images/devices-1.png "SYCL-Devices")
+						![SYCL](../../Static/images/devices-1.png "SYCL-Devices")
 					</div>
 				</section>
         <!--Slide 10-->
@@ -167,9 +140,9 @@
 						#### Querying with a device selector
 					</div>
 					<div class="container">
-						<div class="col-left-1" data-markdown>
-							![Device Topology](../common-revealjs/images/topology-1.png "Device-Topology")
-						</div>
+            <div class="col-left-1" data-markdown>
+              ![Device Topology](../../Static/images/topology-1.png "Device-Topology")
+						</div>	
 						<div class="col-right-1" data-markdown>
 							* To simplify the process of traversing the system topology SYCL provides device selectors.
 							* A device selector is is a callable C++ object which defines a heuristic for scoring devices.
@@ -190,7 +163,7 @@ auto gpuDevice = device(gpu_selector_v);
 							</code></pre>
 						</div>
 						<div class="col-right-1" data-markdown>
-						    ![Device Topology](../common-revealjs/images/topology-1.png "Device-Topology")
+              ![Device Topology](../../Static/images/topology-1.png "Device-Topology")
 						</div>
 					</div>
 					<div class="container" data-markdown>
@@ -206,7 +179,7 @@ auto gpuDevice = device(gpu_selector_v);
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/out_of_order_execution.svg "SYCL")
+							![SYCL](../../Static/images/out_of_order_execution.svg "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* Commands are submitted to devices in SYCL by means of a Queue
@@ -222,7 +195,7 @@ auto gpuDevice = device(gpu_selector_v);
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/in_order_execution.svg "SYCL")
+							![SYCL](../../Static/images/in_order_execution.svg "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* SYCL `queue`s can be configured to be in-order.
@@ -255,7 +228,7 @@ auto gpuDevice = device(gpu_selector_v);
 						    * Some computation on the GPU.
 						    * Migration of the result back to the CPU.
 					</div>
-					<img src="../common-revealjs/images/gpu_cpu_memory.png" height="400">
+					<img src="../../Static/images/gpu_cpu_memory.png" height="400">
 				</section>
         <!--Slide 16-->
 				<section>
@@ -281,7 +254,7 @@ auto gpuDevice = device(gpu_selector_v);
 							* This will only happen once the SYCL runtime knows the data needs to be accessed and where it needs to be accessed
 						</div>
 						<div class="col" data-markdown>
-							![Buffer Host Memory](../common-revealjs/images/buffer-hostmemory.png "Buffer Host Memory")
+							![Buffer Host Memory](../../Static/images/buffer-hostmemory.png "Buffer Host Memory")
 						</div>
 					</div>
 				</section>
@@ -296,7 +269,7 @@ auto gpuDevice = device(gpu_selector_v);
 							* There are a range of different types of accessor which provide different ways to access data
 						</div>
 						<div class="col" data-markdown>
-							![Buffer Host Memory Accessor](../common-revealjs/images/buffer-hostmemory-accessor.png "Buffer Host Memory Accessor")
+							![Buffer Host Memory Accessor](../../Static/images/buffer-hostmemory-accessor.png "Buffer Host Memory Accessor")
 						</div>
 					</div>
 				</section>
@@ -307,7 +280,7 @@ auto gpuDevice = device(gpu_selector_v);
 					</div>
 					<div class="container">
 						<div class="col-left-3">
-							<code><pre>
+							<code data-noescape><pre>
 buffer&ltfloat, 1&gt bufA(dA.data(), range&lt1&gt(dA.size())); 
 buffer&ltfloat, 1&gt bufB(dB.data(), range&lt1&gt(dB.size())); 
 buffer&ltfloat, 1&gt bufO(dO.data(), range&lt1&gt(dO.size()));
@@ -399,7 +372,7 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 							* A work-item can run on CPU threads, SIMD lanes, GPU threads, or any other kind of processing element
 						</div>
 						<div class="col-right" data-markdown>
-							![Work-Item](../common-revealjs/images/workitem.png "Work-Item")
+							![Work-Item](../../Static/images/workitem.png "Work-Item")
 						</div>
 
 					</div>
@@ -416,7 +389,7 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 							* It can also be affected by the resources used by each work-item
 						</div>
 						<div class="col" data-markdown>
-							![Work-Group](../common-revealjs/images/workgroup.png "Work-Group")
+							![Work-Group](../../Static/images/workgroup.png "Work-Group")
 						</div>
 					</div>
 				</section>
@@ -432,7 +405,7 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 							* Work-groups always have the same number of work-items
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/ndrange.png "ND-Range")
+							![ND-Range](../../Static/images/ndrange.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -450,7 +423,7 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 							  * The **local-range** describes the number of work-items in a work-group in each dimension
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/ndrange-example.png "ND-Range")
+							![ND-Range](../../Static/images/ndrange-example.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -461,21 +434,21 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 							
 cgh.parallel_for&ltkernel&gt(<mark>range&lt1&gt(1024)</mark>, 
   [=](<mark>id&lt1&gt idx</mark>){
     /* kernel function code */
 });
 							</code></pre>
-							<code><pre>
+							<code data-noescape><pre>
 							
 cgh.parallel_for&ltkernel&gt(<mark>range&lt1&gt(1024)</mark>, 
   [=](<mark>item&lt1&gt item</mark>){
     /* kernel function code */
 });
 							</code></pre>
-							<code><pre>
+							<code data-noescape><pre>
 							
 cgh.parallel_for&ltkernel&gt(nd_range&lt1&gt(<mark>range&lt1&gt(1024), 
   range&lt1&gt(32))</mark>,[=](<mark>nd_item&lt1&gt ndItem</mark>){
@@ -594,7 +567,7 @@ handler.parallel_for(range, func);
 						#### Image convolution example
 					</div>
 					<div class="container" data-markdown>
-						![SYCL](../common-revealjs/images/image_convolution_example.png "SYCL")
+						![SYCL](../../Static/images/image_convolution_example.png "SYCL")
 					</div>
 				</section>
 				<!--Slide 36-->
@@ -604,7 +577,7 @@ handler.parallel_for(range, func);
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/image_convolution_data_flow.svg "SYCL")
+							![SYCL](../../Static/images/image_convolution_data_flow.svg "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* The kernel must read from the input image data and writes to the output image data.
@@ -645,7 +618,7 @@ handler.parallel_for(range, func);
 						#### Reference image
 					</div>
 					<div class="col" data-markdown>
-						![SYCL](../common-revealjs/images/dogs.png "SYCL")
+						![SYCL](../../Static/images/dogs.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 * We provide a reference image to use in the exercise.
@@ -671,13 +644,5 @@ can be either `identity` or `blur` and a width.
 				</section>
 			</div>
 		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+  </body>
 </html>

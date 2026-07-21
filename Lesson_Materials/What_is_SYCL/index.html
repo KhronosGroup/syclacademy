@@ -1,55 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
-
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
-
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
-
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		
-	</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../Static/css/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/theme/white.css"
+    />
+    <link rel="stylesheet" href="../../Static/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/atom-one-light.css"
+    />
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/plugins/merge-html.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
 				<!--Slide 1-->
 				<section>
 					<div class="hbox" data-markdown>
@@ -70,7 +43,7 @@
 						#### What is SYCL?
 					</div>
 					<div class="container" data-markdown>
-						![SYCL](../common-revealjs/images/sycl_and_cpp.png "SYCL")
+						![SYCL](../../Static/images/sycl_and_cpp.png "SYCL")
 					</div>
 					<div class="hbox" data-markdown>
 						SYCL is a single source, high-level, standard C++ programming model, that can target a range of heterogeneous platforms
@@ -87,7 +60,7 @@
 					<div class="container" data-markdown>
 						A first example of SYCL code. Elements will be explained in coming sections!
 					</div>
-					<object class="r-stretch" data="../common-revealjs/images/sycl_first_sample_code.svg"></object>
+					<object class="r-stretch" data="../../Static/images/sycl_first_sample_code.svg"></object>
 				</section>
 				<!--Slide 4A-->
 				<section data-markdown>
@@ -106,11 +79,11 @@
 						#### What is SYCL?
 					</div>
 					<div class="hbox" data-markdown>
-						SYCL is a ***single source***, high-level, standard C++ programming model, that can target a range of heterogeneous platforms
+						SYCL is a single source, high-level, standard C++ programming model, that can target a range of heterogeneous platforms
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/sycl.png "SYCL")
+							![SYCL](../../Static/images/sycl.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							*  SYCL allows you to write both host CPU and device code in the same C++ source file
@@ -129,7 +102,7 @@
 						#### What is SYCL?
 					</div>
 					<div class="hbox" data-markdown>
-						SYCL is a single source, ***high-level***, standard C++ programming model, that can target a range of heterogeneous platforms
+						SYCL is a single source, high-level, standard C++ programming model, that can target a range of heterogeneous platforms
 					</div>
 					<div class="container">
 					<article class="main" data-markdown>
@@ -148,9 +121,9 @@
 					<div class="hbox" data-markdown>
 						#### What is SYCL?
 					</div>
-				    <div class="hbox" data-markdown>
-				        SYCL is a single source, high-level ***standard C++*** programming model, that can target a range of heterogeneous platforms
-					</div>
+          <div class="hbox" data-markdown>
+						SYCL is a single source, high-level ***standard C++*** programming model, that can target a range of heterogeneous platforms
+					</div> 
 					<div class="container">
 						<div data-markdown>
 							* SYCL allows you to write standard C++
@@ -177,7 +150,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/sycl_targets.png "SYCL-Targets")
+							![SYCL](../../Static/images/sycl_targets.png "SYCL-Targets")
 						</div>
 						<div class="col" data-markdown>
 							* SYCL can target any device supported by its backend
@@ -199,7 +172,7 @@
 					</div>
 					<div class="container">
 					<aside class="aside aside-1" data-markdown>
-						![SYCL](../common-revealjs/images/sycl_spec_versions.png "SYCL-OpenCL")
+						![SYCL](../../Static/images/sycl_spec_versions.png "SYCL-OpenCL")
 					</aside>
 				</section>
 				<!--Slide 10-->
@@ -207,7 +180,7 @@
 					<div class="hbox" data-markdown>
 						#### SYCL implementations
 					</div>
-          <object style="width:100%" data="../common-revealjs/images/sycl_implementation_targets.svg"></object>
+          <object style="width:100%" data="../../Static/images/sycl_implementation_targets.svg"></object>
 				</section>
 				<!--Slide 11-->
 				<section>
@@ -216,7 +189,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL Interface](../common-revealjs/images/sycl_implementation_interface.svg "SYCL-Interface")
+							![SYCL Interface](../../Static/images/sycl_implementation_interface.svg "SYCL-Interface")
 						</div>
 						<div class="col" data-markdown>
 							* The SYCL interface is a C++ template library that developers can use to access the features of SYCL
@@ -235,7 +208,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL Runtime](../common-revealjs/images/sycl_implementation_runtime.svg "SYCL-Runtime")
+							![SYCL Runtime](../../Static/images/sycl_implementation_runtime.svg "SYCL-Runtime")
 						</div>
 						<div class="col" data-markdown>
 							* The SYCL runtime is a library that schedules and executes work
@@ -249,7 +222,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL CPU Device](../common-revealjs/images/sycl_implementation_cpu.svg "SYCL-CPU-Device")
+							![SYCL CPU Device](../../Static/images/sycl_implementation_cpu.svg "SYCL-CPU-Device")
 						</div>
 						<div class="col" data-markdown>
 						  * There is no Host Device in SYCL (as of SYCL 2020)
@@ -266,7 +239,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL Backend](../common-revealjs/images/sycl_implementation_backend.svg "SYCL-Backend")
+							![SYCL Backend](../../Static/images/sycl_implementation_backend.svg "SYCL-Backend")
 						</div>
 						<div class="col" data-markdown>
 							* The back-end interface is where the SYCL runtime calls down into a back-end in order to execute on a particular device  
@@ -281,7 +254,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL Compiler](../common-revealjs/images/sycl_implementation_compiler.svg "SYCL-Compiler")
+							![SYCL Compiler](../../Static/images/sycl_implementation_compiler.svg "SYCL-Compiler")
 						</div>
 						<div class="col" data-markdown>
 							* The SYCL device compiler is a C++ compiler which can identify SYCL kernels and compile them down to an IR or ISA
@@ -300,7 +273,7 @@
 						#### Std C++ compilation model
 					</div>
 					<div class="container" data-markdown>
-						![SYCL Backend](../common-revealjs/images/compilation_1.png "SYCL")
+						![SYCL Backend](../../Static/images/compilation_1.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* This is the typical compilation model for a C++ source file.
@@ -312,7 +285,7 @@
 						#### Std C++ compilation model
 					</div>
 					<div class="container" data-markdown>
-						![SYCL Backend](../common-revealjs/images/compilation_2.png "SYCL")
+						![SYCL Backend](../../Static/images/compilation_2.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* So how do you compile a source file to also target the GPU?
@@ -324,7 +297,7 @@
 						#### A SYCL compilation model
 					</div>
 					<div class="container" data-markdown>
-						![SYCL Backend](../common-revealjs/images/compilation_3.png "SYCL")
+						![SYCL Backend](../../Static/images/compilation_3.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* As SYCL is single source the kernel functions are standard C++ function objects or lambda expressions.
@@ -337,7 +310,7 @@
 						#### A SYCL compilation model
 					</div>
 					<div class="container" data-markdown>
-						![SYCL Backend](../common-revealjs/images/compilation_4.png "SYCL")
+						![SYCL Backend](../../Static/images/compilation_4.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* As well as the standard C++ compiler, the source file is also compiled by a SYCL device compiler.
@@ -350,7 +323,7 @@
 						#### A SYCL compilation model
 					</div>
 					<div class="container" data-markdown>
-						![SYCL Backend](../common-revealjs/images/compilation_5.png "SYCL")
+						![SYCL Backend](../../Static/images/compilation_5.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* The CPU object is then linked with the device IR or ISA to form a single executable with both the CPU and GPU code.
@@ -362,7 +335,7 @@
 						#### A SYCL compilation model
 					</div>
 					<div class="container" data-markdown>
-						![SYCL Backend](../common-revealjs/images/compilation_5.png "SYCL")
+						![SYCL Backend](../../Static/images/compilation_5.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* This is the multi-compiler compilation model.
@@ -375,7 +348,7 @@
 						#### Another SYCL compilation model
 					</div>
 					<div class="container" data-markdown>
-						![SYCL Backend](../common-revealjs/images/compilation_6.png "SYCL")
+						![SYCL Backend](../../Static/images/compilation_6.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* SYCL also supports a single-compiler compilation model.
@@ -408,13 +381,5 @@
 				</section>
 			</div>
 		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+  </body>
 </html>

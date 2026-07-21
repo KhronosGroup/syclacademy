@@ -1,0 +1,14 @@
+# Jekyll excludes node_modules from the published site via its built-in default
+# exclude list, which 404s the reveal.js files the slides load from
+# node_modules/reveal.js/dist. The `include:` directive does not reliably
+# override this on GitHub Pages, so instead we restate the default exclude list
+# with node_modules omitted. Setting `exclude:` replaces the default entirely,
+# so the other standard entries must be listed here to stay excluded.
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  # node_modules intentionally NOT listed, so it gets published.

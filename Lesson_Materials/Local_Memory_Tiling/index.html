@@ -1,55 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
-
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
-
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
-
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		
-	</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../Static/css/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/theme/white.css"
+    />
+    <link rel="stylesheet" href="../../Static/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/atom-one-light.css"
+    />
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/plugins/merge-html.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
 				<!--Slide 1-->
 				<section class="hbox">
 					<div class="hbox" data-markdown>
@@ -80,7 +53,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/cost_of_global_memory_access.png "SYCL")
+							![SYCL](../../Static/images/cost_of_global_memory_access.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* Looking at the image convolution example.
@@ -99,7 +72,7 @@
 						#### Using local memory
 					</div>
 					<div class="container" data-markdown>
-						![SYCL](../common-revealjs/images/local_memory.png "SYCL")
+						![SYCL](../../Static/images/local_memory.png "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* The solution is local memory.
@@ -115,7 +88,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/tiling.png "SYCL")
+							![SYCL](../../Static/images/tiling.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* The iteration space of the kernel function is mapped across multiple work-groups.
@@ -157,7 +130,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/barrier_1.png "SYCL")
+							![SYCL](../../Static/images/barrier_1.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* Remember that work-items are not guaranteed to all execute at the same time (in parallel).
@@ -171,7 +144,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/barrier_2.png "SYCL")
+							![SYCL](../../Static/images/barrier_2.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* A work-item can share results with other work-items via local (or global) memory.
@@ -185,7 +158,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/barrier_3.png "SYCL")
+							![SYCL](../../Static/images/barrier_3.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* This means it's possible for a work-item to read a result that hasn't been written to yet.
@@ -200,7 +173,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/barrier_4.png "SYCL")
+							![SYCL](../../Static/images/barrier_4.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* This problem can be solved with a synchronization primitive called a work-group barrier.
@@ -214,7 +187,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/barrier_5.png "SYCL")
+							![SYCL](../../Static/images/barrier_5.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* When a work-group barrier is inserted work-items will wait until all work-items in the work-group have reached that point.
@@ -228,7 +201,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/barrier_6.png "SYCL")
+							![SYCL](../../Static/images/barrier_6.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* Only then can any work-items in the work-group continue execution.
@@ -242,7 +215,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/barrier_7.png "SYCL")
+							![SYCL](../../Static/images/barrier_7.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* So now you can be sure that all of the results that you want to read have been written to.
@@ -256,7 +229,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/barrier_8.png "SYCL")
+							![SYCL](../../Static/images/barrier_8.png "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* However note that this does not apply across work-group boundaries.
@@ -287,7 +260,7 @@ sycl::group_barrier(item.get_group());
 						#### Local memory image convolution performance
 					</div>
 					<div class="container"data-markdown>
-						![SYCL](../common-revealjs/images/image_convolution_performance_local_mem.png "SYCL")
+						![SYCL](../../Static/images/image_convolution_performance_local_mem.png "SYCL")
 					</div>
 				</section>
 				<!--Slide 11-->
@@ -310,13 +283,5 @@ sycl::group_barrier(item.get_group());
 				</section>
 			</div>
 		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+  </body>
 </html>

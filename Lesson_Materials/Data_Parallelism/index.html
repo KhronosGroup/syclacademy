@@ -1,59 +1,28 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../Static/css/reveal.css" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-light.min.css"
+      href="../../Static/css/theme/white.css"
     />
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
-
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
-
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
-
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		
-	</head>
+    <link rel="stylesheet" href="../../Static/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/atom-one-light.css"
+    />
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/plugins/merge-html.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
 				<!--Slide 1-->
 				<section class="hbox" data-markdown>
 					## Data Parallelism
@@ -72,7 +41,7 @@
 						#### Task vs data parallelism
 					</div>
 					<div class="container" data-markdown>
-						![Task vs Data](../common-revealjs/images/task_parallelism_data_parallelism.png "Task parallelism vs data parallelism")
+						![Task vs Data](../../Static/images/task_parallelism_data_parallelism.png "Task parallelism vs data parallelism")
 					</div>
 					<div class="container" data-markdown>
 						* **Task parallelism** is where you have several,
@@ -151,7 +120,7 @@ parallel_for(calc, in, out, 1024);
 							element.
 						</div>
 						<div class="col-right" data-markdown>
-							![Work-Item](../common-revealjs/images/workitem.png "Work-Item")
+							![Work-Item](../../Static/images/workitem.png "Work-Item")
 						</div>
 					</div>
 				</section>
@@ -167,7 +136,7 @@ parallel_for(calc, in, out, 1024);
 							* Work-groups always have the same number of work-items
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/ndrange.png "ND-Range")
+							![ND-Range](../../Static/images/ndrange.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -185,7 +154,7 @@ parallel_for(calc, in, out, 1024);
 							  * The **local-range** describes the number of work-items in a work-group in each dimension
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/ndrange-example.png "ND-Range")
+							![ND-Range](../../Static/images/ndrange-example.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -207,7 +176,7 @@ parallel_for(calc, in, out, 1024);
 							  * **Local id**: {1, 2}
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/ndrange-example-work-item.png "ND-Range")
+							![ND-Range](../../Static/images/ndrange-example-work-item.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -221,7 +190,7 @@ parallel_for(calc, in, out, 1024);
 							Typically an nd-range invocation SYCL will execute the SYCL kernel function on a very large number of work-items, often in the thousands
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/ndrange-invocation.png "ND-Range")
+							![ND-Range](../../Static/images/ndrange-invocation.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -239,7 +208,7 @@ parallel_for(calc, in, out, 1024);
 							* The order work-items and work-groups are executed in is implementation defined
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/ndrange-lock-step.png "ND-Range")
+							![ND-Range](../../Static/images/ndrange-lock-step.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -254,7 +223,7 @@ parallel_for(calc, in, out, 1024);
 							  * All work-items within a work-group must reach the barrier before any can continue on
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/work-group-0.png "ND-Range")
+							![ND-Range](../../Static/images/work-group-0.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -269,7 +238,7 @@ parallel_for(calc, in, out, 1024);
 							* The only way to do this is to split the computation into separate SYCL kernel functions
 						</div>
 						<div class="col" data-markdown>
-							![ND-Range](../common-revealjs/images/work-group-0-1.png "ND-Range")
+							![ND-Range](../../Static/images/work-group-0-1.png "ND-Range")
 						</div>
 					</div>
 				</section>
@@ -288,8 +257,8 @@ parallel_for(calc, in, out, 1024);
 							   * Runtime may not always have enough information to choose the best-performing size
 						</div>
 						<div style="text-align: right;">
-							<img src="../common-revealjs/images/ndrange.png" alt="ND-Range" style="width:90%" /><br />
-							<img src="../common-revealjs/images/SYCL_range.png" alt="SYCL-Range" style="width:90%" />
+							<img src="../../Static/images/ndrange.png" alt="ND-Range" style="width:90%" /><br />
+							<img src="../../Static/images/SYCL_range.png" alt="SYCL-Range" style="width:90%" />
 						</div>
 					</div>
 				</section>
@@ -381,7 +350,7 @@ q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
 							* A work-item cannot access the private memory of another work-item
 						</div>
 						<div class="col" data-markdown>
-							![Private Memory](../common-revealjs/images/workitem-privatememory.png "Private Memory")
+							![Private Memory](../../Static/images/workitem-privatememory.png "Private Memory")
 						</div>
 
 					</div>
@@ -393,7 +362,7 @@ q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
 					</div>
 					<div class="container">
 						<div class="col-left-3" data-markdown>
-							![Local Memory](../common-revealjs/images/workitem-localmemory.png "Local Memory")
+							![Local Memory](../../Static/images/workitem-localmemory.png "Local Memory")
 						</div>
 						<div class="col-right-2" data-markdown>
 							* Each work-item can access a dedicated region of **local memory** accessible to all work-items in a work-group
@@ -408,7 +377,7 @@ q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
 					</div>
 					<div class="container">
 						<div class="col-left-3" data-markdown>
-							![Global Memory](../common-revealjs/images/workitem-constantmemory.png "Global Memory")
+							![Global Memory](../../Static/images/workitem-constantmemory.png "Global Memory")
 						</div>
 						<div class="col-right-2" data-markdown>
 							* Each work-item can access a single region of **global memory** that's accessible to all work-items in a ND-range
@@ -428,7 +397,7 @@ q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
 							* Private memory is faster than local memory and local memory is faster than global memory
 						</div>
 						<div class="col" data-markdown>
-							![Memory Regions](../common-revealjs/images/memory-regions.png "Memory Regions")
+							![Memory Regions](../../Static/images/memory-regions.png "Memory Regions")
 						</div>
 					</div>
 				</section>
@@ -507,25 +476,5 @@ gpuQueue.wait();
 				</section>
 			</div>
 		</div>
-    <style>
-      .reveal section pre code {
-        font-size: 0.7em !important;
-      }
-
-      mark {
-        background-color: lightblue;
-      }
-    </style>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-    <script src="../common-revealjs/plugin/highlight/highlight.js"></script>
-		<script>
-      Reveal.initialize({
-        plugins: [RevealHighlight, RevealMarkdown, RevealNotes],
-      });
-      Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+  </body>
 </html>

@@ -1,55 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
-
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
-
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
-
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		
-	</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../Static/css/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/theme/white.css"
+    />
+    <link rel="stylesheet" href="../../Static/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/atom-one-light.css"
+    />
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/plugins/merge-html.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
 				<!--Slide 1-->
 				<section>
 					<div class="hbox" data-markdown>
@@ -99,7 +72,7 @@
 					<div class="container">
 						<div class="col">
 							<div class="col-left-1" data-markdown>
-								![SYCL](../common-revealjs/images/command_group.svg "SYCL")
+								![SYCL](../../Static/images/command_group.svg "SYCL")
 							</div>
 						</div>
 						<div class="col" data-markdown>
@@ -119,7 +92,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/composing_a_command_group.svg "SYCL")
+							![SYCL](../../Static/images/composing_a_command_group.svg "SYCL")
 						</div>
 						<div class="col" data-markdown>
 							* Command groups are composed by calling the `submit` member function on a `queue`.
@@ -136,7 +109,7 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 <mark>gpuQueue.submit([&](handler &cgh){</mark>
   
   /* Command group function */
@@ -158,7 +131,7 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 <mark>gpuQueue.submit([&](handler &cgh){</mark>
   
   /* Command group function */
@@ -180,7 +153,7 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 gpuQueue.submit([&](handler &cgh){
 
   /* Command group function */
@@ -202,7 +175,7 @@ gpuQueue.submit([&](handler &cgh){
 						#### Scheduling
 					</div>
 					<div class="container" data-markdown>
-						![SYCL](../common-revealjs/images/scheduling.svg "SYCL")
+						![SYCL](../../Static/images/scheduling.svg "SYCL")
 					</div>
 					<div class="container" data-markdown>
 						* Once `submit` has created a command group it will submit it to the scheduler.
@@ -217,7 +190,7 @@ gpuQueue.submit([&](handler &cgh){
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/common_scheduler.svg "SYCL")
+							![SYCL](../../Static/images/common_scheduler.svg "SYCL")
 						</div>
 					</div>
 					<div class="container" data-markdown>
@@ -232,7 +205,7 @@ gpuQueue.submit([&](handler &cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 class my_kernel;
 
 gpuQueue.submit([&](handler &cgh){
@@ -255,7 +228,7 @@ gpuQueue.submit([&](handler &cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 class my_kernel;
 
 gpuQueue.submit([&](handler &cgh){
@@ -277,7 +250,7 @@ gpuQueue.submit([&](handler &cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 class my_kernel;
 
 gpuQueue.submit([&](handler &cgh){
@@ -299,7 +272,7 @@ gpuQueue.submit([&](handler &cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 <mark>class my_kernel;</mark>
 
 gpuQueue.submit([&](handler &cgh){
@@ -401,7 +374,7 @@ struct my_kernel {
   }
 };
 							</code></pre>
-							<code><pre>
+							<code data-noescape><pre>
 queue gpuQueue;
 gpuQueue.submit([&](handler &cgh){
 								
@@ -450,7 +423,7 @@ sycl::stream(size_t bufferSize, size_t workItemBufferSize, handler &cgh);
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 class my_kernel;
 
 queue gpuQueue;
@@ -477,7 +450,7 @@ gpuQueue.submit([&](handler &cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<code data-noescape><pre>
 class my_kernel;
 
 queue gpuQueue;
@@ -518,13 +491,5 @@ gpuQueue.submit([&](handler &cgh){
 				</section>
 			</div>
 		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+  </body>
 </html>

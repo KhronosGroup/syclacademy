@@ -2,3 +2,17 @@
 build*
 .vscode
 
+# Ignore all of node_modules except the reveal.js files the slides actually load
+# (git needs each parent dir un-ignored before a nested file can be re-included).
+node_modules/*
+!node_modules/reveal.js/
+node_modules/reveal.js/*
+!node_modules/reveal.js/dist/
+node_modules/reveal.js/dist/*
+!node_modules/reveal.js/dist/reveal.js
+!node_modules/reveal.js/dist/plugin/
+node_modules/reveal.js/dist/plugin/*
+!node_modules/reveal.js/dist/plugin/highlight.js
+!node_modules/reveal.js/dist/plugin/markdown.js
+!node_modules/reveal.js/dist/plugin/notes.js
+

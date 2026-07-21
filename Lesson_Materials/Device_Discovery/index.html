@@ -1,55 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html>
-	<head>
-	    <meta charset="utf-8">
-		<link rel="stylesheet" href="../common-revealjs/css/reveal.css">
-		<link rel="stylesheet" href="../common-revealjs/css/theme/white.css">
-		<link rel="stylesheet" href="../common-revealjs/css/custom.css">
-		<script>
-			// This is needed when printing the slides to pdf
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? '../common-revealjs/css/print/pdf.css' : '../common-revealjs/css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<script>
-		    // This is used to display the static images on each slide,
-			// See global-images in this html file and custom.css
-			(function() {
-				if(window.addEventListener) {
-					window.addEventListener('load', () => {
-						let slides = document.getElementsByClassName("slide-background");
-
-						if (slides.length === 0) {
-							slides = document.getElementsByClassName("pdf-page")
-						}
-
-						// Insert global images on each slide
-						for(let i = 0, max = slides.length; i < max; i++) {
-							let cln = document.getElementById("global-images").cloneNode(true);
-							cln.removeAttribute("id");
-							slides[i].appendChild(cln);
-						}
-
-						// Remove top level global images
-						let elem = document.getElementById("global-images");
-						elem.parentElement.removeChild(elem);
-					}, false);
-				}
-			})();
-		</script>
-		
-	</head>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../Static/css/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/theme/white.css"
+    />
+    <link rel="stylesheet" href="../../Static/css/custom.css" />
+    <link
+      rel="stylesheet"
+      href="../../Static/css/atom-one-light.css"
+    />
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/plugins/merge-html.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<div id="global-images" class="global-images">
-					<img src="../common-revealjs/images/sycl_academy.png" />
-					<img src="../common-revealjs/images/sycl_logo.png" />
-					<div class="trademarks">SYCL and the SYCL logo are trademarks of the Khronos Group Inc.</div>
-				</div>
 				<!--Slide 1-->
 				<section class="hbox">
 					<div class="hbox" data-markdown>
@@ -85,7 +58,7 @@
 						  * CPU, GPU, FPGA, and other kinds of accelerators.
 					</div>
 					<div class="col" data-markdown>
-						![SYCL](../common-revealjs/images/devices-1.png "SYCL-Devices")
+						![SYCL](../../Static/images/devices-1.png "SYCL-Devices")
 					</div>
 				</section>
 				<!--Slide 5-->
@@ -99,7 +72,7 @@
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
-							![SYCL](../common-revealjs/images/devices-1.png "SYCL-Devices")
+							![SYCL](../../Static/images/devices-1.png "SYCL-Devices")
 						</div>
 					</div>
 				<!--Slide 7-->
@@ -125,9 +98,9 @@
 auto platforms = platform::get_platforms();
 
 							</code></pre>
-						</div>
+						</div> 
 						<div class="col-right-1" data-markdown>
-						    ![SYCL](../common-revealjs/images/devices-5.png "SYCL-Devices")
+						![SYCL](../../Static/images/devices-5.png "SYCL-Devices")
 						</div>
 					</div>
 					<div class="smaller-size-font" data-markdown>
@@ -148,7 +121,7 @@ auto intelDevices = intelPlatform.get_devices();
 							</code></pre>
 						</div>
 						<div class="col-right-1" data-markdown>
-						    ![SYCL](../common-revealjs/images/devices-6.png "SYCL-Devices")
+						![SYCL](../../Static/images/devices-6.png "SYCL-Devices")
 						</div>
 					</div>
 					<div class="smaller-size-font" data-markdown>
@@ -170,7 +143,7 @@ auto devices = device::get_devices();
 							</code></pre>
 						</div>
 						<div class="col-right-1" data-markdown>
-						    ![SYCL](../common-revealjs/images/devices-7.png "SYCL-Devices")
+						![SYCL](../../Static/images/devices-7.png "SYCL-Devices")
 						</div>
 					</div>
 					<div class="smaller-size-font" data-markdown>
@@ -186,7 +159,7 @@ auto devices = device::get_devices();
 					</div>
 					<div class="container">
 						<div class="col-left-1" data-markdown>
-							![Device Topology](../common-revealjs/images/topology-1.png "Device-Topology")
+							![Device Topology](../../Static/images/topology-1.png "Device-Topology")
 						</div>
 						<div class="col-right-1" data-markdown>
 							* To simplify the process of traversing the system topology SYCL provides device selectors.
@@ -208,7 +181,7 @@ auto gpuDevice = device(gpu_selector_v);
 							</code></pre>
 						</div>
 						<div class="col-right-1" data-markdown>
-						    ![Device Topology](../common-revealjs/images/topology-1.png "Device-Topology")
+						![Device Topology](../../Static/images/topology-1.png "Device-Topology")
 						</div>
 					</div>
 					<div class="container" data-markdown>
@@ -230,7 +203,7 @@ auto chosenDevice = device(default_selector_v);
 							</code></pre>
 						</div>
 						<div class="col-right-1" data-markdown>
-						    ![Device Topology](../common-revealjs/images/topology-1.png "Device-Topology")
+						![Device Topology](../../Static/images/topology-1.png "Device-Topology")
 						</div>
 					</div>
 					<div class="container" data-markdown>
@@ -245,7 +218,7 @@ auto chosenDevice = device(default_selector_v);
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code><pre>
+						<code data-noescape><pre>
 <mark>int my_gpu_selector(const device& dev) {</mark>
 
 <mark>}</mark>
@@ -262,7 +235,7 @@ auto chosenDevice = device(default_selector_v);
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code><pre>
+						<code data-noescape><pre>
 int my_gpu_selector(const device& dev) {
   <mark>if (dev.is_gpu()){</mark>
     <mark>return 1;</mark>
@@ -284,7 +257,7 @@ int my_gpu_selector(const device& dev) {
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code><pre>
+						<code data-noescape><pre>
 int my_gpu_selector(const device& dev) {
   if (dev.is_gpu()){
     return 1;
@@ -318,7 +291,7 @@ auto platformName
 							</code></pre>
 						</div>
 						<div class="col-right-2" data-markdown>
-						    ![SYCL](../common-revealjs/images/topology-2.png "SYCL-Devices")
+						![SYCL](../../Static/images/topology-2.png "SYCL-Devices")
 						</div>
 					</div>
 					<div class="container" data-markdown>
@@ -366,13 +339,5 @@ bool supportsFp16 = dev.has(aspect::fp16);
 				</section>
 			</div>
 		</div>
-		<script src="../common-revealjs/js/reveal.js"></script>
-		<script src="../common-revealjs/plugin/markdown/marked.js"></script>
-		<script src="../common-revealjs/plugin/markdown/markdown.js"></script>
-		<script src="../common-revealjs/plugin/notes/notes.js"></script>
-		<script>
-			Reveal.initialize({mouseWheel: true, defaultNotes: true});
-			Reveal.configure({ slideNumber: true });
-		</script>
-	</body>
+  </body>
 </html>

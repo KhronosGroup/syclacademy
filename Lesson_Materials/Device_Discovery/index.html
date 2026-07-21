@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -94,7 +88,7 @@
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<code><pre>
+							<pre><code class="language-cpp">
 auto platforms = platform::get_platforms();
 
 							</code></pre>
@@ -115,7 +109,7 @@ auto platforms = platform::get_platforms();
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<code><pre>
+							<pre><code class="language-cpp">
 auto intelDevices = intelPlatform.get_devices();
 
 							</code></pre>
@@ -137,7 +131,7 @@ auto intelDevices = intelPlatform.get_devices();
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<code><pre>
+							<pre><code class="language-cpp">
 auto devices = device::get_devices();
 
 							</code></pre>
@@ -176,7 +170,7 @@ auto devices = device::get_devices();
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<code><pre>
+							<pre><code class="language-cpp">
 auto gpuDevice = device(gpu_selector_v); 
 							</code></pre>
 						</div>
@@ -185,7 +179,7 @@ auto gpuDevice = device(gpu_selector_v);
 						</div>
 					</div>
 					<div class="container" data-markdown>
-							* A device selector takes a parameter of type `const device &` and gives it a "score".
+							* A device selector takes a parameter of type `const device &amp;` and gives it a "score".
 							* Used to query all devices and return the one with the highest "score".
 							* A device with a negative score will never be chosen.
 					</div>
@@ -197,7 +191,7 @@ auto gpuDevice = device(gpu_selector_v);
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<code><pre>
+							<pre><code class="language-cpp">
 auto chosenDevice = device();
 auto chosenDevice = device(default_selector_v);
 							</code></pre>
@@ -218,8 +212,8 @@ auto chosenDevice = device(default_selector_v);
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code data-noescape><pre>
-<mark>int my_gpu_selector(const device& dev) {</mark>
+						<pre><code data-noescape class="language-cpp">
+<mark>int my_gpu_selector(const device&amp; dev) {</mark>
 
 <mark>}</mark>
 						</code></pre>
@@ -235,8 +229,8 @@ auto chosenDevice = device(default_selector_v);
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code data-noescape><pre>
-int my_gpu_selector(const device& dev) {
+						<pre><code data-noescape class="language-cpp">
+int my_gpu_selector(const device&amp; dev) {
   <mark>if (dev.is_gpu()){</mark>
     <mark>return 1;</mark>
   <mark>}</mark>
@@ -257,8 +251,8 @@ int my_gpu_selector(const device& dev) {
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<code data-noescape><pre>
-int my_gpu_selector(const device& dev) {
+						<pre><code data-noescape class="language-cpp">
+int my_gpu_selector(const device&amp; dev) {
   if (dev.is_gpu()){
     return 1;
   }
@@ -284,7 +278,7 @@ int main(int argc, char *argv[]) {
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<code><pre>
+							<pre><code class="language-cpp">
 auto plt = dev.get_platform();
 auto platformName
   = dev.get_info&lt;info::device::name&gt;();
@@ -307,7 +301,7 @@ auto platformName
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<pre><code class="language-cpp">
 bool supportsFp16 = dev.has(aspect::fp16);
 							</code></pre>
 						</div>

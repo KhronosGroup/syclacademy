@@ -45,15 +45,24 @@ class Mode(IntFlag):
     SILENT = auto()
 
 
+class State(IntFlag):
+    NONE = 0
+    CODE = auto()
+    MARK = auto()
+    ERROR = auto()
+
+
+# ------------------------------------------------------------------------------------------
+
+
 @dataclass
 class SYCLAParser(HTMLParser):
     lesson_name: str
     mode: Mode
     code_blocks: list[tuple[int, str]] = field(default_factory=list)
     output: list[str] = field(default_factory=list)
-    is_code: bool = False
-    is_mark: bool = False
-    parser_error: bool = False
+
+    state: State = State.NONE
 
     SELF_CLOSING_TAGS = {
         "area",
@@ -87,6 +96,24 @@ class SYCLAParser(HTMLParser):
     def output_joined(self):
         return "".join(self.output)
 
+    @property
+    def parser_error(self):
+        return State.ERROR in self.state
+
+    @property
+    def last_code_idx(self):
+        if State.CODE in self.state:
+            # reverse search output for last code tag
+            return next(
+                (
+                    i
+                    for i in range(len(self.output) - 1, -1, -1)
+                    # < is important, because the word "code" can apepar in a comment, just like it does in this one
+                    if "<code" in self.output[i]
+                ),
+                None,
+            )
+
     def _encode_attrs(self, tag, attrs):
         tag_attrs = [tag] + [
             f"{k}" if v in [None, True] else f'{k}="{v.strip()}"'  # pyright: ignore
@@ -108,18 +135,39 @@ class SYCLAParser(HTMLParser):
     def handle_starttag(self, tag, attrs):
         match tag:
             case "code":
-                self.is_code = True
+                self.state |= State.CODE
+
                 if ("class", "language-cpp") not in attrs:
                     attrs.append(("class", "language-cpp"))
 
                 self.code_blocks.append((self.getpos()[0], ""))
 
             case "mark":
-                self.is_mark = True
+                self.state |= State.MARK
 
-            case "pre" if self.is_code:
+                # cache the last code
+                last_code_idx = self.last_code_idx
 
-                self.parser_error = True
+                if (
+                    State.CODE in self.state
+                    and last_code_idx is not None
+                    and "data-noescape" not in self.output[last_code_idx]
+                ):
+                    self.state |= State.ERROR
+                    self._warn(
+                        f"<mark> in <code> without data-noescape prop in lesson {self.lesson_name} line num: {self.getpos()[0]}"
+                    )
+
+                    # Add data-noescape prop to code
+                    code_tag = self.output[last_code_idx]
+                    print(code_tag)
+                    self.output[last_code_idx] = (
+                        code_tag[:-1] + " data-noescape" + code_tag[-1]
+                    )
+
+            case "pre" if State.CODE in self.state:
+
+                self.state |= State.ERROR
                 self._warn(
                     f"misalligned <code> and <pre> tags in lesson {self.lesson_name} line num: {self.getpos()[0]}"
                 )
@@ -130,8 +178,8 @@ class SYCLAParser(HTMLParser):
 
             case _:
                 # Any other unescaped
-                if self.is_code:
-                    self.parser_error = True
+                if State.CODE in self.state:
+                    self.state |= State.ERROR
                     self._warn(
                         f"<mark> annotations are the only tags allowed in <code> blocks! Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag}"
                     )
@@ -147,12 +195,12 @@ class SYCLAParser(HTMLParser):
         self.output.append(self._encode_attrs(tag, attrs))
 
     def handle_data(self, data):
-        if self.is_code and bool(self.mode & Mode.EXTRACT):
+        if State.CODE in self.state and bool(self.mode & Mode.EXTRACT):
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + data)
 
         if data == "&":
-            self.parser_error = True
+            self.state |= State.ERROR
             self._warn(
                 f"Unescaped &! Violation in lesson {self.lesson_name} line num: {self.getpos()}"
             )
@@ -166,7 +214,7 @@ class SYCLAParser(HTMLParser):
             case "lt" | "gt" | "amp":
                 raw_entity = f"&{name};"
             case _:
-                self.parser_error = True
+                self.state |= State.ERROR
                 self._warn(
                     f"Impropperly escaped entity ref! Violation in lesson {self.lesson_name} line num: {self.getpos()} ref: {name}"
                 )
@@ -175,7 +223,7 @@ class SYCLAParser(HTMLParser):
 
         self.output.append(raw_entity)
 
-        if self.is_code and bool(self.mode & Mode.EXTRACT):
+        if State.CODE in self.state and bool(self.mode & Mode.EXTRACT):
             converted_char = html.unescape(raw_entity)
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + converted_char)
@@ -185,15 +233,19 @@ class SYCLAParser(HTMLParser):
 
     def handle_endtag(self, tag):
         if tag in self.SELF_CLOSING_TAGS:
-            self.parser_error = True
+            self.state |= State.ERROR
             self._warn(
                 f"Self closing tag does not require an endtag Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag}"
             )
             return
 
-        if tag == "code":
-            self.is_code = False
-            self.is_mark = False
+        # if tag == "code":
+
+        match tag:
+            case "code":
+                self.state &= ~State.CODE
+            case "mark":
+                self.state &= ~State.MARK
 
         self.output.append(f"</{tag}>")
 
@@ -275,7 +327,9 @@ if __name__ == "__main__":  # pragma: no cover
             with open(f"{out_base}/CMakeLists.txt", "w") as cmake:
                 cmake.write(cmake_executables)
 
-            if args.autofix:
+            # only write back to file if there is sonething to fix
+            if args.autofix and error:
+                print("saving back because fixed a thing")
                 write_back_path = l_path
 
                 with open(write_back_path, "w") as out:

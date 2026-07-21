@@ -2,13 +2,13 @@
   "name": "syclacademy",
   "version": "1.0.0",
   "description": "Learning materials for SYCL]",
-  "homepage": "https://github.com/MikeL270/syclacademy#readme",
+  "homepage": "https://github.com/KhronosGroup/syclacademy#readme",
   "bugs": {
-    "url": "https://github.com/MikeL270/syclacademy/issues"
+    "url": "https://github.com/KhronosGroup/syclacademy/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MikeL270/syclacademy.git"
+    "url": "git+https://github.com/KhronosGroup/syclacademy.git"
   },
   "license": "ISC",
   "author": "",

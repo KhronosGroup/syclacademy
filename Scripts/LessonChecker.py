@@ -334,8 +334,8 @@ if __name__ == "__main__":  # pragma: no cover
                     with open(wpath, "w") as out:
                         out.write(code)
 
-            with open(f"{out_base}/CMakeLists.txt", "w") as cmake:
-                cmake.write(cmake_executables)
+                with open(f"{out_base}/CMakeLists.txt", "w") as cmake:
+                    cmake.write(cmake_executables)
 
             # only write back to file if there is sonething to fix
             if args.autofix and error:

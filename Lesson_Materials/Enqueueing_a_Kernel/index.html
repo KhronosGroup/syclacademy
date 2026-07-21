@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -109,8 +103,8 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
-<mark>gpuQueue.submit([&](handler &cgh){</mark>
+							<pre><code data-noescape class="language-cpp">
+<mark>gpuQueue.submit([&amp;](handler &amp;cgh){</mark>
   
   /* Command group function */
   
@@ -131,8 +125,8 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
-<mark>gpuQueue.submit([&](handler &cgh){</mark>
+							<pre><code data-noescape class="language-cpp">
+<mark>gpuQueue.submit([&amp;](handler &amp;cgh){</mark>
   
   /* Command group function */
   
@@ -153,8 +147,8 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
-gpuQueue.submit([&](handler &cgh){
+							<pre><code data-noescape class="language-cpp">
+gpuQueue.submit([&amp;](handler &amp;cgh){
 
   /* Command group function */
   
@@ -205,10 +199,10 @@ gpuQueue.submit([&](handler &cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 class my_kernel;
 
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
 
   <mark>cgh.single_task&lt;my_kernel&gt;([=]() {</mark>
     /* kernel code */
@@ -228,10 +222,10 @@ gpuQueue.submit([&](handler &cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 class my_kernel;
 
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
 								
   cgh.single_task&lt;my_kernel&gt;(<mark>[=]() {</mark>
     <mark>/* kernel code */</mark>
@@ -250,10 +244,10 @@ gpuQueue.submit([&](handler &cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 class my_kernel;
 
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
 								
   cgh.single_task&lt;my_kernel&gt;(<mark>[=]() {</mark>
     <mark>/* kernel code */</mark>
@@ -272,10 +266,10 @@ gpuQueue.submit([&](handler &cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 <mark>class my_kernel;</mark>
 
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
 								
   cgh.single_task&lt;<mark>my_kernel</mark>&gt;([=]() {
     /* kernel code */
@@ -295,7 +289,7 @@ gpuQueue.submit([&](handler &cgh){
 					<div class="hbox" data-markdown>
 						#### SYCL kernel function rules
 					</div>
-					<div class=container data-markdown>
+					<div class="container" data-markdown>
 						* Must be defined using a C++ lambda or function object, they cannot be a function pointer or std::function.
 						* Must always capture or store members by-value.
 						* SYCL kernel functions declared with a lambda ~~must be named using a forward declarable C++ type, declared in global scope~~ can be anonymous since SYCL 2020!
@@ -307,7 +301,7 @@ gpuQueue.submit([&](handler &cgh){
 					<div class="hbox" data-markdown>
 						#### SYCL kernel function restrictions
 					</div>
-					<div class=container data-markdown>
+					<div class="container" data-markdown>
 						* No dynamic allocation
 						* No dynamic polymorphism
 						* No function pointers
@@ -321,11 +315,11 @@ gpuQueue.submit([&](handler &cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<pre><code class="language-cpp">
 class my_kernel;
 
 queue gpuQueue;
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
 
   cgh.single_task&lt;my_kernel&gt;([=]() {
     /* kernel code */
@@ -345,7 +339,7 @@ gpuQueue.submit([&](handler &cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<pre><code class="language-cpp">
 struct my_kernel { 
   void operator()() const {
     /* kernel function */
@@ -367,16 +361,16 @@ struct my_kernel {
 					</div>
 					<div class="container">
 						<div class="col">
-							<code><pre>
+							<pre><code class="language-cpp">
 struct my_kernel { 
   void operator()() const {
     /* kernel function */
   }
 };
 							</code></pre>
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 queue gpuQueue;
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
 								
   cgh.single_task(<mark>my_kernel{}</mark>); 
 }).wait();
@@ -393,7 +387,7 @@ gpuQueue.submit([&](handler &cgh){
 					<div class="hbox" data-markdown>
 						#### Streams
 					</div>
-					<div class=container data-markdown>
+					<div class="container" data-markdown>
 						* A `stream` can be used in a kernel function to print text to the console from the device, similarly to how you would with `std::cout`.
 						* The `stream` is a buffered output stream so the output may not appear until the kernel function is complete.
 						* The `stream` is useful for debugging, but should not be relied on in performance critical code.
@@ -405,8 +399,8 @@ gpuQueue.submit([&](handler &cgh){
 						#### Streams
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
-sycl::stream(size_t bufferSize, size_t workItemBufferSize, handler &cgh);
+						<pre><code class="language-cpp">
+sycl::stream(size_t bufferSize, size_t workItemBufferSize, handler &amp;cgh);
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -423,11 +417,11 @@ sycl::stream(size_t bufferSize, size_t workItemBufferSize, handler &cgh);
 					</div>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 class my_kernel;
 
 queue gpuQueue;
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
 
   <mark>auto os = sycl::stream(1024, 1024, cgh);</mark>
 
@@ -450,11 +444,11 @@ gpuQueue.submit([&](handler &cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 class my_kernel;
 
 queue gpuQueue;
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
 
   auto os = sycl::stream(1024, 1024, cgh);
 

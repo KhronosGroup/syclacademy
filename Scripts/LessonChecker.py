@@ -138,7 +138,18 @@ class SYCLAParser(HTMLParser):
                 self.state |= State.CODE
 
                 if ("class", "language-cpp") not in attrs:
+                    self.state |= State.ERROR
+                    self._warn(
+                        f"highlight langauge class missing in lesson {self.lesson_name} line num: {self.getpos()[0]}"
+                    )
                     attrs.append(("class", "language-cpp"))
+
+                if ("class", "code-100pc") in attrs:
+                    self.state |= State.ERROR
+                    self._warn(
+                        f"Old stling in lesson {self.lesson_name} line num: {self.getpos()[0]}"
+                    )
+                    attrs.remove(("class", "code-100pc"))
 
                 self.code_blocks.append((self.getpos()[0], ""))
 
@@ -160,7 +171,6 @@ class SYCLAParser(HTMLParser):
 
                     # Add data-noescape prop to code
                     code_tag = self.output[last_code_idx]
-                    print(code_tag)
                     self.output[last_code_idx] = (
                         code_tag[:-1] + " data-noescape" + code_tag[-1]
                     )
@@ -329,7 +339,7 @@ if __name__ == "__main__":  # pragma: no cover
 
             # only write back to file if there is sonething to fix
             if args.autofix and error:
-                print("saving back because fixed a thing")
+                print("Saving fixes back to lesson")
                 write_back_path = l_path
 
                 with open(write_back_path, "w") as out:

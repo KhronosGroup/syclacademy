@@ -453,15 +453,15 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
   auto os = sycl::stream(1024, 1024, cgh);
 
   cgh.single_task&lt;my_kernel&gt;([=]() {
-    <mark>os << "Hello world!\n";</mark>
+    <mark>os &lt;&lt; "Hello world!\n";</mark>
   }); 
 }).wait();
 							</code></pre>
 						</div>
 						<div class="col" data-markdown>
 							* Next we capture the `stream` in the kernel function's lambda expression.
-							* Then we can print `"Hello World!"` to the console using the `<<` operator.
-							* This is where the work-item size comes in, this is the cache available to store text on the right-hand-size of the `<<` operator.
+							* Then we can print `"Hello World!"` to the console using the `&lt;&lt;` operator.
+							* This is where the work-item size comes in, this is the cache available to store text on the right-hand-size of the `&lt;&lt;` operator.
 						</div>
 					</div>
 				</section>

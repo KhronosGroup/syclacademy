@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -25,7 +19,7 @@
 			<div class="slides">
 			  <!--Slide 1-->
 			  <section class="hbox">
-			    <h2  style="text-transform: none;">
+			    <h2 style="text-transform: none;">
 						oneAPI Math Library (oneMath)
 					</h2>
 			  </section>
@@ -59,13 +53,13 @@
 					   * **Intel CPU/GPU**: Intel Math Kernels Library (oneMKL)
 					   * **NVIDIA GPU**: cuBLAS, cuSOLVER, cuRAND, cuFFT
 					   * **AMD GPU**: rocBLAS, rocSOLVER, rocRAND, rocFFT
-					* Imagine being able to use all of them with *single source code* &#8594; **oneMath**
+					* Imagine being able to use all of them with *single source code*  **oneMath**
 					</div>
 			  </section>
 			  <!--Slide 5-->
 			  <section>
 					<div class="hbox">
-						<h2  style="text-transform: none;">
+						<h2 style="text-transform: none;">
 							oneAPI and oneMath
 						</h2>
 					</div>
@@ -80,14 +74,14 @@
 						   * wrapper implementation dispatching SYCL API calls to a multitude of implementations, both generic and vendor-specific
 					</div>
 					<div class="container">
-						<img style="height:4em; margin-top:2em;" src="../../Static/images/oneAPI.png" />
+						<img style="height:4em; margin-top:2em;" src="../../Static/images/oneAPI.png"/>
 						<div style="display: inline; width: 2em;"></div>
-						<img style="height:4em; margin-top:2em;" src="../../Static/images/uxl.svg" />
+						<img style="height:4em; margin-top:2em;" src="../../Static/images/uxl.svg"/>
 					</div>
 			  </section>
 			  <!--Slide 6-->
 			  <section>
-					<h2  style="text-transform: none;">
+					<h2 style="text-transform: none;">
 						oneMath library backends
 					</h2>
 					<object class="r-stretch" data="../../Static/images/oneMath-backends.svg"></object>
@@ -98,7 +92,7 @@
 			      #### Run-time dispatching
 			    </div>
 			    <div class="container">
-						<pre><code>
+						<pre><code class="language-cpp">
 #include &lt;oneapi/math.hpp&gt;
 
 sycl::queue q{myDeviceSelector};
@@ -125,8 +119,8 @@ oneapi::math::blas::column_major::gemm(q, ..., m, n, k, ..., a, ..., b, ..., c, 
 			      #### Compile-time dispatching
 			    </div>
 			    <div class="container">
-						<pre><code>
-#include &ltoneapi/math.hpp&gt
+						<pre><code class="language-cpp">
+#include &lt;oneapi;/math.hpp&gt;
 
 sycl::queue cpu_queue{sycl::cpu_selector_v};
 
@@ -134,7 +128,7 @@ sycl::buffer&lt;T,1&gt; a{a_host, m*k};
 sycl::buffer&lt;T,1&gt; b{b_host, k*n};
 sycl::buffer&lt;T,1&gt; c{c_host, m*n};
 
-oneapi::math::backend_selector&ltoneapi::math::backend::mklcpu&gt cpu_selector(cpu_queue);
+oneapi::math::backend_selector&lt;oneapi;::math::backend::mklcpu&gt; cpu_selector(cpu_queue);
 // Select the Intel oneMKL CPU backend specifically ^^^^^^
 
 oneapi::math::blas::column_major::gemm(cpu_selector, ..., m, n, k, ..., a, ..., b, ..., c, ... );

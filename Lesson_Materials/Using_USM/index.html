@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -53,7 +47,7 @@
 					<div class="hbox" data-markdown>
 						#### USM Allocation Types
 					</div>
-					<div class="container"data-markdown>
+					<div class="container" data-markdown>
 | Type   | Description                     | Access host    | Access device  | Nominal location     |
 |--------|---------------------------------|----------------|----------------|----------------------|
 | device | device global allocations       | ✗              | ✓              | device               |
@@ -67,11 +61,11 @@
 						#### Malloc_device
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
-void* malloc_device(size_t numBytes, const queue& syclQueue, const property_list &propList = {});
+						<pre><code class="language-cpp">
+void* malloc_device(size_t numBytes, const queue&amp; syclQueue, const property_list &amp;propList = {});
 
 template &lt;typename T&gt;
-T* malloc_device(size_t count, const queue& syclQueue, const property_list &propList = {});
+T* malloc_device(size_t count, const queue&amp; syclQueue, const property_list &amp;propList = {});
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -88,8 +82,8 @@ T* malloc_device(size_t count, const queue& syclQueue, const property_list &prop
 						#### Free
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
-void free(void* ptr, queue& syclQueue);
+						<pre><code class="language-cpp">
+void free(void* ptr, queue&amp; syclQueue);
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -105,8 +99,8 @@ void free(void* ptr, queue& syclQueue);
 						#### Memcpy
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
-event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vector<event> &depEvents);
+						<pre><code class="language-cpp">
+event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vector&lt;event&gt; &amp;depEvents);
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -120,13 +114,13 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 				<!--Slide 7-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Memset & fill
+						#### Memset &amp; fill
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
-event queue::memset(void* ptr, int value, size_t numBytes, const std::vector<event> &depEvents);
+						<pre><code class="language-cpp">
+event queue::memset(void* ptr, int value, size_t numBytes, const std::vector&lt;event&gt; &amp;depEvents);
 
-event queue::fill(void* ptr, const T& pattern, size_t count, const std::vector<event> &depEvents);
+event queue::fill(void* ptr, const T&amp; pattern, size_t count, const std::vector&lt;event&gt; &amp;depEvents);
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -142,12 +136,12 @@ event queue::fill(void* ptr, const T& pattern, size_t count, const std::vector<e
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 int square_number(int x){
 	
   auto myQueue = queue{};
 
-  myQueue.submit([&](handler &cgh){
+  myQueue.submit([&amp;](handler &amp;cgh){
     cgh.single_task&lt;square_number&gt;([=](){
       /* square some number */
     });
@@ -167,12 +161,12 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<code class="code-100pc" data-noescape><pre>
+						<pre><code data-noescape class="language-cpp">
 int square_number(int x){
 	
   auto myQueue = queue{<mark>usm_selector{}</mark>};
 
-  myQueue.submit([&](handler &cgh){
+  myQueue.submit([&amp;](handler &amp;cgh){
     cgh.single_task&lt;square_number&gt;([=](){
       /* square some number */
     });
@@ -192,14 +186,14 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<code class="code-100pc" data-noescape><pre>
+						<pre><code data-noescape class="language-cpp">
 int square_number(int x){
 	
   auto myQueue = queue{usm_selector{}};
 
   <mark>auto devicePtr = malloc_device&lt;int&gt;(1, myQueue);</mark>
 
-  myQueue.submit([&](handler &cgh){
+  myQueue.submit([&amp;](handler &amp;cgh){
     cgh.single_task&lt;square_number&gt;([=](){
       /* square some number */
     });
@@ -220,16 +214,16 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<code class="code-100pc" data-noescape><pre>
+						<pre><code data-noescape class="language-cpp">
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
 
   auto devicePtr = malloc_device&lt;int&gt;(1, myQueue);
 
-  <mark>myQueue.memcpy(devicePtr, &x, sizeof(int)).wait();</mark>
+  <mark>myQueue.memcpy(devicePtr, &amp;x, sizeof(int)).wait();</mark>
 
-  myQueue.submit([&](handler &cgh){
+  myQueue.submit([&amp;](handler &amp;cgh){
     cgh.single_task&lt;square&gt;([=](){
       /* square some number */
     });
@@ -250,16 +244,16 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<code class="code-100pc" data-noescape><pre>
+						<pre><code data-noescape class="language-cpp">
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
 
   auto devicePtr = malloc_device&lt;int&gt;(1, myQueue);
 
-  myQueue.memcpy(devicePtr, &x, sizeof(int)).wait();
+  myQueue.memcpy(devicePtr, &amp;x, sizeof(int)).wait();
 
-  myQueue.submit([&](handler &cgh){
+  myQueue.submit([&amp;](handler &amp;cgh){
     cgh.single_task&lt;square&gt;([=](){
       <mark>*devicePtr = (*devicePtr) * (*devicePtr);</mark>
     });
@@ -279,22 +273,22 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<code class="code-100pc" data-noescape><pre>
+						<pre><code data-noescape class="language-cpp">
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
 
   auto devicePtr = malloc_device&lt;int&gt;(1, myQueue);
 
-  myQueue.memcpy(devicePtr, &x, sizeof(int)).wait();
+  myQueue.memcpy(devicePtr, &amp;x, sizeof(int)).wait();
 
-  myQueue.submit([&](handler &cgh){
+  myQueue.submit([&amp;](handler &amp;cgh){
     cgh.single_task&lt;square&gt;([=](){
       *devicePtr = (*devicePtr) * (*devicePtr);
     });
   }).wait();
 
-  <mark>myQueue.memcpy(&x, devicePtr, sizeof(int)).wait();</mark>
+  <mark>myQueue.memcpy(&amp;x, devicePtr, sizeof(int)).wait();</mark>
 
   return x;
 }
@@ -310,22 +304,22 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<code class="code-100pc" data-noescape><pre>
+						<pre><code data-noescape class="language-cpp">
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
 
   auto devicePtr = malloc_device&lt;int&gt;(1, myQueue);
 
-  myQueue.memcpy(devicePtr, &x, sizeof(int)).wait();
+  myQueue.memcpy(devicePtr, &amp;x, sizeof(int)).wait();
 
-  myQueue.submit([&](handler &cgh){
+  myQueue.submit([&amp;](handler &amp;cgh){
     cgh.single_task&lt;square&gt;([=](){
       *devicePtr = (*devicePtr) * (*devicePtr);
     });
   }).wait();
 
-  myQueue.memcpy(&x, devicePtr, sizeof(int)).wait();
+  myQueue.memcpy(&amp;x, devicePtr, sizeof(int)).wait();
 
   <mark>free(devicePtr, myQueue);</mark>
 
@@ -343,12 +337,12 @@ int square_number(int x){
 						#### Queue shortcuts
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 template &lt;typename KernelName, typename KernelType&gt;
-event queue::single_task(const KernelType &KernelFunc);
+event queue::single_task(const KernelType &amp;KernelFunc);
 
 template &lt;typename KernelName, typename KernelType, int Dims&gt;
-event queue::parallel_for(range<Dims> GlobalRange, const KernelType &KernelFunc);
+event queue::parallel_for(range&lt;Dims&gt; GlobalRange, const KernelType &amp;KernelFunc);
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -362,20 +356,20 @@ event queue::parallel_for(range<Dims> GlobalRange, const KernelType &KernelFunc)
 						#### With the queue shortcut
 					</div>
 					<div class="container">
-						<code class="code-100pc" data-noescape><pre>
+						<pre><code data-noescape class="language-cpp">
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
 
   auto devicePtr = malloc_device&lt;int&gt;(1, myQueue);
 
-  myQueue.memcpy(devicePtr, &x, sizeof(int)).wait();
+  myQueue.memcpy(devicePtr, &amp;x, sizeof(int)).wait();
 
   <mark>myQueue.single_task&lt;square&gt;([=](){</mark>
     <mark>*devicePtr = (*devicePtr) * (*devicePtr);</mark>
   <mark>}).wait();</mark>
 
-  myQueue.memcpy(&x, devicePtr, sizeof(int)).wait();
+  myQueue.memcpy(&amp;x, devicePtr, sizeof(int)).wait();
 
   free(devicePtr, myQueue);
 

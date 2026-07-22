@@ -11,6 +11,7 @@ from enum import IntFlag, auto
 from pathlib import Path
 import argparse
 import sys
+import re
 
 # ------------------------------------------------------------------------------------------
 # Config
@@ -219,10 +220,11 @@ class SYCLAParser(HTMLParser):
         self.output.append(data)
 
     def handle_entityref(self, name):
-
         match name:
             case "lt" | "gt" | "amp":
                 raw_entity = f"&{name};"
+            case str() if m := re.search(r"lt(.+)", name):
+                raw_entity = f"&lt;{m.group(1)};"
             case _:
                 self.state |= State.ERROR
                 self._warn(

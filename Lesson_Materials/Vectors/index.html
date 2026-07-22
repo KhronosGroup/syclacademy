@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -112,7 +106,7 @@
 						#### Vec class
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 template &lt;typename dataT, int numElements&gt;
 class vec;
 						</code></pre>
@@ -129,7 +123,7 @@ class vec;
 						#### Aliases
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 using float4 = vec&lt;float, 4&gt;;
 ...
 						</code></pre>
@@ -144,18 +138,18 @@ using float4 = vec&lt;float, 4&gt;;
 						#### Vec constructors
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto f4 = sycl::float4{1.0f, 2.0f, 3.0f, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
 						</code></pre>
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto f2 = sycl::float4{2.0f, 3.0f}; // {2.0f, 3.0f}
 auto f4 = sycl::float4{1.0f, f2, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
 						</code></pre>
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto f4 = sycl::float4{0.0f};  // {0.0f, 0.0f, 0.0f, 0.0f}
 						</code></pre>
 					</div>
@@ -170,7 +164,7 @@ auto f4 = sycl::float4{0.0f};  // {0.0f, 0.0f, 0.0f, 0.0f}
 						#### Vec operators
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto f4a = sycl::float4{1.0f, 2.0f, 3.0f, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
 
 auto f4b = sycl::float4{2.0f}; // {2.0f, 2.0f, 2.0f, 2.0f}
@@ -188,7 +182,7 @@ auto f4r = f4a * f4b; // {2.0f, 4.0f, 6.0f, 8.0f}
 						#### Vec types
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 sycl::int2
 sycl::int3
 sycl::int4
@@ -209,13 +203,13 @@ sycl::int16</code></pre>
 						#### Swizzles
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto f4 = sycl::float4{1.0f, 2.0f, 3.0f, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
 auto f2 = f4.swizzle&lt;0, 3&gt;(); // {1.0f, 4.0f}
 						</code></pre>
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto f4 = sycl::float4{1.0f, 2.0f, 3.0f, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
 f4.swizzle&lt;1, 2&gt;() = sycl::float2{9.0f, 9.0f}; // f4 becomes {1.0f, 9.0f, 9.0f, 4.0f}
 						</code></pre>
@@ -230,13 +224,13 @@ f4.swizzle&lt;1, 2&gt;() = sycl::float2{9.0f, 9.0f}; // f4 becomes {1.0f, 9.0f, 
 						#### Simple swizzles
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto f4 = sycl::float4{1.0f, 2.0f, 3.0f, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
 auto f2 = f4.xw(); // {1.0f, 4.0f}
 						</code></pre>
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto f4 = sycl::float4{1.0f, 2.0f, 3.0f, 4.0f}; // {1.0f, 2.0f, 3.0f, 4.0f}
 f4.yz() = sycl::float2{9.0f, 9.0f}; // f4 becomes {1.0f, 9.0f, 9.0f, 4.0f}
 						</code></pre>
@@ -250,7 +244,7 @@ f4.yz() = sycl::float2{9.0f, 9.0f}; // f4 becomes {1.0f, 9.0f, 9.0f, 4.0f}
 					<div class="hbox" data-markdown>
 						#### Vectorized image convolution performance
 					</div>
-					<div class="container"data-markdown>
+					<div class="container" data-markdown>
 						![SYCL](../../Static/images/image_convolution_performance_vectorized.png "SYCL")
 					</div>
 				</section>

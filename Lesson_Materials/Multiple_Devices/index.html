@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -102,7 +96,7 @@
 						#### Creating an implicit context
 					</div>
 					<div class="container">
-						<code><pre>
+						<pre><code class="language-cpp">
 auto defaultQueue = queue{};
 						</code></pre>
 					</div>
@@ -118,7 +112,7 @@ auto defaultQueue = queue{};
 						#### Creating a context from devices
 					</div>
 					<div class="container">
-						<code><pre>
+						<pre><code class="language-cpp">
 auto sharedContext = context{{cpuDevice, gpuDevice}};
 						</code></pre>
 					</div>
@@ -133,7 +127,7 @@ auto sharedContext = context{{cpuDevice, gpuDevice}};
 						#### Creating a context from a platform
 					</div>
 					<div class="container">
-						<code><pre>
+						<pre><code class="language-cpp">
 auto sharedContext = context{intelPlatform};
 						</code></pre>
 					</div>

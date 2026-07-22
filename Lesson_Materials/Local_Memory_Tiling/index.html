@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -103,7 +97,7 @@
 						#### Local accessors
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl::range{workGroupSize}, cgh);
 						</code></pre>
 					</div>
@@ -244,7 +238,7 @@ auto scratchpad = sycl::accessor&lt;int, 1, sycl::access::target::local&gt;(sycl
 						#### Group_barrier
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp">
 sycl::group_barrier(item.get_group());
 						</code></pre>
 					</div>
@@ -259,7 +253,7 @@ sycl::group_barrier(item.get_group());
 					<div class="hbox" data-markdown>
 						#### Local memory image convolution performance
 					</div>
-					<div class="container"data-markdown>
+					<div class="container" data-markdown>
 						![SYCL](../../Static/images/image_convolution_performance_local_mem.png "SYCL")
 					</div>
 				</section>

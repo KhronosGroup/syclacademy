@@ -164,6 +164,17 @@ test_cases = [
         "expected_return": True,
         "expected_output": '<pre><code class="language-cpp"></code></pre>',
     },
+    {
+        "name": "fix_partial_escape_sequences",
+        "body": '<div>&amp</div>',
+        "extract": False,
+        "verify": False,
+        "fix": True,
+        "silent": False,
+        "expected_return": True,
+        "expected_output": '<div>&amp;</div>',
+    },
+
 ]
 
 

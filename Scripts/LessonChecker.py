@@ -190,6 +190,7 @@ class SYCLAParser(HTMLParser):
             case _:
                 # Any other unescaped
                 if State.CODE in self.state:
+                    print(tag)
                     self.state |= State.ERROR
                     self._warn(
                         f"<mark> annotations are the only tags allowed in <code> blocks! Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag}"
@@ -210,12 +211,13 @@ class SYCLAParser(HTMLParser):
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + data)
 
-        if data == "&":
+        if any((viol_char := char) in {"&", "<", ">"} for char in data):
             self.state |= State.ERROR
             self._warn(
-                f"Unescaped &! Violation in lesson {self.lesson_name} line num: {self.getpos()}"
+                f"Unescaped character {viol_char} in lesson {self.lesson_name} line num: {self.getpos()[0]}"
             )
-            data = "&amp;"
+
+        data = data.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
         self.output.append(data)
 
@@ -225,6 +227,11 @@ class SYCLAParser(HTMLParser):
                 raw_entity = f"&{name};"
             case str() if m := re.search(r"lt(.+)", name):
                 raw_entity = f"&lt;{m.group(1)};"
+
+                self.state |= State.ERROR
+                self._warn(
+                    f"Partial escape sequence found in lesson {self.lesson_name} line num: {self.getpos()[0]}"
+                )
             case _:
                 self.state |= State.ERROR
                 self._warn(
@@ -251,8 +258,6 @@ class SYCLAParser(HTMLParser):
             )
             return
 
-        # if tag == "code":
-
         match tag:
             case "code":
                 self.state &= ~State.CODE
@@ -268,7 +273,7 @@ class SYCLAParser(HTMLParser):
         self.output.append(f"<!{decl}>")
 
 
-# ------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------
 
 
 def verify_html(lesson, file_str, args) -> tuple[str, list, bool]:

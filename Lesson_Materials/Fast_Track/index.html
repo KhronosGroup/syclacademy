@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -31,7 +25,7 @@
 				</section>
 				<!--Slide 2-->
 				<section class="hbox">
-          <div  class="container" data-markdown>
+          <div class="container" data-markdown>
 					## Learning Objectives
           </div>
 					<div class="container" data-markdown>
@@ -158,7 +152,7 @@
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<code><pre>
+							<pre><code class="language-cpp">
 auto gpuDevice = device(gpu_selector_v); 
 							</code></pre>
 						</div>
@@ -167,7 +161,7 @@ auto gpuDevice = device(gpu_selector_v);
 						</div>
 					</div>
 					<div class="container" data-markdown>
-							* A device selector takes a parameter of type `const device &` and gives it a "score".
+							* A device selector takes a parameter of type `const device &amp;` and gives it a "score".
 							* Used to query all devices and return the one with the highest "score".
 							* A device with a negative score will never be chosen.
 					</div>
@@ -228,12 +222,12 @@ auto gpuDevice = device(gpu_selector_v);
 						    * Some computation on the GPU.
 						    * Migration of the result back to the CPU.
 					</div>
-					<img src="../../Static/images/gpu_cpu_memory.png" height="400">
+					<img src="../../Static/images/gpu_cpu_memory.png" height="400"/>
 				</section>
         <!--Slide 16-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container" data-markdown>
 						* The buffer/accessor model separates the storage and access of data 
@@ -246,7 +240,7 @@ auto gpuDevice = device(gpu_selector_v);
 				<!--Slide 17-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
@@ -261,7 +255,7 @@ auto gpuDevice = device(gpu_selector_v);
 				<!--Slide 18-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
@@ -280,17 +274,17 @@ auto gpuDevice = device(gpu_selector_v);
 					</div>
 					<div class="container">
 						<div class="col-left-3">
-							<code data-noescape><pre>
-buffer&ltfloat, 1&gt bufA(dA.data(), range&lt1&gt(dA.size())); 
-buffer&ltfloat, 1&gt bufB(dB.data(), range&lt1&gt(dB.size())); 
-buffer&ltfloat, 1&gt bufO(dO.data(), range&lt1&gt(dO.size()));
+							<pre><code data-noescape class="language-cpp">
+buffer&lt;float, 1&gt; bufA(dA.data(), range&lt;1&gt;(dA.size())); 
+buffer&lt;float, 1&gt; bufB(dB.data(), range&lt;1&gt;(dB.size())); 
+buffer&lt;float, 1&gt; bufO(dO.data(), range&lt;1&gt;(dO.size()));
 
-gpuQueue.submit([&](handler &cgh){
+gpuQueue.submit([&amp;](handler &amp;cgh){
   sycl::accessor inA{bufA, cgh, sycl::read_only};
   sycl::accessor inB{bufB, cgh, sycl::read_only};
   sycl::accessor out{bufO, cgh, sycl::write_only};
-  cgh.parallel_for&ltadd&gt(range&lt1&gt(dA.size()), 
-    [=](id&lt1&gt i){ 
+  cgh.parallel_for&lt;add&gt;(range&lt;1&gt;(dA.size()), 
+    [=](id&lt;1&gt; i){ 
     <mark>out[i] = inA[i] + inB[i];</mark>
   });
 });
@@ -309,11 +303,11 @@ gpuQueue.submit([&](handler &cgh){
 						#### USM: Malloc_device
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
-void* malloc_device(size_t numBytes, const queue& syclQueue, const property_list &propList = {});
+						<pre><code class="language-cpp">
+void* malloc_device(size_t numBytes, const queue&amp; syclQueue, const property_list &amp;propList = {});
 
 template &lt;typename T&gt;
-T* malloc_device(size_t count, const queue& syclQueue, const property_list &propList = {});
+T* malloc_device(size_t count, const queue&amp; syclQueue, const property_list &amp;propList = {});
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -330,8 +324,8 @@ T* malloc_device(size_t count, const queue& syclQueue, const property_list &prop
 						#### USM: Free
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
-void free(void* ptr, queue& syclQueue);
+						<pre><code class="language-cpp">
+void free(void* ptr, queue&amp; syclQueue);
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -347,8 +341,8 @@ void free(void* ptr, queue& syclQueue);
 						#### USM: Memcpy
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
-event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vector<event> &depEvents);
+						<pre><code class="language-cpp">
+event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vector&lt;event&gt; &amp;depEvents);
 						</code></pre>
 					</div>
 					<div class="container" data-markdown>
@@ -434,24 +428,24 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 					</div>
 					<div class="container">
 						<div class="col">
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 							
-cgh.parallel_for&ltkernel&gt(<mark>range&lt1&gt(1024)</mark>, 
-  [=](<mark>id&lt1&gt idx</mark>){
+cgh.parallel_for&lt;kernel&gt;(<mark>range&lt;1&gt;(1024)</mark>, 
+  [=](<mark>id&lt;1&gt; idx</mark>){
     /* kernel function code */
 });
 							</code></pre>
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 							
-cgh.parallel_for&ltkernel&gt(<mark>range&lt1&gt(1024)</mark>, 
-  [=](<mark>item&lt1&gt item</mark>){
+cgh.parallel_for&lt;kernel&gt;(<mark>range&lt;1&gt;(1024)</mark>, 
+  [=](<mark>item&lt;1&gt; item</mark>){
     /* kernel function code */
 });
 							</code></pre>
-							<code data-noescape><pre>
+							<pre><code data-noescape class="language-cpp">
 							
-cgh.parallel_for&ltkernel&gt(nd_range&lt1&gt(<mark>range&lt1&gt(1024), 
-  range&lt1&gt(32))</mark>,[=](<mark>nd_item&lt1&gt ndItem</mark>){
+cgh.parallel_for&lt;kernel&gt;(nd_range&lt;1&gt;(<mark>range&lt;1&gt;(1024), 
+  range&lt;1&gt;(32))</mark>,[=](<mark>nd_item&lt;1&gt; ndItem</mark>){
     /* kernel function code */
 });
 							</code></pre>
@@ -495,11 +489,11 @@ class MyKernel {
   sycl::accessor<float> input_;
   float* output_;
 
-  MyKernel(sycl::buffer<float> buf, float* output, sycl::handler& h)
+  MyKernel(sycl::buffer<float> buf, float* output, sycl::handler&amp; h)
     : input{buf.get_access(h)}, output_{output} {}
 
   // const is required
-  void operator()(sycl::item<1> i) const {
+  void operator()(sycl::item&lt;1&gt; i) const {
     ; // computation here
   }
 };
@@ -523,7 +517,7 @@ float * output = sycl::malloc_device(/* params */);
 ... queue submit as normal ...
 
 auto acc = buf.get_access(h);
-auto func = [=](sycl::item<1> i) {
+auto func = [=](sycl::item&lt;1&gt; i) {
   acc[i] = someVal;
   output[i.get_global_linear_id()] = someOtherVal;
 });

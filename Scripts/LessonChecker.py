@@ -152,6 +152,11 @@ class SYCLAParser(HTMLParser):
                     )
                     attrs.remove(("class", "code-100pc"))
 
+                if not any(attr[0] == "data-line-numbers" for attr in attrs):
+                    self.state |= State.ERROR 
+                    self._warn(f"data-line-numbers missing in lesson {self.lesson_name} line num: {self.getpos()[0]}")
+                    attrs.append(("data-line-numbers", None))
+
                 self.code_blocks.append((self.getpos()[0], ""))
 
             case "mark":

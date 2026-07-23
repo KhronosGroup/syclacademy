@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -152,7 +146,7 @@
 						#### Input/output image locations
 					</div>
 					<div class="container">
-						<code>
+						<code class="language-cpp" data-line-numbers>
 							<pre>
 auto inputImageFile = "../Code_Exercises/Images/dogs.png";
 auto outputImageFile = ../Code_Exercises/Images/blurred_dogs.png";
@@ -172,7 +166,7 @@ auto outputImageFile = ../Code_Exercises/Images/blurred_dogs.png";
 						#### Convolution filters
 					</div>
 					<div class="container">
-						<code>
+						<code class="language-cpp" data-line-numbers>
 							<pre>
 auto filter = util::generate_filter(util::filter_type filterType, int width);
 						</code></pre>

@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -60,7 +54,7 @@
 						    * Some computation on the GPU.
 						    * Migration of the result back to the CPU.
 					</div>
-					<img src="../../Static/images/gpu_cpu_memory.png" height="400">
+					<img src="../../Static/images/gpu_cpu_memory.png" height="400"/>
 				</section>
 				<!--Slide 3A-->
 				<section>
@@ -71,7 +65,7 @@
 						* Memory transfers between CPU and GPU are a bottleneck.
 						* We want to minimize these transfers, when possible.
 					</div>
-					<img src="../../Static/images/gpu_cpu_memory.png" height="400">
+					<img src="../../Static/images/gpu_cpu_memory.png" height="400"/>
 				</section>
 				<!--Slide 3B-->
 				<section>
@@ -95,7 +89,7 @@
 						#### Using USM - Malloc Device
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 // Allocate memory on device
 T *device_ptr = sycl::malloc_device&lt;T&gt;(n, myQueue);
 
@@ -123,7 +117,7 @@ sycl::free(device_ptr, myQueue);
 						#### Using USM - Malloc Shared
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 // Allocate shared memory 
 T *shared_ptr = sycl::malloc_shared&lt;T&gt;(n, myQueue);
 
@@ -146,7 +140,7 @@ sycl::free(shared_ptr, myQueue);
 				</section>
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container" data-markdown>
 						* SYCL provides an API which takes care of allocations and `memcpy`s, as well as some other things.
@@ -154,7 +148,7 @@ sycl::free(shared_ptr, myQueue);
 				</section>
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container" data-markdown>
 						* The buffer/accessor model separates the storage and access of data 
@@ -167,7 +161,7 @@ sycl::free(shared_ptr, myQueue);
 				<!--Slide 4-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
@@ -184,7 +178,7 @@ sycl::free(shared_ptr, myQueue);
 				<!--Slide 5-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
@@ -199,7 +193,7 @@ sycl::free(shared_ptr, myQueue);
 				<!--Slide 6-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
@@ -214,7 +208,7 @@ sycl::free(shared_ptr, myQueue);
 				<!--Slide 7-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
@@ -230,7 +224,7 @@ sycl::free(shared_ptr, myQueue);
 				<!--Slide 8-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container">
 						<div class="col" data-markdown>
@@ -245,15 +239,15 @@ sycl::free(shared_ptr, myQueue);
 				<!--Slide 9-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### SYCL Buffers & Accessors
+						#### SYCL Buffers &amp; Accessors
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 T var = 42;
 
 {
   // Create buffer pointing to var.
-  auto buf = sycl::buffer{&var, sycl::range&lt;1&gt;{1}};
+  auto buf = sycl::buffer{&amp;var, sycl::range&lt;1&gt;{1}};
 
   // ...
   // Do some computation on device. Use accessors to access buffer
@@ -295,7 +289,7 @@ assert(var != 42);
 						#### Constructing an accessor
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 auto acc = sycl::accessor{bufA, cgh};
 						</code></pre>
 					</div>
@@ -320,7 +314,7 @@ auto acc = sycl::accessor{bufA, cgh};
 						#### Specifying the access mode
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 auto readAcc = sycl::accessor{bufA, cgh, sycl::read_only};
 auto writeAcc = sycl::accessor{bufB, cgh, sycl::write_only};
 						</code></pre>
@@ -339,7 +333,7 @@ auto writeAcc = sycl::accessor{bufB, cgh, sycl::write_only};
 						#### Specifying no initialization
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 auto acc = sycl::accessor{buf, cgh, sycl::no_init};
 						</code></pre>
 					</div>
@@ -355,15 +349,15 @@ auto acc = sycl::accessor{buf, cgh, sycl::no_init};
 						#### Using Accessors
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 T var = 42;
 
 {
   // Create buffer pointing to var.
-  auto bufA = sycl::buffer{&var, sycl::range&lt;1&gt;{1}};
-  auto bufB = sycl::buffer{&var, sycl::range&lt;1&gt;{1}};
+  auto bufA = sycl::buffer{&amp;var, sycl::range&lt;1&gt;{1}};
+  auto bufB = sycl::buffer{&amp;var, sycl::range&lt;1&gt;{1}};
 
-  q.submit([&](sycl::handler &cgh) {
+  q.submit([&amp;](sycl::handler &amp;cgh) {
 	auto accA = sycl::accessor{bufA, cgh, sycl::read_only};
 	auto accB = sycl::accessor{bufA, cgh, sycl::no_init};
 
@@ -387,8 +381,8 @@ assert(var != 42);
 						#### operator[]
 					</div>
 					<div class="container">
-						<code class="code-100pc" data-noescape><pre>
-gpuQueue.submit([&](handler &cgh){
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
+gpuQueue.submit([&amp;](handler &amp;cgh){
   auto inA = sycl::accessor{bufA, cgh, sycl::read_only};
   auto inB = sycl::accessor{bufB, cgh, sycl::read_only};
   auto out = sycl::accessor{bufO, cgh, sycl::write_only};

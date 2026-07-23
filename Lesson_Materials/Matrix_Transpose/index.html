@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -183,7 +177,7 @@
 						#### Local accessors
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 auto scratchpad = sycl::local_accessor&lt;int, dims&gt;(sycl::range{workGroupSize}, cgh);
 						</code></pre>
 					</div>
@@ -324,7 +318,7 @@ auto scratchpad = sycl::local_accessor&lt;int, dims&gt;(sycl::range{workGroupSiz
 						#### Group_barrier
 					</div>
 					<div class="container">
-						<code class="code-100pc"><pre>
+						<pre><code class="language-cpp" data-line-numbers>
 sycl::group_barrier(item.get_group());
 						</code></pre>
 					</div>

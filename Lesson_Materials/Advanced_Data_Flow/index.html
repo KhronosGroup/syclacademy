@@ -2,17 +2,11 @@
 
 <html>
   <head>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../Static/css/reveal.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/theme/white.css"
-    />
-    <link rel="stylesheet" href="../../Static/css/custom.css" />
-    <link
-      rel="stylesheet"
-      href="../../Static/css/atom-one-light.css"
-    />
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
     <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
     <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
@@ -61,7 +55,7 @@
             #### Initial data (USM)
           </div>
           <div class="container">
-            <pre><code class="language-cpp">
+            <pre><code class="language-cpp" data-line-numbers>
 auto devicePtr = sycl::malloc_device(sizeInBytes, gpuQueue);
 
 gpuQueue.memcpy(devicePtr, initialData, sizeInBytes).wait();
@@ -80,7 +74,7 @@ gpuQueue.memcpy(devicePtr, initialData, sizeInBytes).wait();
             #### Initial data (USM)
           </div>
           <div class="container">
-            <pre><code class="language-cpp">
+            <pre><code class="language-cpp" data-line-numbers>
 auto sharedData = sycl::malloc_shared(sizeInBytes, gpuQueue);
 						</code></pre>
           </div>
@@ -96,7 +90,7 @@ auto sharedData = sycl::malloc_shared(sizeInBytes, gpuQueue);
             #### Initial data (buffer/accessor)
           </div>
           <div class="container">
-            <pre><code class="language-cpp">
+            <pre><code class="language-cpp" data-line-numbers>
 auto buf = sycl::buffer{initialData, sycl::range{size}};
 						</code></pre>
           </div>
@@ -115,7 +109,7 @@ auto buf = sycl::buffer{initialData, sycl::range{size}};
             #### Use_host_pointer property
           </div>
           <div class="container">
-            <pre><code class="language-cpp">
+            <pre><code class="language-cpp" data-line-numbers>
 auto buf = sycl::buffer{initialData, sycl::range{size},
   {sycl::property::buffer::use_host_ptr{}}};
 						</code></pre>
@@ -146,7 +140,7 @@ auto buf = sycl::buffer{initialData, sycl::range{size},
             #### Set_final_data
           </div>
           <div class="container">
-            <pre><code class="language-cpp">
+            <pre><code class="language-cpp" data-line-numbers>
 auto buf = sycl::buffer{initialData, sycl::range{size}};
 
 buf.set_final_data(finalData);
@@ -165,7 +159,7 @@ buf.set_final_data(finalData);
             #### Set_final_data
           </div>
           <div class="container">
-            <pre><code class="language-cpp">
+            <pre><code class="language-cpp" data-line-numbers>
 auto buf = sycl::buffer{initialData, sycl::range{size}};
 
 buf.set_final_data(nullptr);
@@ -186,7 +180,7 @@ buf.set_final_data(nullptr);
             #### Uninitialized buffers (buffer/accessor)
           </div>
           <div class="container">
-            <pre><code class="language-cpp">
+            <pre><code class="language-cpp" data-line-numbers>
 auto buf = sycl::buffer&lt;T&gt;{sycl::range{size}};
 						</code></pre>
           </div>

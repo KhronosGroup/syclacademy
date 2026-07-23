@@ -85,6 +85,15 @@ test_cases = [
         "expected_return": False,
     },
     {
+        "name": "validate_charref",
+        "body": "<div>&#x1F4A9;</div>",
+        "extract": False,
+        "verify": True,
+        "fix": False,
+        "silent": True,
+        "expected_return": False,
+    },
+    {
         "name": "extract_code_block",
         "body": '<pre><code class="language-cpp" data-line-numbers>int main() { return 0; }</code></pre>',
         "extract": True,

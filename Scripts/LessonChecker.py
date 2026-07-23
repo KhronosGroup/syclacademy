@@ -258,6 +258,9 @@ class SYCLAParser(HTMLParser):
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + converted_char)
 
+    def handle_charref(self, name):
+        self.output.append(f"&#{name};")
+
     def handle_startendtag(self, tag, attrs):
         self.output.append(self._encode_attrs(tag, attrs))
 

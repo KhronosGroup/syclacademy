@@ -221,7 +221,6 @@ class SYCLAParser(HTMLParser):
         self.output.append(data)
 
     def handle_entityref(self, name):
-        print(name)
         match name:
             case "lt" | "gt" | "amp":
                 raw_entity = f"&{name};"

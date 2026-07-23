@@ -110,7 +110,7 @@ test_cases = [
         "extract": True,
         "verify": False,
         "fix": False,
-        "silent": True,
+        "silent": False,
         "expected_return": False,
         "expected_code": "#include<sycl/sycl.hpp>",
     },
@@ -166,15 +166,14 @@ test_cases = [
     },
     {
         "name": "fix_partial_escape_sequences",
-        "body": '<div>&amp</div>',
+        "body": "<div>&lt1</div>",
         "extract": False,
         "verify": False,
         "fix": True,
         "silent": False,
         "expected_return": True,
-        "expected_output": '<div>&amp;</div>',
+        "expected_output": "<div>&lt;1</div>",
     },
-
 ]
 
 

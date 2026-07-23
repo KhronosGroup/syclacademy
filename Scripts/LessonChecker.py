@@ -190,7 +190,6 @@ class SYCLAParser(HTMLParser):
             case _:
                 # Any other unescaped
                 if State.CODE in self.state:
-                    print(tag)
                     self.state |= State.ERROR
                     self._warn(
                         f"<mark> annotations are the only tags allowed in <code> blocks! Violation in lesson {self.lesson_name} line num: {self.getpos()} tag: {tag}"
@@ -222,11 +221,13 @@ class SYCLAParser(HTMLParser):
         self.output.append(data)
 
     def handle_entityref(self, name):
+        print(name)
         match name:
             case "lt" | "gt" | "amp":
                 raw_entity = f"&{name};"
-            case str() if m := re.search(r"lt(.+)", name):
-                raw_entity = f"&lt;{m.group(1)};"
+
+            case str() if m := re.search(r"(lt|gt|amp)(.+)", name):
+                raw_entity = f"&{m.group(1)};{m.group(2)}"
 
                 self.state |= State.ERROR
                 self._warn(

@@ -152,7 +152,7 @@
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 auto gpuDevice = device(gpu_selector_v); 
 							</code></pre>
 						</div>
@@ -274,7 +274,7 @@ auto gpuDevice = device(gpu_selector_v);
 					</div>
 					<div class="container">
 						<div class="col-left-3">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 buffer&lt;float, 1&gt; bufA(dA.data(), range&lt;1&gt;(dA.size())); 
 buffer&lt;float, 1&gt; bufB(dB.data(), range&lt;1&gt;(dB.size())); 
 buffer&lt;float, 1&gt; bufO(dO.data(), range&lt;1&gt;(dO.size()));
@@ -303,7 +303,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 						#### USM: Malloc_device
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 void* malloc_device(size_t numBytes, const queue&amp; syclQueue, const property_list &amp;propList = {});
 
 template &lt;typename T&gt;
@@ -324,7 +324,7 @@ T* malloc_device(size_t count, const queue&amp; syclQueue, const property_list &
 						#### USM: Free
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 void free(void* ptr, queue&amp; syclQueue);
 						</code></pre>
 					</div>
@@ -341,7 +341,7 @@ void free(void* ptr, queue&amp; syclQueue);
 						#### USM: Memcpy
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vector&lt;event&gt; &amp;depEvents);
 						</code></pre>
 					</div>
@@ -428,21 +428,21 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 							
 cgh.parallel_for&lt;kernel&gt;(<mark>range&lt;1&gt;(1024)</mark>, 
   [=](<mark>id&lt;1&gt; idx</mark>){
     /* kernel function code */
 });
 							</code></pre>
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 							
 cgh.parallel_for&lt;kernel&gt;(<mark>range&lt;1&gt;(1024)</mark>, 
   [=](<mark>item&lt;1&gt; item</mark>){
     /* kernel function code */
 });
 							</code></pre>
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 							
 cgh.parallel_for&lt;kernel&gt;(nd_range&lt;1&gt;(<mark>range&lt;1&gt;(1024), 
   range&lt;1&gt;(32))</mark>,[=](<mark>nd_item&lt;1&gt; ndItem</mark>){

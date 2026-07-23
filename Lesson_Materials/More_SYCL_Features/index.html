@@ -221,7 +221,7 @@ q.parallel_for([=](sycl::item&lt;1&gt; it) {
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 q.parallel_for([=](sycl::item&lt;1&gt; it) {
   sycl::atomic_ref&lt;T,
           sycl::memory_order_relaxed,
@@ -282,7 +282,7 @@ q.parallel_for([=](sycl::item&lt;1&gt; it) {
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 q.submit([&amp;](sycl::handler &amp;cgh) {
   // Output of reduction will be in ptr
   auto sumReduction = sycl::reduction(ptr,
@@ -309,7 +309,7 @@ q.submit([&amp;](sycl::handler &amp;cgh) {
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 q.submit([&amp;](sycl::handler &amp;cgh) {
   // Output of reduction will be in ptr
   auto maxReduction = sycl::reduction(ptr,

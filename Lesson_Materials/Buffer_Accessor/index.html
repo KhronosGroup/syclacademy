@@ -18,147 +18,33 @@
 		<div class="reveal">
 			<div class="slides">
 				<!--Slide 1-->
-				<section class="hbox" data-markdown>
-					## Managing Data
-				</section>
-				<!--Slide 2-->
-				<section class="hbox" data-markdown>
-					## Learning Objectives
-					* Learn about the USM and buffer/accessor models for managing data
-					* Learn how to allocate, transfer and free memory using USM.
-					* Learn how a buffer synchronizes data
-					* Learn how to access data in a kernel function
-				</section>
 				<section>
 					<div class="hbox" data-markdown>
-						#### Memory Models
-					</div>
-					<div class="container" data-markdown>
-						* In SYCL there are two models for managing data:
-						  * The buffer/accessor model.
-						  * The USM (unified shared memory) model.
-						* Which model you choose can have an effect on how you enqueue kernel functions.
+						## The Buffer Accessor Model
 					</div>
 				</section>
-				<!--Slide 3-->
-				<!--Slide 3A-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### CPU and GPU Memory
-					</div>
-					<div class="container" data-markdown>
-						* A GPU has its own memory, separate to CPU memory.
-						* In order for the GPU to use memory from the CPU, the following actions must take place (either explicitly or implicitly):
-						    * Memory allocation on the GPU.
-						    * Data migration from the CPU to the allocation on the GPU.
-						    * Some computation on the GPU.
-						    * Migration of the result back to the CPU.
-					</div>
-					<img src="../../Static/images/gpu_cpu_memory.png" height="400"/>
-				</section>
-				<!--Slide 3A-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### CPU and GPU Memory
-					</div>
-					<div class="container" data-markdown>
-						* Memory transfers between CPU and GPU are a bottleneck.
-						* We want to minimize these transfers, when possible.
-					</div>
-					<img src="../../Static/images/gpu_cpu_memory.png" height="400"/>
-				</section>
-				<!--Slide 3B-->
-				<section>
-					<div class="hbox" data-markdown>
-#### USM Allocation Types
-					</div>
-					<div class="container" data-markdown>
-* There are different ways USM memory can be allocated: host, device and shared.
-					</div>
-					<div class="container" data-markdown>
-| Type   | Description                     | Access host    | Access device  | Nominal location     |
-|--------|---------------------------------|----------------|----------------|----------------------|
-| device | device global allocations       | ✗              | ✓              | device               |
-| host   | host allocations                | ✓              | ✓              | host                 |
-| shared | Allocations shared between both | ✓              | ✓              | migrates as required |
-					</div>
-				</section>
-				<!--Slide 3-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Using USM - Malloc Device
-					</div>
-					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-// Allocate memory on device
-T *device_ptr = sycl::malloc_device&lt;T&gt;(n, myQueue);
-
-// Copy data to device
-myQueue.memcpy(device_ptr, cpu_ptr, n * sizeof(T));
-
-// ...
-// Do some computation on device
-// ...
-
-// Copy data back to CPU
-myQueue.memcpy(result_ptr, device_ptr, n * sizeof(T)).wait();
-
-// Free allocated data
-sycl::free(device_ptr, myQueue);
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* It is important to free memory after it has been 
-						used to avoid memory leaks.
-					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### Using USM - Malloc Shared
-					</div>
-					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-// Allocate shared memory 
-T *shared_ptr = sycl::malloc_shared&lt;T&gt;(n, myQueue);
-
-// Shared memory can be accessed on host as well as device
-for (auto i = 0; i &lt; n; ++i)
-  shared_ptr[i] = i;
-
-// ...
-// Do some computation on device
-// ...
-
-// Free allocated data
-sycl::free(shared_ptr, myQueue);
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* Shared memory is accessible on host and device.
-						* Performance of shared memory accesses may be poor depending on platform.
-					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### SYCL Buffers &amp; Accessors
-					</div>
-					<div class="container" data-markdown>
-						* SYCL provides an API which takes care of allocations and `memcpy`s, as well as some other things.
-					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### SYCL Buffers &amp; Accessors
-					</div>
-					<div class="container" data-markdown>
+        <!--Slide 2-->
+        <section>
+          <div class="hbox" data-markdown>
+          ## Learning Objectives
+          * Learn about the buffer/accessor model 
+          * Learn how to manage data with the buffer/accessor model
+          </div>
+        </section>
+        <!--Slide 3-->
+        <section>
+          <div class="hbox" data-markdown>
+            #### SYCL Buffers &amp; Accessors
+          </div>
+          <div class="container" data-markdown>
 						* The buffer/accessor model separates the storage and access of data 
 						  * A SYCL buffer manages data across the host and any number of devices 
 						  * A SYCL accessor requests access to data on the host or on a device for a specific SYCL kernel function
 						* Accessors are also used to access data within a SYCL kernel function
 						  * This means they are declared in the host code but captured by and then accessed within a SYCL kernel function
 					</div>
-				</section>
-				<!--Slide 4-->
+        </section>
+        <!--Slide 4-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### SYCL Buffers &amp; Accessors
@@ -243,6 +129,14 @@ sycl::free(shared_ptr, myQueue);
 					</div>
 					<div class="container">
 						<pre><code class="language-cpp" data-line-numbers>
+#include&lt;sycl/sycl.hpp&gt; 
+
+int main() {
+  int var = 42; 
+
+  auto buf = sycl::buffer{&amp;var, sycl::range&lt;1&gt;{1}};
+
+}
 T var = 42;
 
 {
@@ -403,30 +297,8 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 						  multi-dimensional `sycl::id` or a `size_t`.
 					</div>
 				</section>
-				<!--Slide 20-->
-				<section>
-					<div class="hbox" data-markdown>
-						## Questions
-					</div>
-				</section>
-				<!--Slide 21-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Exercise
-					</div>
-					<div class="container" data-markdown>
-						Code_Exercises/Managing_Data/source
-					</div>
-					<div class="container" data-markdown>
-						Implement a SYCL application that adds two variables
-						and returns the result using:
-					</div>
-					<div class="container" data-markdown>
-							1. The USM memory model
-							2. The buffer/accessor memory model.
-					</div>
-				</section>
 			</div>
 		</div>
   </body>
 </html>
+

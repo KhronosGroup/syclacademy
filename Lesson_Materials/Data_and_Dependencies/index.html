@@ -111,7 +111,7 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 sycl::buffer buf {data, sycl::range{1024}};
 
 gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
@@ -149,7 +149,7 @@ gpuQueue.wait();
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 <mark>sycl::buffer buf {data, sycl::range{1024}};</mark>
 
 gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
@@ -188,7 +188,7 @@ gpuQueue.wait();
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 sycl::buffer buf {data, sycl::range{1024}};
 
 gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
@@ -226,7 +226,7 @@ gpuQueue.wait();
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 buf = sycl::buffer(data, sycl::range{1024});
 
 gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
@@ -263,7 +263,7 @@ gpuQueue.wait();
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 auto devicePtr =
   sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 
@@ -302,7 +302,7 @@ sycl::free(devicePtr, gpuQueue);
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 auto devicePtr =
   sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 
@@ -337,7 +337,7 @@ auto devicePtr =
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 auto devicePtr =
   sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 
@@ -390,7 +390,7 @@ sycl::free(devicePtr, gpuQueue);
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 sycl::buffer bufA {dataA, sycl::range{1024}};
 sycl::buffer bufB {dataB, sycl::range{1024}};
 
@@ -429,7 +429,7 @@ gpuQueue.wait();
 						#### Concurrent data flow with USM
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 auto devicePtrA = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 auto devicePtrB = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 
@@ -463,7 +463,7 @@ sycl::free(devicePtrB, gpuQueue);
 						#### Concurrent data flow with USM
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 auto devicePtrA = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 auto devicePtrB = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
 

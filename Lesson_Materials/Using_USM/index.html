@@ -61,7 +61,7 @@
 						#### Malloc_device
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 void* malloc_device(size_t numBytes, const queue&amp; syclQueue, const property_list &amp;propList = {});
 
 template &lt;typename T&gt;
@@ -82,7 +82,7 @@ T* malloc_device(size_t count, const queue&amp; syclQueue, const property_list &
 						#### Free
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 void free(void* ptr, queue&amp; syclQueue);
 						</code></pre>
 					</div>
@@ -99,7 +99,7 @@ void free(void* ptr, queue&amp; syclQueue);
 						#### Memcpy
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vector&lt;event&gt; &amp;depEvents);
 						</code></pre>
 					</div>
@@ -117,7 +117,7 @@ event queue::memcpy(void* dest, const void* src, size_t numBytes, const std::vec
 						#### Memset &amp; fill
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 event queue::memset(void* ptr, int value, size_t numBytes, const std::vector&lt;event&gt; &amp;depEvents);
 
 event queue::fill(void* ptr, const T&amp; pattern, size_t count, const std::vector&lt;event&gt; &amp;depEvents);
@@ -136,7 +136,7 @@ event queue::fill(void* ptr, const T&amp; pattern, size_t count, const std::vect
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 int square_number(int x){
 	
   auto myQueue = queue{};
@@ -161,7 +161,7 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int square_number(int x){
 	
   auto myQueue = queue{<mark>usm_selector{}</mark>};
@@ -186,7 +186,7 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int square_number(int x){
 	
   auto myQueue = queue{usm_selector{}};
@@ -214,7 +214,7 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
@@ -244,7 +244,7 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
@@ -273,7 +273,7 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
@@ -304,7 +304,7 @@ int square_number(int x){
 						#### Putting it all together
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};
@@ -337,7 +337,7 @@ int square_number(int x){
 						#### Queue shortcuts
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 template &lt;typename KernelName, typename KernelType&gt;
 event queue::single_task(const KernelType &amp;KernelFunc);
 
@@ -356,7 +356,7 @@ event queue::parallel_for(range&lt;Dims&gt; GlobalRange, const KernelType &amp;K
 						#### With the queue shortcut
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int square_number(int x){
 
   auto myQueue = queue{usm_selector{}};

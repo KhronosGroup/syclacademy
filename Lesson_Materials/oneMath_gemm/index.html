@@ -92,7 +92,7 @@
 			      #### Run-time dispatching
 			    </div>
 			    <div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 #include &lt;oneapi/math.hpp&gt;
 
 sycl::queue q{myDeviceSelector};
@@ -119,7 +119,7 @@ oneapi::math::blas::column_major::gemm(q, ..., m, n, k, ..., a, ..., b, ..., c, 
 			      #### Compile-time dispatching
 			    </div>
 			    <div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 #include &lt;oneapi;/math.hpp&gt;
 
 sycl::queue cpu_queue{sycl::cpu_selector_v};

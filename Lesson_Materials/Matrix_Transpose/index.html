@@ -177,7 +177,7 @@
 						#### Local accessors
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 auto scratchpad = sycl::local_accessor&lt;int, dims&gt;(sycl::range{workGroupSize}, cgh);
 						</code></pre>
 					</div>
@@ -318,7 +318,7 @@ auto scratchpad = sycl::local_accessor&lt;int, dims&gt;(sycl::range{workGroupSiz
 						#### Group_barrier
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 sycl::group_barrier(item.get_group());
 						</code></pre>
 					</div>

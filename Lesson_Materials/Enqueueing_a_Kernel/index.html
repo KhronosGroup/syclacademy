@@ -103,7 +103,7 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 <mark>gpuQueue.submit([&amp;](handler &amp;cgh){</mark>
   
   /* Command group function */
@@ -125,7 +125,7 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 <mark>gpuQueue.submit([&amp;](handler &amp;cgh){</mark>
   
   /* Command group function */
@@ -147,7 +147,7 @@
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 gpuQueue.submit([&amp;](handler &amp;cgh){
 
   /* Command group function */
@@ -199,7 +199,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 class my_kernel;
 
 gpuQueue.submit([&amp;](handler &amp;cgh){
@@ -222,7 +222,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 class my_kernel;
 
 gpuQueue.submit([&amp;](handler &amp;cgh){
@@ -244,7 +244,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 class my_kernel;
 
 gpuQueue.submit([&amp;](handler &amp;cgh){
@@ -266,7 +266,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 				<section>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 <mark>class my_kernel;</mark>
 
 gpuQueue.submit([&amp;](handler &amp;cgh){
@@ -315,7 +315,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 class my_kernel;
 
 queue gpuQueue;
@@ -339,7 +339,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 struct my_kernel { 
   void operator()() const {
     /* kernel function */
@@ -361,14 +361,14 @@ struct my_kernel {
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 struct my_kernel { 
   void operator()() const {
     /* kernel function */
   }
 };
 							</code></pre>
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 queue gpuQueue;
 gpuQueue.submit([&amp;](handler &amp;cgh){
 								
@@ -399,7 +399,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 						#### Streams
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp">
+						<pre><code class="language-cpp" data-line-numbers>
 sycl::stream(size_t bufferSize, size_t workItemBufferSize, handler &amp;cgh);
 						</code></pre>
 					</div>
@@ -417,7 +417,7 @@ sycl::stream(size_t bufferSize, size_t workItemBufferSize, handler &amp;cgh);
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 class my_kernel;
 
 queue gpuQueue;
@@ -444,7 +444,7 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code data-noescape class="language-cpp">
+							<pre><code data-noescape class="language-cpp" data-line-numbers>
 class my_kernel;
 
 queue gpuQueue;

@@ -88,7 +88,7 @@
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 auto platforms = platform::get_platforms();
 
 							</code></pre>
@@ -109,7 +109,7 @@ auto platforms = platform::get_platforms();
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 auto intelDevices = intelPlatform.get_devices();
 
 							</code></pre>
@@ -131,7 +131,7 @@ auto intelDevices = intelPlatform.get_devices();
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 auto devices = device::get_devices();
 
 							</code></pre>
@@ -170,7 +170,7 @@ auto devices = device::get_devices();
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 auto gpuDevice = device(gpu_selector_v); 
 							</code></pre>
 						</div>
@@ -191,7 +191,7 @@ auto gpuDevice = device(gpu_selector_v);
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 auto chosenDevice = device();
 auto chosenDevice = device(default_selector_v);
 							</code></pre>
@@ -212,7 +212,7 @@ auto chosenDevice = device(default_selector_v);
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 <mark>int my_gpu_selector(const device&amp; dev) {</mark>
 
 <mark>}</mark>
@@ -229,7 +229,7 @@ auto chosenDevice = device(default_selector_v);
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int my_gpu_selector(const device&amp; dev) {
   <mark>if (dev.is_gpu()){</mark>
     <mark>return 1;</mark>
@@ -251,7 +251,7 @@ int my_gpu_selector(const device&amp; dev) {
 						#### Creating a custom device selector
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp">
+						<pre><code data-noescape class="language-cpp" data-line-numbers>
 int my_gpu_selector(const device&amp; dev) {
   if (dev.is_gpu()){
     return 1;
@@ -278,7 +278,7 @@ int main(int argc, char *argv[]) {
 					</div>
 					<div class="container">
 						<div class="col-left-1">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 auto plt = dev.get_platform();
 auto platformName
   = dev.get_info&lt;info::device::name&gt;();
@@ -301,7 +301,7 @@ auto platformName
 					</div>
 					<div class="container">
 						<div class="col">
-							<pre><code class="language-cpp">
+							<pre><code class="language-cpp" data-line-numbers>
 bool supportsFp16 = dev.has(aspect::fp16);
 							</code></pre>
 						</div>

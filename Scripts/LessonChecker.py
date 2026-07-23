@@ -177,7 +177,7 @@ class SYCLAParser(HTMLParser):
                         f"<mark> in <code> without data-noescape prop in lesson {self.lesson_name} line num: {self.getpos()[0]}"
                     )
 
-                    # Add data-noescape prop to code
+                    # `<code [...]>` -> `<code [...] data-noescape>`
                     code_tag = self.output[last_code_idx]
                     self.output[last_code_idx] = (
                         code_tag[:-1] + " data-noescape" + code_tag[-1]

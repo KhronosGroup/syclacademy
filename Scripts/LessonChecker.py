@@ -108,9 +108,9 @@ class SYCLAParser(HTMLParser):
             return next(
                 (
                     i
-                    for i in range(len(self.output) - 1, -1, -1)
-                    # < is important, because the word "code" can apepar in a comment, just like it does in this one
-                    if "<code" in self.output[i]
+                    for i, line in reversed(list(enumerate(self.output)))
+                    # < matters: "code" can appear in a comment, like this one
+                    if "<code" in line
                 ),
                 None,
             )
@@ -153,8 +153,10 @@ class SYCLAParser(HTMLParser):
                     attrs.remove(("class", "code-100pc"))
 
                 if not any(attr[0] == "data-line-numbers" for attr in attrs):
-                    self.state |= State.ERROR 
-                    self._warn(f"data-line-numbers missing in lesson {self.lesson_name} line num: {self.getpos()[0]}")
+                    self.state |= State.ERROR
+                    self._warn(
+                        f"data-line-numbers missing in lesson {self.lesson_name} line num: {self.getpos()[0]}"
+                    )
                     attrs.append(("data-line-numbers", None))
 
                 self.code_blocks.append((self.getpos()[0], ""))
@@ -215,10 +217,14 @@ class SYCLAParser(HTMLParser):
             pos, e_data = self.code_blocks[-1]
             self.code_blocks[-1] = (pos, e_data + data)
 
-        if any((viol_char := char) in {"&", "<", ">"} for char in data):
+        viol_chars = [char for char in data if char in {"&", "<", ">"}]
+
+        if viol_chars:
+            unique_viols = ", ".join(sorted(set(viol_chars)))
+
             self.state |= State.ERROR
             self._warn(
-                f"Unescaped character {viol_char} in lesson {self.lesson_name} line num: {self.getpos()[0]}"
+                f"Unescaped character(s) [{unique_viols}] in lesson {self.lesson_name} line num: {self.getpos()[0]}"
             )
 
         data = data.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

@@ -120,7 +120,7 @@ oneapi::math::blas::column_major::gemm(q, ..., m, n, k, ..., a, ..., b, ..., c, 
 			    </div>
 			    <div class="container">
 						<pre><code class="language-cpp" data-line-numbers>
-#include &lt;oneapi;/math.hpp&gt;
+#include &lt;oneapi/math.hpp&gt;
 
 sycl::queue cpu_queue{sycl::cpu_selector_v};
 
@@ -128,7 +128,7 @@ sycl::buffer&lt;T,1&gt; a{a_host, m*k};
 sycl::buffer&lt;T,1&gt; b{b_host, k*n};
 sycl::buffer&lt;T,1&gt; c{c_host, m*n};
 
-oneapi::math::backend_selector&lt;oneapi;::math::backend::mklcpu&gt; cpu_selector(cpu_queue);
+oneapi::math::backend_selector&lt;oneapi::math::backend::mklcpu&gt; cpu_selector(cpu_queue);
 // Select the Intel oneMKL CPU backend specifically ^^^^^^
 
 oneapi::math::blas::column_major::gemm(cpu_selector, ..., m, n, k, ..., a, ..., b, ..., c, ... );

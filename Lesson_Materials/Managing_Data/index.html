@@ -24,23 +24,11 @@
 				<!--Slide 2-->
 				<section class="hbox" data-markdown>
 					## Learning Objectives
-					* Learn about the USM and buffer/accessor models for managing data
+					* Learn about the USM model for managing data
 					* Learn how to allocate, transfer and free memory using USM.
-					* Learn how a buffer synchronizes data
 					* Learn how to access data in a kernel function
 				</section>
 				<section>
-					<div class="hbox" data-markdown>
-						#### Memory Models
-					</div>
-					<div class="container" data-markdown>
-						* In SYCL there are two models for managing data:
-						  * The buffer/accessor model.
-						  * The USM (unified shared memory) model.
-						* Which model you choose can have an effect on how you enqueue kernel functions.
-					</div>
-				</section>
-				<!--Slide 3-->
 				<!--Slide 3A-->
 				<section>
 					<div class="hbox" data-markdown>
@@ -89,7 +77,7 @@
 						#### Using USM - Malloc Device
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
+						<pre><code class="language-cpp" data-trim data-line-numbers>
 // Allocate memory on device
 T *device_ptr = sycl::malloc_device&lt;T&gt;(n, myQueue);
 
@@ -117,7 +105,7 @@ sycl::free(device_ptr, myQueue);
 						#### Using USM - Malloc Shared
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
+						<pre><code class="language-cpp" data-trim data-line-numbers>
 // Allocate shared memory 
 T *shared_ptr = sycl::malloc_shared&lt;T&gt;(n, myQueue);
 
@@ -236,174 +224,6 @@ sycl::free(shared_ptr, myQueue);
 						</div>
 					</div>
 				</section>
-				<!--Slide 9-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### SYCL Buffers &amp; Accessors
-					</div>
-					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-T var = 42;
-
-{
-  // Create buffer pointing to var.
-  auto buf = sycl::buffer{&amp;var, sycl::range&lt;1&gt;{1}};
-
-  // ...
-  // Do some computation on device. Use accessors to access buffer
-  // ...
-  
-} // var updated here
-
-assert(var != 42);
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* A buffer is associated with a type, range and 
-						  dimensionality. Dimensionality must be either 1, 2 or 
-						  3.
-						* Usually type and dimensionality can be inferred using
-						  CTAD.
-						* If a buffer is associated with some allocation in host
-						  memory, the host memory will be updated only once the
-						  buffer goes out of scope.
-					</div>
-				</section>
-				<section>
-					<div class="hbox" data-markdown>
-						#### Accessor class
-					</div>
-					<div class="container" data-markdown>
-						* There are many different ways to use the `accessor`
-						class.
-						  * Accessing data on a device.
-						  * Accessing data immediately in the host application.
-						  * Allocating local memory.
-						* For now we are going to focus on accessing data on a
-						device.
-					</div>
-				</section>
-				<!--Slide 13-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Constructing an accessor
-					</div>
-					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-auto acc = sycl::accessor{bufA, cgh};
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* There are many ways to construct an `accessor`.
-						* Accessors are complicated templates with many template arguments,
-						representing the data type, dimensionality, access mode etc.
-						* The `accessor` class supports CTAD so it's not
-						necessary to specify all of the template arguments.
-						* The most common way to construct an `accessor` is from
-						a `buffer` and a `handler` associated with the command
-						group function you are within.
-						  * The element type and dimensionality are inferred from
-						  the `buffer`.
-						  * The `access_mode` is defaulted to
-						  `access_mode::read_write`.
-					</div>
-				</section>
-				<!--Slide 14-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Specifying the access mode
-					</div>
-					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-auto readAcc = sycl::accessor{bufA, cgh, sycl::read_only};
-auto writeAcc = sycl::accessor{bufB, cgh, sycl::write_only};
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* When constructing an `accessor` you will likely also
-						want to specify the `access_mode`
-						* You can do this by passing one of the CTAD tags:
-						  * `read_only` will result in `access_mode::read`.
-						  * `write_only` will result in `access_mode::write`.
-					</div>
-				</section>
-				<!--Slide 15-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Specifying no initialization
-					</div>
-					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-auto acc = sycl::accessor{buf, cgh, sycl::no_init};
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* When constructing an `accessor` you may also want to
-						discard the original data of a `buffer`.
-						* You can do this by passing the `no_init` property.
-					</div>
-				</section>
-				<!--Slide 16-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Using Accessors
-					</div>
-					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-T var = 42;
-
-{
-  // Create buffer pointing to var.
-  auto bufA = sycl::buffer{&amp;var, sycl::range&lt;1&gt;{1}};
-  auto bufB = sycl::buffer{&amp;var, sycl::range&lt;1&gt;{1}};
-
-  q.submit([&amp;](sycl::handler &amp;cgh) {
-	auto accA = sycl::accessor{bufA, cgh, sycl::read_only};
-	auto accB = sycl::accessor{bufA, cgh, sycl::no_init};
-
-  cgh.single_task&lt;mykernel&gt;(...); // Do some work
-  });
-  
-} // var updated here
-
-assert(var != 42);
-						</code></pre>
-					</div>
-						<div class="col-right-2" data-markdown>
-							* Buffers and accessors take care of memory 
-							migration, as well as dependency analysis.
-							  * More to come later on dependencies.
-						</div>
-				</section>
-				<!--Slide 19-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### operator[]
-					</div>
-					<div class="container">
-						<pre><code data-noescape class="language-cpp" data-line-numbers>
-gpuQueue.submit([&amp;](handler &amp;cgh){
-  auto inA = sycl::accessor{bufA, cgh, sycl::read_only};
-  auto inB = sycl::accessor{bufB, cgh, sycl::read_only};
-  auto out = sycl::accessor{bufO, cgh, sycl::write_only};
-  cgh.single_task&lt;mykernel&gt;([=]{
-    <mark>out[0] = inA[0] + inB[0];</mark>
-  }); 
-});
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* As well as specifying data dependencies an `accessor`
-						can also be used to access the data from within a kernel
-						function.
-						* You can do this by calling `operator[]` on the
-						`accessor`.
-						  * `operator[]` for USM pointers must take a `size_t`, 
-						  whereas `operator[]` for accessors can take a 
-						  multi-dimensional `sycl::id` or a `size_t`.
-					</div>
-				</section>
-				<!--Slide 20-->
 				<section>
 					<div class="hbox" data-markdown>
 						## Questions

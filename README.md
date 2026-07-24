@@ -99,7 +99,7 @@ may not match completely.
 | 19 | Matrix Transpose | [slides][lesson-19-slides] | [exercise][lesson-19-exercise] | [source][lesson-19-source] | [solution][lesson-19-solution] |
 | 20 | More SYCL Features | [slides][lesson-20-slides] | [exercise][lesson-20-exercise] | [source][lesson-20-source] | [solution][lesson-20-solution] |
 | 21 | Functors | [slides][lesson-21-slides] | [exercise][lesson-21-exercise] | [source][lesson-21-source] | [solution][lesson-21-solution] |
-| 22 | Buffer/Accessor Model | [slides][leson-22-slides] 
+| 22 | Buffer/Accessor Model | [slides][lesson-22-slides] 
 
 ### oneMath
 

@@ -143,7 +143,7 @@
 				</div>
 				<div class="container">
 					<div class="col-left-3">
-						<pre><code class="language-cpp" data-line-numbers="|6,11|15|15|11,14,15|15|15|18" data-fragment-index="0" data-noescape data-trim>
+						<pre><code class="language-cpp" data-line-numbers="|6,12|15|15|11,14,15|15|15|18" data-fragment-index="0" data-noescape data-trim>
 #include&lt;sycl/sycl.hpp&gt;
 #include&lt;vector&gt;
 
@@ -151,11 +151,11 @@ int main() {
   int N = 5;
   <mark class="fragment" data-fragment-index="0">std::vector&lt;int&gt; ints(N);</mark>
   std::vector&lt;int&gt; checkVec{0, 1, 2, 3, 4};
-  { // create a code block so buffer goes out of scope
+  sycl::queue q;
+  { // create a code block so the buffer goes out of scope
     // and the destructor is called automatically
     // Create buffer pointing to ints.
     sycl::buffer&lt;int, 1&gt; buf{<mark class="fragment" data-fragment-index="0">ints.data()</mark>, sycl::range&lt;1&gt;{ints.size()}};
-    sycl::queue q;
     // Do some computation on device. Use accessors to access buffer
     q.submit([&amp;](sycl::handler&amp; cgh) {
       sycl::accessor wAcc{<mark class="fragment" data-fragment-index="3">buf, cgh</mark>, <mark class="fragment" data-fragment-index="4">sycl::write_only</mark>, <mark class="fragment" data-fragment-index="5">sycl::no_init</mark>};
@@ -167,72 +167,287 @@ int main() {
   } // ints updated here
   assert(ints == checkVec);
 }
-            </code></pre>
+						</code></pre>
 					</div>
 					<div class="col-right-2 stack-fragments">
+						<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+							* Constructing a `buffer` and `accessor` involves several template arguments and properties
+							* CTAD can infer many of these from the data and buffer
+							* Each argument controls how data is managed and accessed
+						</div>
 						<div class="fragment current-visible" data-fragment-index="0" data-markdown>
 							* A buffer is associated with a type, range and dimensionality. Dimensionality must be
-							either 1, 2 or 3.
+							either 1, 2 or 3
 							* Usually type and dimensionality can be inferred using CTAD.
 							* If a buffer is associated with some allocation in host memory, the host memory will be
-							updated only once the buffer goes out of scope.
+							updated only once the buffer goes out of scope
 						</div>
 						<div class="fragment current-visible" data-fragment-index="1" data-markdown>
 							* There are many different ways to use the `accessor`
-							class.
-							  * Accessing data on a device.
-							  * Accessing data immediately in the host application.
-							  * Allocating local memory.
-							  * For now we are going to focus on accessing data on a
-							  device.
+							class
+							* Accessing data on a device
+							* Accessing data immediately in the host application
+							* Allocating local memory
+							* For now we are going to focus on accessing data on a
+							device
 						</div>
 						<div class="fragment current-visible" data-fragment-index="2" data-markdown>
-							* There are many ways to construct an `accessor`.
-							  * Accessors are complicated templates with many template arguments,
-							  representing the data type, dimensionality, access mode etc.
-							  * The `accessor` class supports CTAD so it's not
-							  necessary to specify all of the template arguments.
+							* There are many ways to construct an `accessor`
+							* Accessors are complicated templates with many template arguments,
+							representing the data type, dimensionality, access mode etc
+							* The `accessor` class supports CTAD so it's not
+							necessary to specify all of the template arguments
 						</div>
 						<div class="fragment current-visible" data-fragment-index="3" data-markdown>
 							* The most common way to construct an `accessor` is from
 							a `buffer` and a `handler` associated with the command
-							group function you are within.
+							group function you are within
 							* The element type and dimensionality are inferred from
-							the `buffer`.	
+							the `buffer`
 						</div>
 						<div class="fragment current-visible" data-fragment-index="4" data-markdown>
 							* When constructing an `accessor` you will likely also
 							want to specify the `access_mode`
 							* You can do this by passing one of the CTAD tags:
 							* `read_only` will result in `access_mode::read`.
-							* `write_only` will result in `access_mode::write`.
+							* `write_only` will result in `access_mode::write`
 							* The `access_mode` is defaulted to
-							`access_mode::read_write`.
-				    </div>
-				    <div class="fragment current-visible" data-fragment-index="5" data-markdown>
+							`access_mode::read_write`
+						</div>
+						<div class="fragment current-visible" data-fragment-index="5" data-markdown>
 							* When constructing an `accessor` you may also want to
-							discard the original data of a `buffer`.
-							* You can do this by passing the `no_init` property.
-				    </div>
-				    <div class="fragment current-visible" data-fragment-index="6" data-markdown>
+							discard the original data of a `buffer`
+							* You can do this by passing the `no_init` property
+						</div>
+						<div class="fragment current-visible" data-fragment-index="6" data-markdown>
 							* As well as specifying data dependencies an `accessor`
 							can also be used to access the data from within a kernel
-							function.
+							function
 							* You can do this by calling `operator[]` on the
-							`accessor`.
-							* `operator[]` for USM pointers must take a `size_t`,
-							whereas `operator[]` for accessors can take a
-							multi-dimensional `sycl::id` or a `size_t`.
-				</div>
-
+							`accessor`
+							* `operator[]` for accessors can take a
+							multi-dimensional `sycl::id` or a `size_t`
+						</div>
 					</div>
 				</div>
 			</section>
-      <section>
-					<div class="hbox" data-markdown>
-						## Questions
+			<!--Slide 10-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Dependencies with buffers and accessors
+				</div>
+				<div class="container">
+					<div class="col-left-3">
+						<pre><code class="language-cpp" data-trim data-line-numbers="|12,14,19,21|11,12,18,19|" data-noescape data-fragment-index="1">
+#include&lt;sycl/sycl.hpp&gt;
+#include&lt;vector&gt;
+
+int main() {
+  int N = 5;
+  std::vector&lt;int&gt; ints(N);
+  std::vector&lt;int&gt; checkVec{1, 2, 3, 4, 5};
+  sycl::queue q;
+  {
+    sycl::buffer&lt;int, 1&gt; buf{ints.data(), sycl::range&lt;1&gt;{ints.size()}};
+    q.submit([&amp;](<mark class="fragment" data-fragment-index="2">sycl::handler&amp; cgh</mark>) {
+      <mark class="fragment" data-fragment-index="1">sycl::accessor wAcc{buf, <mark class="fragment" data-fragment-index="2">cgh, sycl::write_only</mark>, sycl::no_init}</mark>;
+      cgh.parallel_for(N, [=](sycl::id&lt;1&gt; idx){
+        <mark class="fragment" data-fragment-index="1">wAcc</mark>[idx] = idx;
+      });
+    });
+
+    q.submit([&amp;](<mark class="fragment" data-fragment-index="2">sycl::handler&amp; cgh</mark>){
+      <mark class="fragment" data-fragment-index="1">sycl::accessor rwAcc{buf, <mark class="fragment" data-fragment-index="2">cgh, sycl::read_write</mark>}</mark>;
+      cgh.parallel_for(N, [=](sycl::id&lt;1&gt; idx) {
+        <mark class="fragment" data-fragment-index="1">rwAcc</mark>[idx]++;
+      });
+    });
+  }
+  assert(ints == checkVec);
+}
+						</code></pre>
 					</div>
-				</section>
+					<div class="col-right-2 stack-fragments">
+						<div class="fragment fade-out" data-fragment-index="1" data-markdown>
+							* The buffer/accessor data model is descriptive
+							* Dependencies and data movement is inferred from the access requirements of command groups
+							* The SYCL runtime is responsible for guaranteeing that data dependencies and consistency are
+							maintained
+						</div>
+						<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+							* An `accessor` object is responsible for describing data access requirements
+							* It describes what data a kernel function is accessing and how it is accessing it
+							* The `buffer` object uses this information to infer dependencies and data movement
+						</div>
+						<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+							* Associating the `accessor` object with the `handler` connects the access dependency to the
+							kernel function
+							* It also associates the access requirement with the device being targeted
+						</div>
+						<div class="fragment current-visible" data-fragment-index="3" data-markdown>
+							* The runtime waits for the first kernel to execute before executing the second kernel
+						</div>
+					</div>
+				</div>
+			</section>
+			<!--Slide 11-->
+			<section class="hbox">
+				<div class="hbox" data-markdown>
+					## Advanced data flow
+				</div>
+			</section>
+			<!--Slide 12-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Initial and Final data
+				</div>
+				<div class="container">
+					<pre><code class="language-cpp" data-line-numbers="6,10|6,18" data-trim data-noescape data-fragment-index="1">
+#include&lt;sycl/sycl.hpp&gt;
+#include&lt;vector&gt;
+
+int main() {
+  int N = 5;
+  std::vector&lt;int&gt; <mark class="fragment" data-fragment-index="0">vA{6, 7, 8, 9, 10}</mark>, <mark class="fragment" data-fragment-index="2">vB(N)</mark>, checkVec{7, 8, 9, 10, 11};
+  sycl::queue q;
+  {
+    // data() returns a direct pointer to the vA vector
+    sycl::buffer buf{<mark class="fragment" data-fragment-index="0">vA.data()</mark>, sycl::range&lt;1&gt;{vA.size()}};
+    q.submit([&amp;](sycl::handler&amp; cgh) {
+      sycl::accessor rwAcc{buf, cgh, sycl::read_write};
+      cgh.parallel_for(N, [=](sycl::id&lt;1&gt; idx){
+        rwAcc[idx]++;
+      });
+    });
+
+    buf.set_final_data(<mark class="fragment" data-fragment-index="2">vB.data()</mark>);
+  }
+  assert(vB == checkVec);
+  assert(vA != checkVec);
+}
+					</code></pre>
+				</div>
+				<div class="container">
+					<div class="stack-fragments">
+						<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+							* A `buffer` can start from initial data in host memory and write its
+							contents back to a final destination.
+							* This controls where data is read from when the `buffer` is
+							constructed and where it is written when the `buffer` is destroyed.
+							* Both of these can be adjusted to control how data moves.
+						</div>
+						<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+							* When using the buffer/accessor model a `buffer` can manage already
+							allocated memory or have the SYCL runtime allocate it.
+							* To do this simply provide an initial pointer when constructing a
+							`buffer`.
+							* Note that the SYCL runtime is free to allocate memory and copy
+							this into it, which can introduce an overhead.
+						</div>
+						<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+							* A `buffer` will synchronize the latest modified copy of the data
+							it manages back to the initial pointer on destruction.
+						</div>
+						<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+							* To change the destination that a `buffer` will synchronize to on
+							destruction you can call `set_final_data` with another.
+							* The address provided must be capable of holding the size of the data the `buffer` manages.
+						</div>
+						<div class="fragment current-visible" data-fragment-index="3" data-markdown>
+							* Alternatively to prevent the `buffer` from synchronizing back to
+							the initial data entirely you can call `set_final_data` with
+							`nullptr`.
+							* A `buffer` with no final data address is useful because the data
+							can left on a device and not copied back to the host from the
+							device.
+						</div>
+					</div>
+				</div>
+			</section>
+			<!--Slide 13-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Uninitialized buffers
+				</div>
+				<div class="container">
+					<pre><code class="language-cpp" data-line-numbers data-trim>
+#include&lt;sycl/sycl.hpp&gt;
+
+int main() {
+  constexpr static size_t size = 1024;
+
+  auto buf = sycl::buffer&lt;int&gt;{sycl::range{size}};
+}
+					</code></pre>
+				</div>
+				<div class="container" data-markdown>
+					* As we've seen in the USM model all memory is allocated
+					initialized, but `buffer`s can be constructed without initial data.
+					* A `buffer` like this is called uninitialized.
+					* To do this simply construct a `buffer` without initial data. Just
+					remember to explicitly specify the buffer's data type as it can't be
+					inferred from the initial data any more.
+					* Uninitialized `buffer`s are useful for a couple of reasons because
+					they can be allocated directly on a device and don't require moving
+					data from the host.
+				</div>
+			</section>
+			<!--Slide 14-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Using initial data and uninitialized buffers
+				</div>
+				<div class="container">
+					<div class="col" data-markdown>
+						![SYCL](../../Static/images/uninitialized_buffer.svg "SYCL")
+					</div>
+					<div class="col" data-markdown>
+						* Here we have an example of using these techniques:
+						* **Input data** is initialized with initial data but doesn't
+						need to be copied back so it can use `set_final_data(nullptr)`.
+						* **Temporary** is only used on the device so can be an
+						uninitialized `buffer`.
+						* **Output data** is initialized on the device and needs to be
+						copied back so it can be an uninitialized `buffer` and use
+						`set_final_data` to provide the final data address.
+					</div>
+				</div>
+			</section>
+			<!--Slide 15-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Pinned memory
+				</div>
+				<div class="container">
+					<div class="stack-fragments">
+					<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+						* Pinned memory is a feature supported by most SYCL backends and
+						devices.
+						* It allows you to allocate memory which can be mapped between the
+						host and device more efficiently, providing similar benefits to USM.
+						* Though the requirements can vary from one device to another.
+						* It's always best to check the vendor's programming guide.
+					</div>
+					<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+						* The SYCL runtime will always aim to manage the memory for you in
+						the most efficient way for the target device.
+						* Generally there are two approaches to facilitate pinned memory:
+						* Allocate memory according to the vendor's programming guide,
+						usually involved allocating a size of a particular multiple and
+						aligned to a particular size, and then use the
+						`property::buffer::use_host_ptr` property.
+						* Create an uninitialized `buffer` and allow the runtime to
+						allocate the memory the appropriate way.
+						</div>
+					</div>
+				</div>
+			</section>
+			<!--Slide 16-->
+			<section>
+				<div class="hbox" data-markdown>
+					## Questions
+				</div>
+			</section>
 		</div>
 	</div>
 </body>

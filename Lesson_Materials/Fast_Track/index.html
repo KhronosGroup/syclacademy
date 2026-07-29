@@ -67,7 +67,7 @@
               * Designed with "modern" C++ in mind
             * SYCL provides high-level abstractions over common boilerplate code 
               * Platform/device selection
-              * Buffer creation and data movement
+              * Memory allocation and data movement
               * Kernel function compilation
               * Dependency management and scheduling
 					</div>
@@ -203,9 +203,7 @@ auto gpuDevice = device(gpu_selector_v);
 						#### Memory Models
 					</div>
 					<div class="container" data-markdown>
-						* In SYCL there are two models for managing data:
-						  * The buffer/accessor model.
-						  * The USM (unified shared memory) model.
+						* In SYCL the USM (unified shared memory) model can be used to manage data.
 						* Which model you choose can have an effect on how you enqueue kernel functions.
 					</div>
 				</section>
@@ -223,79 +221,6 @@ auto gpuDevice = device(gpu_selector_v);
 						    * Migration of the result back to the CPU.
 					</div>
 					<img src="../../Static/images/gpu_cpu_memory.png" height="400"/>
-				</section>
-        <!--Slide 16-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### SYCL Buffers &amp; Accessors
-					</div>
-					<div class="container" data-markdown>
-						* The buffer/accessor model separates the storage and access of data 
-						  * A SYCL buffer manages data across the host and any number of devices 
-						  * A SYCL accessor requests access to data on the host or on a device for a specific SYCL kernel function
-						* Accessors are also used to access data within a SYCL kernel function
-						  * This means they are declared in the host code but captured by and then accessed within a SYCL kernel function
-					</div>
-				</section>
-				<!--Slide 17-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### SYCL Buffers &amp; Accessors
-					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							* When a buffer object is constructed it will not allocate or copy to device memory at first
-							* This will only happen once the SYCL runtime knows the data needs to be accessed and where it needs to be accessed
-						</div>
-						<div class="col" data-markdown>
-							![Buffer Host Memory](../../Static/images/buffer-hostmemory.png "Buffer Host Memory")
-						</div>
-					</div>
-				</section>
-				<!--Slide 18-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### SYCL Buffers &amp; Accessors
-					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							* Constructing an accessor specifies a request to access the data managed by the buffer
-							* There are a range of different types of accessor which provide different ways to access data
-						</div>
-						<div class="col" data-markdown>
-							![Buffer Host Memory Accessor](../../Static/images/buffer-hostmemory-accessor.png "Buffer Host Memory Accessor")
-						</div>
-					</div>
-				</section>
-				<!--Slide 19-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Accessing Data With Accessors
-					</div>
-					<div class="container">
-						<div class="col-left-3">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-buffer&lt;float, 1&gt; bufA(dA.data(), range&lt;1&gt;(dA.size())); 
-buffer&lt;float, 1&gt; bufB(dB.data(), range&lt;1&gt;(dB.size())); 
-buffer&lt;float, 1&gt; bufO(dO.data(), range&lt;1&gt;(dO.size()));
-
-gpuQueue.submit([&amp;](handler &amp;cgh){
-  sycl::accessor inA{bufA, cgh, sycl::read_only};
-  sycl::accessor inB{bufB, cgh, sycl::read_only};
-  sycl::accessor out{bufO, cgh, sycl::write_only};
-  cgh.parallel_for&lt;add&gt;(range&lt;1&gt;(dA.size()), 
-    [=](id&lt;1&gt; i){ 
-    <mark>out[i] = inA[i] + inB[i];</mark>
-  });
-});
-							</code></pre>
-						</div>
-						<div class="col-right-2" data-markdown>
-							* Here we access the data of the `accessor` by
-							passing in the `id` passed to the SYCL kernel
-							function.
-						</div>
-					</div>
 				</section>
 				<!--Slide 20-->
 				<section>
@@ -486,11 +411,11 @@ cgh.parallel_for&lt;kernel&gt;(nd_range&lt;1&gt;(<mark>range&lt;1&gt;(1024),
 					<div class="container" data-markdown>
             ```c++
 class MyKernel {
-  sycl::accessor<float> input_;
+  const float* input_;
   float* output_;
 
-  MyKernel(sycl::buffer<float> buf, float* output, sycl::handler&amp; h)
-    : input{buf.get_access(h)}, output_{output} {}
+  MyKernel(const float* input, float* output)
+    : input_{input}, output_{output} {}
 
   // const is required
   void operator()(sycl::item&lt;1&gt; i) const {
@@ -511,14 +436,13 @@ class MyKernel {
 					</div>
 					<div class="container" data-markdown>
             ```c++
-sycl::buffer<float, 1> buf = /* normal init */;
-float * output = sycl::malloc_device(/* params */);
+float* input = sycl::malloc_device(/* params */);
+float* output = sycl::malloc_device(/* params */);
 
 ... queue submit as normal ...
 
-auto acc = buf.get_access(h);
 auto func = [=](sycl::item&lt;1&gt; i) {
-  acc[i] = someVal;
+  input[i.get_global_linear_id()] = someVal;
   output[i.get_global_linear_id()] = someOtherVal;
 });
 handler.parallel_for(range, func);
@@ -540,7 +464,7 @@ handler.parallel_for(range, func);
             * Each instance of the kernel has a uniquely valued `sycl::item`
               describing its position in the iteration space as covered in
               "SYCL execution model"
-            * Can be used to index into accessors, pointers etc.
+            * Can be used to index into pointers etc.
 					</div>
 				</section>
 				<!--Slide 34-->

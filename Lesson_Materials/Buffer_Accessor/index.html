@@ -31,6 +31,7 @@
 					## Learning Objectives
 					* Learn about the buffer/accessor model
 					* Learn how to manage data with the buffer/accessor model
+					* Learn how to manage dependencies with the buffer/accessor model
 				</div>
 			</section>
 			<!--Slide 3-->
@@ -143,7 +144,7 @@
 				</div>
 				<div class="container">
 					<div class="col-left-3">
-						<pre><code class="language-cpp" data-line-numbers="|6,12|15|15|11,14,15|15|15|18" data-fragment-index="0" data-noescape data-trim>
+						<pre><code class="language-cpp" data-line-numbers="|6,9-12,21|15|15|11,14,15|15|15|18" data-fragment-index="0" data-noescape data-trim>
 #include&lt;sycl/sycl.hpp&gt;
 #include&lt;vector&gt;
 
@@ -285,7 +286,9 @@ int main() {
 							* It also associates the access requirement with the device being targeted
 						</div>
 						<div class="fragment current-visible" data-fragment-index="3" data-markdown>
-							* The runtime waits for the first kernel to execute before executing the second kernel
+							* You do not need to explicitly call `wait` between the kernels
+							* The runtime is implictly aware that the second kernel depends on the first kerenel based on 
+              the accessor requirements 
 						</div>
 					</div>
 				</div>

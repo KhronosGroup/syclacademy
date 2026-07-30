@@ -28,30 +28,21 @@
 					## Learning Objectives
 					* Learn about how to create dependencies between kernel functions
 					* Learn about how to move data between the host and device(s)
-					* Learn about the differences between the buffer/accessor and USM data management models
 					* Learn how to represent basic data flow graphs
                 </section>
 				<!--Slide 3-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Access/buffer and USM
+						#### Moving data with USM
 					</div>
 					<div class="container" data-markdown>
-						There are two ways to move data and create dependencies between kernel functions in SYCL
+						The USM data movement model is used to move data and create dependencies between kernel functions in SYCL
 					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							Buffer/accessor data movement model
-							<br/>
-							* Data dependencies analysis
-							* Implicit data movement
-						</div>
-						<div class="col" data-markdown>
-							USM data movement model
-							<br/>
-							* Manual chaining of dependencies
-							* Explicit data movement
-						</div>
+					<div class="container" data-markdown>
+						USM data movement model
+						<br/>
+						* Manual chaining of dependencies
+						* Explicit data movement
 					</div>
 				</section>
 				<!--Slide 4-->
@@ -101,158 +92,6 @@
 							* Combining kernel function dependencies and the data movement dependencies we have a final data flow graph
 							* This graph defines the order in which all commands must execute in order to maintain consistency
 							* In more complex data flow graphs there may be multiple orderings which can achieve the same consistency
-						</div>
-					</div>
-				</section>
-				<!--Slide 7-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Data flow with buffers and accessors
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code class="language-cpp" data-line-numbers>
-sycl::buffer buf {data, sycl::range{1024}};
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  sycl::accessor acc {buf, cgh};
-
-  cgh.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      acc[idx] = /* some computation */
-    });
-});
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  sycl::accessor acc{buf, cgh};
-
-  cgh.parallel_for&lt;kernel_b&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      acc[idx] = /* some computation */
-    });
-});
-
-gpuQueue.wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* The buffer/accessor data management model data model is descriptive
-							* Dependencies and data movement is inferred from the access requirements of command groups
-							* The SYCL runtime is responsible for guaranteeing that data dependencies and consistency are maintained
-						</div>
-					</div>
-				</section>
-				<!--Slide 8-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Data flow with buffers and accessors
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-<mark>sycl::buffer buf {data, sycl::range{1024}};</mark>
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  sycl::accessor acc {buf, cgh};
-
-  cgh.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      acc[idx] = /* some computation */
-    });
-});
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  sycl::accessor acc {buf, cgh};
-
-  cgh.parallel_for&lt;kernel_b&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      acc[idx] = /* some computation */
-    });
-});
-
-gpuQueue.wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* A `buffer` object is responsible for managing data between the host and one or more devices
-							* It is also responsible for tracking dependencies on the data it manages
-							* It will also allocating memory and move data when necessary.
-							* Note that a `buffer` is lazy and will not allocate or move data until it is asked to
-						</div>
-					</div>
-				</section>
-				<!--Slide 9-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Data flow with buffers and accessors
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-sycl::buffer buf {data, sycl::range{1024}};
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  <mark>sycl::accessor acc{buf, cgh};</mark>
-
-  cgh.parallel_for&lt;my_kernel&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      acc[idx] = /* some computation */
-    });
-});
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  <mark>sycl::accessor acc{buf, cgh};</mark>
-
-  cgh.parallel_for&lt;my_kernel&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      acc[idx] = /* some computation */
-    });
-});
-
-gpuQueue.wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* An `accessor` object is responsible for describing data access requirements
-							* It describes what data a kernel function is accessing and how it is accessing it
-							* The `buffer` object uses this information to create infer dependencies and data movement
-						</div>
-					</div>
-				</section>
-				<!--Slide 10-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Data flow with buffers and accessors
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-buf = sycl::buffer(data, sycl::range{1024});
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  sycl::accessor acc {buf, <mark>cgh</mark>};
-
-  cgh.parallel_for&lt;my_kernel&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      acc[idx] = /* some computation */
-    });
-});
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  sycl::accessor acc {buf, <mark>cgh</mark>};
-
-  cgh.parallel_for&lt;my_kernel&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      acc[idx] = /* some computation */
-    });
-});
-
-gpuQueue.wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Associating the `accessor` object with the `handler` connects the access dependency to the kernel function
-							* It also associates the access requirement with the device being targeted
 						</div>
 					</div>
 				</section>
@@ -376,50 +215,10 @@ sycl::free(devicePtr, gpuQueue);
 							![SYCL](../../Static/images/concurrent_data_flow.svg "SYCL")
 						</div>
 						<div class="col" data-markdown>
-							* If two kernels are accessing different buffers then there is no dependency between them
+							* If two kernels are accessing different data then there is no dependency between them
 							* In this case the two kernels and their respective data movement are independent
 							* By default `queue`s are out-of-order which means that these commands can execute in any order
 							* They could also execute concurrently if the target device is able to do so
-						</div>
-					</div>
-				</section>
-				<!--Slide 15-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Concurrent data flow with buffers and accessors
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-sycl::buffer bufA {dataA, sycl::range{1024}};
-sycl::buffer bufB {dataB, sycl::range{1024}};
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  <mark>sycl::accessor accA {bufA, cgh};</mark>
-
-  cgh.parallel_for&lt;kernel_a&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      accA[idx] = /* some computation */
-    });
-});
-
-gpuQueue.submit([&amp;](sycl::handler &amp;cgh) {
-  <mark>sycl::accessor accB {bufB, cgh};</mark>
-
-  cgh.parallel_for&lt;kernel_b&gt;(sycl::range{1024},
-    [=](sycl::id&lt;1&gt; idx) {
-      accB[idx] = /* some computation */
-    });
-});
-
-gpuQueue.wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* The buffer/accessor data management model automatically infers dependencies
-							* As each of the two kernel functions are accessing different `buffer` objects the SYCL runtime can infer there is no dependency between them
-							* Data movement is still performed for the two kernels as normal
-							* The two kernels and their respective copies collectively can be executed in any order
 						</div>
 					</div>
 				</section>
@@ -491,29 +290,6 @@ sycl::free(devicePtrB, gpuQueue);
 						* The two kernels and their respective copies collectively can be executed in any order
 					</div>
 				</section>
-				<!--Slide 15-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Which should you choose?
-					</div>
-					<div class="container" data-markdown>
-						When should you use the buffer/accessor or USM data management models?
-					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							Buffer/accessor data movement model
-							<br/>
-							* If you want to guarantee consistency and avoid errors
-							* If you want to iterate over your data flow quicker
-						</div>
-						<div class="col" data-markdown>
-							USM data movement model
-							<br/>
-							* If you need to use USM
-							* If you want more fine grained control over data movement
-						</div>
-					</div>
-				</section>
 				<!--Slide 16-->
 				<section>
 					<div class="hbox" data-markdown>
@@ -532,7 +308,7 @@ sycl::free(devicePtrB, gpuQueue);
 						![SYCL](../../Static/images/diamond_data_flow.svg "SYCL")
 					</div>
 					<div class="container" data-markdown>
-						Put together what you've seen here to create the above diamond data flow graph in either buffer/accessor or USM data management models
+						Put together what you've seen here to create the above diamond data flow graph using the USM data management model
 					</div>
 				</section>
 			</div>

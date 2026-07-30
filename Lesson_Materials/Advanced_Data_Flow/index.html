@@ -26,20 +26,9 @@
         <!--Slide 2-->
         <section class="hbox" data-markdown>
           ## Learning Objectives
-          * Learn about ways to use initial data and pinned memory
-          * Learn about uninitialized buffers and when to use them
+          * Learn about ways to use initial data with USM
         </section>
         <!--Slide 3-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Precursor
-          </div>
-          <div class="container" data-markdown>
-            Parts of this lecture will focus primarily on the buffer/accessor
-            model.
-          </div>
-        </section>
-        <!--Slide 4-->
         <section>
           <div class="hbox" data-markdown>
             #### Initial data
@@ -49,7 +38,7 @@
             which has been allocated somewhere else in the application.
           </div>
         </section>
-        <!--Slide 5-->
+        <!--Slide 4-->
         <section>
           <div class="hbox" data-markdown>
             #### Initial data (USM)
@@ -68,7 +57,7 @@ gpuQueue.memcpy(devicePtr, initialData, sizeInBytes).wait();
             allocation using `memcpy`.
           </div>
         </section>
-        <!--Slide 6-->
+        <!--Slide 5-->
         <section>
           <div class="hbox" data-markdown>
             #### Initial data (USM)
@@ -84,187 +73,10 @@ auto sharedData = sycl::malloc_shared(sizeInBytes, gpuQueue);
             * Then there is no need to copy the data to the device.
           </div>
         </section>
-        <!--Slide 7-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Initial data (buffer/accessor)
-          </div>
-          <div class="container">
-            <pre><code class="language-cpp" data-line-numbers>
-auto buf = sycl::buffer{initialData, sycl::range{size}};
-						</code></pre>
-          </div>
-          <div class="container" data-markdown>
-            * When using the buffer/accessor model a `buffer` can manage already
-            allocated memory or have the SYCL runtime allocate it.
-            * To do this simply provide an initial pointer when constructing a
-            `buffer`.
-            * Note that the SYCL runtime is free to allocate memory and copy
-            this into it, which can introduce an overhead.
-          </div>
-        </section>
-        <!--Slide 8-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Use_host_pointer property
-          </div>
-          <div class="container">
-            <pre><code class="language-cpp" data-line-numbers>
-auto buf = sycl::buffer{initialData, sycl::range{size},
-  {sycl::property::buffer::use_host_ptr{}}};
-						</code></pre>
-          </div>
-          <div class="container" data-markdown>
-            * To prevent the runtime allocation memory you can provide the
-            `property::buffer::use_host_ptr` property when constructing the
-            `buffer`.
-            * This instructs the SYCL runtime that it may not allocate any
-            additional memory.
-            * Though note that the backend (such as OpenCL) may still allocate
-            memory.
-          </div>
-        </section>
-        <!--Slide 9-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Copy back
-          </div>
-          <div class="container" data-markdown>
-            * A `buffer` will synchronize the latest modified copy of the data
-            it manages back to the initial pointer on destruction.
-          </div>
-        </section>
-        <!--Slide 10-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Set_final_data
-          </div>
-          <div class="container">
-            <pre><code class="language-cpp" data-line-numbers>
-auto buf = sycl::buffer{initialData, sycl::range{size}};
-
-buf.set_final_data(finalData);
-						</code></pre>
-          </div>
-          <div class="container" data-markdown>
-            * To change the destination that a `buffer` will synchronize to on
-            destruction you can call `set_final_data` with another.
-            * The address provided must be capable of holding the size of the
-            data the `buffer` manages.
-          </div>
-        </section>
-        <!--Slide 11-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Set_final_data
-          </div>
-          <div class="container">
-            <pre><code class="language-cpp" data-line-numbers>
-auto buf = sycl::buffer{initialData, sycl::range{size}};
-
-buf.set_final_data(nullptr);
-						</code></pre>
-          </div>
-          <div class="container" data-markdown>
-            * Alternatively to prevent the `buffer` from synchronizing back to
-            the initial data entirely you can call `set_final_data` with
-            `nullptr`.
-            * A `buffer` with no final data address is useful because the data
-            can left on a device and not copied back to the host from the
-            device.
-          </div>
-        </section>
-        <!--Slide 12-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Uninitialized buffers (buffer/accessor)
-          </div>
-          <div class="container">
-            <pre><code class="language-cpp" data-line-numbers>
-auto buf = sycl::buffer&lt;T&gt;{sycl::range{size}};
-						</code></pre>
-          </div>
-          <div class="container" data-markdown>
-            * As we've seen in the USM model all memory is allocated
-            initialized, but `buffer`s can be constructed without initial data.
-            * A `buffer` like this is called uninitialized.
-            * To do this simply construct a `buffer` without initial data. Just
-            remember to explicitly specify the buffer's data type as it can't be
-            inferred from the initial data any more.
-            * Uninitialized `buffer`s are useful for a couple of reasons because
-            they can be allocated directly on a device and don't require moving
-            data from the host.
-          </div>
-        </section>
-        <!--Slide 13-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Using initial data and uninitialized buffers
-          </div>
-          <div class="container">
-            <div class="col" data-markdown>
-              ![SYCL](../../Static/images/uninitialized_buffer.svg "SYCL")
-            </div>
-            <div class="col" data-markdown>
-              * Here we have an example of using these techniques:
-                * **Input data** is initialized with initial data but doesn't
-                need to be copied back so it can use `set_final_data(nullptr)`.
-                * **Temporary** is only used on the device so can be an
-                uninitialized `buffer`.
-                * **Output data** is initialized on the device and needs to be
-                copied back so it can be an uninitialized `buffer` and use
-                `set_final_data` to provide the final data address.
-            </div>
-          </div>
-        </section>
-        <!--Slide 14-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Pinned memory (buffer/accessor)
-          </div>
-          <div class="container" data-markdown>
-            * Pinned memory is a feature supported by most SYCL backends and
-            devices.
-            * It allows you to allocate memory which can be mapped between the
-            host and device more efficiently, providing similar benefits to USM.
-            * Though the requirements can vary from one device to another.
-            * It's always best to check the vendor's programming guide.
-          </div>
-        </section>
-        <!--Slide 15-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Pinned memory (buffer/accessor)
-          </div>
-          <div class="container" data-markdown>
-            * The SYCL runtime will always aim to manage the memory for you in
-            the most efficient way for the target device.
-            * Generally there are two approaches to facilitate pinned memory:
-              * Allocate memory according to the vendor's programming guide,
-              usually involved allocating a size of a particular multiple and
-              aligned to a particular size, and then use the
-              `property::buffer::use_host_ptr` property.
-              * Create an uninitialized `buffer` and allow the runtime to
-              allocate the memory the appropriate way.
-          </div>
-        </section>
-        <!--Slide 16-->
+        <!--Slide 6-->
         <section>
           <div class="hbox" data-markdown>
             ## Questions
-          </div>
-        </section>
-        <!--Slide 17-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Exercise
-          </div>
-          <div class="container" data-markdown>
-            Code_Exercises/Advanced_Data_Flow/source
-          </div>
-          <div class="container" data-markdown>
-            Write a SYCL application which uses uninitialized `buffer`s and
-            disabling write back.
           </div>
         </section>
       </div>

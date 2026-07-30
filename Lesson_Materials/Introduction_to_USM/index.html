@@ -37,7 +37,7 @@
 						#### What is USM?
 					</div>
 					<div class="container" data-markdown>
-						Unified shared memory (USM) provides an alternative pointer-based data management model to the accessor-buffer model
+						Unified shared memory (USM) provides a pointer-based data management model
 					</div>
 					<div class="container" data-markdown>
 						* Unified virtual address space
@@ -57,7 +57,6 @@
 						</div>
 						<div class="col" data-markdown>
 							* USM memory allocations return pointers which are consistent between the host application and kernel functions on a device
-							* Representing data between the host and device(s) does not require creating accessors
 							* Pointer-based API more familiar to C or C++ programmers
 						</div>
 					</div>
@@ -72,7 +71,7 @@
 							![SYCL](../../Static/images/pointer_based_structures.svg "SYCL")
 						</div>
 						<div class="col" data-markdown>
-							* Data is moved between the host and device(s) in a span of memory in bytes rather than a buffer of a specific type
+							* Data is moved between the host and device(s) in a span of memory in bytes
 							* Pointers within that region of memory can freely point to any other address in that region
 							* Easier to port existing C or C++ code to use SYCL
 						</div>
@@ -89,7 +88,6 @@
 						</div>
 						<div class="col" data-markdown>
 							* Memory is allocated and data is moved using explicit routines
-							* Moving data between the host and device(s) does not require accessors or submitting command groups
 							* The SYCL runtime will not perform any data dependency analysis, dependencies between commands must be managed manually
 						</div>
 					</div>
@@ -153,29 +151,6 @@
 						different variants of USM and different kinds of memory allocation
 					</div>
 					<pre><code class="language-cpp" data-line-numbers>if (dev.has(sycl::aspect::usm_device_allocations))</code></pre>
-				</section>
-				<!--Slide 11-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Buffer/accessor vs USM
-					</div>
-					<div class="container" data-markdown>
-						So when should you use the accessor/buffer mode and
-						when should you use the USM model?
-					</div>
-					<div class="container" data-markdown>
-						* The **buffer/accessor** provides guaranteed
-						consistency and automatically manages dependencies
-						  * Recommended when you need to iterate over or
-						  prototype your application
-						  * Recommended for maximum performance portability
-						  * Provides a lot of information to the SYCL runtime which can perform many optimizations automatically
-						* The **USM** model provides a lower-level pointer-based
-						solution with fine grained control
-						  * Recommended when porting existing C++ applications
-						  or using pointer-based structures
-						  * User has responsibility for certain aspects relevant for performance (e.g. data transfers or data prefetches)
-					</div>
 				</section>
 				<!--Slide 12-->
 				<section>

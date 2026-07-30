@@ -269,7 +269,6 @@ html.print-pdf .aria-status {
     }
     html .reveal .hljs {
 	max-height:100%;
-
 	white-space:pre-wrap;
 	word-wrap:break-word;
 	word-break:break-word;
@@ -341,7 +340,6 @@ html.print-pdf .aria-status {
     }
     
     html .col-right-2 {	 
-
 	flex: 1;
 	margin: 0;
 	flex-grow:2;
@@ -380,7 +378,6 @@ html.print-pdf .aria-status {
     html section {
 	position: relative;
 	
-
     }
     
     html .global-images {
@@ -422,26 +419,5 @@ html.print-pdf .aria-status {
     html .reveal section img {
 	background:none; border:none; box-shadow:none; 
     }
+
 }
-
-.reveal .slides section code mark.fragment {
-  visibility: inherit !important;
-  opacity: 1 !important;
-  background-color: transparent;
-  color: inherit;
-}
-
-.reveal .slides section code mark.fragment.current-fragment {
-  background-color: lightblue;
-  border-radius: 2px;
-}
-
-.stack-fragments {
-  display: grid;
-}
-
-.stack-fragments > .fragment {
-  grid-area: 1 / 1;
-}
-
-

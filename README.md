@@ -99,7 +99,6 @@ may not match completely.
 | 19 | Matrix Transpose | [slides][lesson-19-slides] | [exercise][lesson-19-exercise] | [source][lesson-19-source] | [solution][lesson-19-solution] |
 | 20 | More SYCL Features | [slides][lesson-20-slides] | [exercise][lesson-20-exercise] | [source][lesson-20-source] | [solution][lesson-20-solution] |
 | 21 | Functors | [slides][lesson-21-slides] | [exercise][lesson-21-exercise] | [source][lesson-21-source] | [solution][lesson-21-solution] |
-| 22 | Buffer/Accessor Model | [slides][lesson-22-slides] 
 
 ### oneMath
 
@@ -110,7 +109,7 @@ DPC++ build of SYCL-Academy, but whether to build them can be controlled through
 
 | Lesson | Title | Slides | Exercise | Source | Solution |
 |--------|-------|--------|----------|--------|----------|
-| 22 | OneMath GEMM | [slides][lesson-22-slides] | [execise][lesson-22-exercise] | [source][lesson-22-source] | [solution][lesson-22-solution] |
+| 22 | OneMath GEMM | [slides][lesson-23-slides] | [execise][lesson-23-exercise] | [source][lesson-23-source] | [solution][lesson-23-solution] |
 
 ## Building the Exercises
 
@@ -451,9 +450,9 @@ cmake ../ "-GUnix Makefiles" -DSYCL_ACADEMY_USE_DPCPP=ON -DSYCL_ACADEMY_ENABLE_S
 [lesson-21-source]:   ./Code_Exercises/Functors/source.cpp
 [lesson-21-solution]: ./Code_Exercises/Functors/solution.cpp
 
-[lesson-22-slides]: ./Lesson_Materials/Buffer_Accessor/index.html
+[lesson-22-slides]: ./Lesson_Materials/oneMath_gemm/
 
-<!-- [lesson-22-slides]: ./Lesson_Materials/oneMath_gemm/ -->
-<!-- [lesson-22-exercise]: ./Code_Exercises/oneMath_gemm/README.md -->
-<!-- [lesson-22-source]:   ./Code_Exercises/oneMath_gemm/source_onemath_usm_gemm.cpp -->
-<!-- [lesson-22-solution]: ./Code_Exercises/oneMath_gemm/solution_onemath_usm_gemm.cpp -->
+[lesson-23-slides]: ./Lesson_Materials/oneMath_gemm/
+[lesson-23-exercise]: ./Code_Exercises/oneMath_gemm/README.md
+[lesson-23-source]:   ./Code_Exercises/oneMath_gemm/source_onemath_usm_gemm.cpp
+[lesson-23-solution]: ./Code_Exercises/oneMath_gemm/solution_onemath_usm_gemm.cpp

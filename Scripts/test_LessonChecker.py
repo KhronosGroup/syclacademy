@@ -134,6 +134,16 @@ test_cases = [
         "expected_output": '<pre><code class="language-cpp" data-line-numbers></code></pre>',
     },
     {
+        "name": "fix_mismatched_pre_code_newline_tabs_between_code_pre",
+        "body": "<code>\n\t\t\t\t\t\t<pre></code></pre>",
+        "extract": False,
+        "verify": False,
+        "fix": True,
+        "silent": True,
+        "expected_return": True,
+        "expected_output": '<pre><code class="language-cpp" data-line-numbers>\n\t\t\t\t\t\t</code></pre>',
+    },
+    {
         "name": "fix_improper_escaped_ref",
         "body": '<pre><code class="language-cpp" data-line-numbers>&evt</code></pre>',
         "extract": False,

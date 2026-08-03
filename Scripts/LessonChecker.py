@@ -189,9 +189,12 @@ class SYCLAParser(HTMLParser):
                 self._warn(
                     f"misalligned <code> and <pre> tags in lesson {self.lesson_name} line num: {self.getpos()[0]}"
                 )
+                lcode = self.last_code_idx 
 
-                if "code" in self.output[-1]:
-                    self.output.insert(-1, "<pre>")
+                assert lcode is not None
+
+                if "code" in self.output[lcode]:
+                    self.output.insert(lcode, "<pre>") 
                     return
 
             case _:
@@ -205,8 +208,10 @@ class SYCLAParser(HTMLParser):
                     # Fetch the original case of the impropperly escaped code
                     raw_tag = self.get_starttag_text()
 
+                    assert raw_tag is not None
+
                     self.output.append(
-                        f"&lt;{raw_tag.lstrip("<").rstrip(">")}&gt;"  # pyright: ignore
+                        f"&lt;{raw_tag.lstrip("<").rstrip(">")}&gt;"  
                     )
                     return
 

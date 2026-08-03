@@ -305,13 +305,13 @@ int main() {
 					#### Buffer Initial and Final data
 				</div>
 				<div class="container">
-					<pre><code class="language-cpp" data-line-numbers="|6,10||6,18" data-trim data-noescape data-fragment-index="1">
+					<pre><code class="language-cpp" data-line-numbers="6,10||6,18" data-trim data-noescape data-fragment-index="1">
 #include&lt;sycl/sycl.hpp&gt;
 #include&lt;vector&gt;
 
 int main() {
   int N = 5;
-  std::vector&lt;int&gt; <mark class="fragment" data-fragment-index="0">vA{6, 7, 8, 9, 10}</mark>, <mark class="fragment" data-fragment-index="2">vB(N)</mark>, checkVec{7, 8, 9, 10, 11};
+  std::vector&lt;int&gt; <mark class="fragment" data-fragment-index="0">vA{6, 7, 8, 9, 10}</mark>, checkVec{7, 8, 9, 10, 11};
   sycl::queue q;
   {
     // data() returns a direct pointer to the vA vector
@@ -323,9 +323,9 @@ int main() {
       });
     });
 
-    buf.set_final_data(<mark class="fragment" data-fragment-index="2">vB.data()</mark>);
+    <mark class="fragment" data-fragment-index="2">buf.set_final_data</mark>(<mark class="fragment" data-fragment-index="3">nullptr</mark>);
   }
-  assert(vB == checkVec);
+  assert(vA != checkVec);
 }
 					</code></pre>
 				</div>

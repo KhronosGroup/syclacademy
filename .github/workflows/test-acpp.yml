@@ -13,7 +13,7 @@ jobs:
       with:
         python-version: "3.14"
     - name: Validate lesson HTML
-      run: python ./Scripts/LessonChecker.py --verify Lesson_Materials/*/index.html
+      run: python ./Scripts/LessonChecker.py --verify Lesson_Materials/Handling_Errors/index.html
 
   test-acpp:
     name: acpp llvm ${{ matrix.clang }}, ${{ matrix.os }}

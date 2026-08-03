@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   validate-lessons:
-    name: Validate SYCLAcademy lesson HTML
+    name: Validate Handling_Errors lesson
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

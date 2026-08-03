@@ -78,9 +78,9 @@ jobs:
     - name: Extract code blocks from lesson
       run: |
         SNIPPETS="${GITHUB_WORKSPACE}/Code_Exercises/Lesson_Snippets"
-        LESSONS="Lesson_Materials/Handling_Errors/index.html"
+        LESSONS="Lesson_Materials/Handling_Errors/index.html Lesson_Materials/Buffer_Accessor/index.html"
 
-        python ./Scripts/LessonChecker.py --extract -o "${SNIPPETS}" "${LESSONS}"
+        python ./Scripts/LessonChecker.py --extract -o "${SNIPPETS}" ${LESSONS}
     - name: Build SYCLAcademy SYCL source code
       run: |
         mkdir -p ${GITHUB_WORKSPACE}/build && cd ${GITHUB_WORKSPACE}/build

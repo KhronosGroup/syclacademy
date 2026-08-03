@@ -205,8 +205,10 @@ class SYCLAParser(HTMLParser):
                     # Fetch the original case of the impropperly escaped code
                     raw_tag = self.get_starttag_text()
 
+                    assert raw_tag is not None
+
                     self.output.append(
-                        f"&lt;{raw_tag.lstrip("<").rstrip(">")}&gt;"  # pyright: ignore
+                        f"&lt;{raw_tag.lstrip("<").rstrip(">")}&gt;"  
                     )
                     return
         

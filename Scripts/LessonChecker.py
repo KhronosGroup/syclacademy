@@ -189,9 +189,9 @@ class SYCLAParser(HTMLParser):
                 self._warn(
                     f"misalligned <code> and <pre> tags in lesson {self.lesson_name} line num: {self.getpos()[0]}"
                 )
-
-                if "code" in self.output[-1]:
-                    self.output.insert(-1, "<pre>")
+                lcode = self.last_code_idx 
+                if "code" in self.output[lcode]: #pyright: ignore
+                    self.output.insert(lcode, "<pre>") #pyright: ignore
                     return
 
             case _:
@@ -209,7 +209,7 @@ class SYCLAParser(HTMLParser):
                         f"&lt;{raw_tag.lstrip("<").rstrip(">")}&gt;"  # pyright: ignore
                     )
                     return
-
+        
         self.output.append(self._encode_attrs(tag, attrs))
 
     def handle_data(self, data):

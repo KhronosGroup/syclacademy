@@ -1,165 +1,250 @@
 <!doctype html>
 
 <html>
-  <head>
-    <meta charset="utf-8"/>
-    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
-    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
-    <link rel="stylesheet" href="../../Static/css/custom.css"/>
-    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
-    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
-    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
-    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
-    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
-    <script src="../../js/plugins/merge-html.js" defer></script>
-    <script src="../../js/setup.js" defer></script>
-  </head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-			  <!--Slide 1-->
-			  <section class="hbox">
-			    <h2 style="text-transform: none;">
-						oneAPI Math Library (oneMath)
-					</h2>
-			  </section>
-			  <!--Slide 2-->
-			  <section class="hbox" data-markdown>
-			    ## Learning Objectives
-			    * Learn what the oneMath is and how it works
-			    * Learn how to use GEMM APIs from oneMath with both USM and buffer memory models
-			  </section>
-			  <!--Slide 3-->
-			  <section>
-					<div class="hbox" data-markdown>
-			    ## Do you need to write your own kernels?
-					</div>
 
-					<div class="container" data-markdown>
-					* Many computationally intensive applications spend the most of their time in **common operations / algorithms**
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="../../Static/css/reveal.css" />
+	<link rel="stylesheet" href="../../Static/css/theme/white.css" />
+	<link rel="stylesheet" href="../../Static/css/custom.css" />
+	<link rel="stylesheet" href="../../Static/css/atom-one-light.css" />
+	<script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+	<script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+	<script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+	<script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+	<script src="../../js/plugins/merge-html.js" defer></script>
+	<script src="../../js/setup.js" defer></script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<!--Slide 1-->
+			<section class="hbox">
+				<h2 style="text-transform: none;">
+					oneAPI Math Library (oneMath)
+				</h2>
+			</section>
+			<!--Slide 2-->
+			<section class="hbox" data-markdown>
+				## Learning Objectives
+				* Learn what the oneMath is and how it works
+				* Learn how oneMath dispatches work to a backend at run time or compile time
+				* Learn what GEMM is
+				* Learn how to use the GEMM API from oneMath with the USM memory model
+			</section>
+			<!--Slide 3-->
+			<section>
+				<div class="hbox" data-markdown>
+					## Do you need to write your own kernels?
+				</div>
+				<div class="container" data-markdown>
+					* Many computationally intensive applications spend the most of their time in **common operations /
+					algorithms**
 					* **Numerical libraries** provide reliable solutions to these common problems
-					   * You can focus on solving higher-level problems instead of technical details
+					  * You can focus on solving higher-level problems instead of technical details
 					* Libraries optimised for specific hardware provide **superior performance**
-					</div>
-			  </section>
-			  <!--Slide 4-->
-			  <section>
-					<div class="hbox" data-markdown>
-			    ## Numerical libraries
-					</div>
-
-					<div class="container" data-markdown>
-					* Common APIs like BLAS or LAPACK have multiple CPU implementations and vendor-specific GPU solutions
-					   * **Intel CPU/GPU**: Intel Math Kernels Library (oneMKL)
-					   * **NVIDIA GPU**: cuBLAS, cuSOLVER, cuRAND, cuFFT
-					   * **AMD GPU**: rocBLAS, rocSOLVER, rocRAND, rocFFT
+				</div>
+			</section>
+			<!--Slide 4-->
+			<section>
+				<div class="hbox" data-markdown>
+					## Numerical libraries
+				</div>
+				<div class="container" data-markdown>
+					* Common APIs like BLAS or LAPACK have multiple CPU implementations and vendor-specific GPU
+					solutions
+					* **Intel CPU/GPU**: Intel Math Kernels Library (oneMKL)
+					* **NVIDIA GPU**: cuBLAS, cuSOLVER, cuRAND, cuFFT
+					* **AMD GPU**: rocBLAS, rocSOLVER, rocRAND, rocFFT
 					* Imagine being able to use all of them with *single source code* &#8594; **oneMath**
-					</div>
-			  </section>
-			  <!--Slide 5-->
-			  <section>
-					<div class="hbox">
-						<h2 style="text-transform: none;">
-							oneAPI and oneMath
-						</h2>
-					</div>
-					<div class="container" data-markdown>
-						* Open-source [**oneAPI**](https://oneapi.io/) project governed by the [United Acceleration (UXL) Foundation](https://uxlfoundation.org/):
-						   * defines SYCL-based APIs and provides library implementations
-						   * brings performance and ease of development to SYCL applications
-						* [**oneMath** specification](https://oneapi-spec.uxlfoundation.org/specifications/oneapi/latest/elements/onemath/source/):
-						   * defines SYCL API for numerical computations across several domains
-						   * Linear Algebra, Discrete Fourier Transforms, Random Number Generators, Statistics, Vector Math
-						* [**oneMath** library](https://github.com/uxlfoundation/oneMath):
-						   * wrapper implementation dispatching SYCL API calls to a multitude of implementations, both generic and vendor-specific
-					</div>
-					<div class="container">
-						<img style="height:4em; margin-top:2em;" src="../../Static/images/oneAPI.png"/>
-						<div style="display: inline; width: 2em;"></div>
-						<img style="height:4em; margin-top:2em;" src="../../Static/images/uxl.svg"/>
-					</div>
-			  </section>
-			  <!--Slide 6-->
-			  <section>
+				</div>
+			</section>
+			<!--Slide 5-->
+			<section>
+				<div class="hbox">
 					<h2 style="text-transform: none;">
-						oneMath library backends
+						oneAPI and oneMath
 					</h2>
-					<object class="r-stretch" data="../../Static/images/oneMath-backends.svg"></object>
-			  </section>
-			  <!--Slide 7-->
-			  <section>
-			    <div class="hbox" data-markdown>
-			      #### Run-time dispatching
-			    </div>
-			    <div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
+				</div>
+				<div class="container" data-markdown>
+					* Open-source [**oneAPI**](https://oneapi.io/) project governed by the [United Acceleration (UXL)
+					Foundation](https://uxlfoundation.org/):
+					* defines SYCL-based APIs and provides library implementations
+					* brings performance and ease of development to SYCL applications
+					* [**oneMath**
+					specification](https://oneapi-spec.uxlfoundation.org/specifications/oneapi/latest/elements/onemath/source/):
+					* defines SYCL API for numerical computations across several domains
+					* Linear Algebra, Discrete Fourier Transforms, Random Number Generators, Statistics, Vector Math
+					* [**oneMath** library](https://github.com/uxlfoundation/oneMath):
+					* wrapper implementation dispatching SYCL API calls to a multitude of implementations, both generic
+					and vendor-specific
+				</div>
+				<div class="container">
+					<img style="height:4em; margin-top:2em;" src="../../Static/images/oneAPI.png" />
+					<div style="display: inline; width: 2em;"></div>
+					<img style="height:4em; margin-top:2em;" src="../../Static/images/uxl.svg" />
+				</div>
+			</section>
+			<!--Slide 6-->
+			<section>
+				<h2 style="text-transform: none;">
+					oneMath library backends
+				</h2>
+				<object class="r-stretch" data="../../Static/images/oneMath-backends.svg"></object>
+			</section>
+			<!--Slide 7-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### Dispatching
+				</div>
+				<div class="container">
+					<div class="col-left-3">
+						<pre><code class="language-cpp" data-line-numbers="|8,11-14|16-20" data-fragment-index="0" data-noescape data-trim>
+#include &lt;cassert&gt;
 #include &lt;oneapi/math.hpp&gt;
+#include &lt;sycl/sycl.hpp&gt;
 
-sycl::queue q{myDeviceSelector};
+int main() {
+  int n = 16;
+  float alpha = 2;
+  <mark class="fragment" data-fragment-index="0">sycl::queue q</mark>;
+  float *x = sycl::malloc_device&lt;float&gt;(n, q);
 
-sycl::buffer&lt;T,1&gt; a{a_host, m*k};
-sycl::buffer&lt;T,1&gt; b{b_host, k*n};
-sycl::buffer&lt;T,1&gt; c{c_host, m*n};
+  // Run-time dispatch: backend chosen from the queue's device
+  q.fill(x, 1.0f, n).wait();
+  oneapi::math::blas::column_major::scal(
+      <mark class="fragment" data-fragment-index="0">q</mark>, n, alpha, x, 1).wait();
 
-// Compute C = A*B+C on the device
-oneapi::math::blas::column_major::gemm(q, ..., m, n, k, ..., a, ..., b, ..., c, ... );
+  // Compile-time dispatch: backend fixed at compile time
+  oneapi::math::backend_selector&lt;oneapi::math::backend::generic&gt; <mark class="fragment" data-fragment-index="1">sel</mark>{q};
+  q.fill(x, 1.0f, n).wait();
+  oneapi::math::blas::column_major::scal(
+      <mark class="fragment" data-fragment-index="1">sel</mark>, n, alpha, x, 1).wait();
+
+  float result;
+  q.memcpy(&amp;result, x, sizeof(float)).wait();
+  // x started as 1 and was scaled by alpha
+  assert(result == alpha);
+  sycl::free(x, q);
+}
 						</code></pre>
-			    </div>
-					<div class="container" data-markdown>
-						* Backend is loaded at run time based on the device associated with the SYCL queue
-						* Both buffer and USM APIs available (mind the different synchronisation)
-						* The same binary can run on different hardware with a generic device selector
-						   * Can run on CPU or different GPUs without recompiling
-						* Link the application with the top-level runtime library: `-lonemath`
 					</div>
-			  </section>
-			  <!--Slide 8-->
-			  <section>
-			    <div class="hbox" data-markdown>
-			      #### Compile-time dispatching
-			    </div>
-			    <div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
+					<div class="col-right-2 stack-fragments">
+						<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+							* oneMath chooses which backend runs a routine
+							* The first argument decides how that backend is selected
+						</div>
+						<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+							* **Run-time dispatch:** pass the `queue` directly as the first argument
+							* The backend is loaded at run time from the device the queue targets
+							* The same binary can run on different hardware without recompiling
+							* Link the application with the top-level runtime library: `-lonemath`
+						</div>
+						<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+							* **Compile-time dispatch:** wrap the queue in a `backend_selector` and pass that instead
+							* The backend is fixed at compile time
+							* Reduces the small dispatching overhead at the cost of removed portability
+							* Link the application with the specific backend library: `-lonemath_blas_mklcpu`
+						</div>
+					</div>
+				</div>
+			</section>
+			<!--Slide 8-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### What is GEMM?
+				</div>
+				<div class="container" data-markdown>
+					* GEMM stands for **GE**neral **M**atrix **M**ultiply
+					* It is the core Level-3 routine of BLAS (Basic Linear Algebra Subprograms)
+					* It computes `C = alpha * A * B + beta * C`
+					  * `A`, `B` and `C` are dense matrices; `alpha` and `beta` are scalars
+					  * `A` and/or `B` may optionally be transposed
+					* It is the building block of dense linear algebra and machine learning, so every backend optimises it heavily
+				</div>
+			</section>
+			<!--Slide 9-->
+			<section>
+				<div class="hbox" data-markdown>
+					#### GEMM with oneMath
+				</div>
+				<div class="container">
+					<pre><code class="language-cpp" data-line-numbers="|7-12|16-22|25-27|30-31" data-fragment-index="0" data-noescape data-trim>
+#include &lt;cassert&gt;
 #include &lt;oneapi/math.hpp&gt;
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;vector&gt;
 
-sycl::queue cpu_queue{sycl::cpu_selector_v};
+int main() {
+  // C(m x n) = alpha * A(m x k) * B(k x n) + beta * C(m x n)
+  int m = 16, n = 16, k = 16;
+  int lda = k, ldb = n, ldc = n;
+  float alpha = 1, beta = 0;
+  auto transA = oneapi::math::transpose::nontrans;
+  auto transB = oneapi::math::transpose::nontrans;
 
-sycl::buffer&lt;T,1&gt; a{a_host, m*k};
-sycl::buffer&lt;T,1&gt; b{b_host, k*n};
-sycl::buffer&lt;T,1&gt; c{c_host, m*n};
+  sycl::queue q;
 
-oneapi::math::backend_selector&lt;oneapi::math::backend::mklcpu&gt; cpu_selector(cpu_queue);
-// Select the Intel oneMKL CPU backend specifically ^^^^^^
+  // Allocate device memory and copy the inputs across
+  float *dA = sycl::malloc_device&lt;float&gt;(m * k, q);
+  float *dB = sycl::malloc_device&lt;float&gt;(k * n, q);
+  float *dC = sycl::malloc_device&lt;float&gt;(m * n, q);
+  std::vector&lt;float&gt; A(m * k, 1), B(k * n, 1), C(m * n);
+  q.memcpy(dA, A.data(), sizeof(float) * m * k);
+  q.memcpy(dB, B.data(), sizeof(float) * k * n).wait();
 
-oneapi::math::blas::column_major::gemm(cpu_selector, ..., m, n, k, ..., a, ..., b, ..., c, ... );
-						</code></pre>
+  // Compute C = alpha * A * B + beta * C on the device
+  oneapi::math::blas::row_major::gemm(
+      q, transA, transB, m, n, k, alpha,
+      dA, lda, dB, ldb, beta, dC, ldc).wait();
+
+  // Copy the result back and check it
+  q.memcpy(C.data(), dC, sizeof(float) * m * n).wait();
+  assert(C[0] == static_cast&lt;float&gt;(k));
+
+  sycl::free(dA, q); sycl::free(dB, q); sycl::free(dC, q);
+}
+					</code></pre>
+				</div>
+				<div class="bottom-bullets stack-fragments">
+					<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+						* oneMath exposes GEMM as a single call, with the matrices held in USM device memory
 					</div>
-					<div class="container" data-markdown>
-				* Specific backend can be selected at compile-time with a `backend_selector`
-				   * Passed into the API in place of the queue
-				* Reduces the small dispatching overhead at the cost of removed portability
-				* Link the application with the specific backend library: `-lonemath_blas_mklcpu`
-			    </div>
-			  </section>
-			  <!--Slide 9-->
-			  <section>
-					<div class="hbox" data-markdown>
-						## Exercise
+					<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+						* The GEMM call is described by the dimensions `m`, `n`, `k`, the leading dimensions, the `alpha`/`beta` scalars and whether `A` or `B` are transposed
 					</div>
-					<div class="container" data-markdown>
-					* Objectives: Learn to use oneMath GEMM buffer and USM APIs
+					<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+						* Allocate device memory with USM and copy the input matrices across
+					</div>
+					<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+						* A single call computes `C = alpha * A * B + beta * C`; `row_major` matches C/C++ array layout
+					</div>
+					<div class="fragment current-visible" data-fragment-index="3" data-markdown>
+						* Copy the result back and check it: `A` and `B` are all ones, so every element of `C` is `k`
+					</div>
+				</div>
+			</section>
+			<!--Slide 10-->
+			<section>
+				<div class="hbox" data-markdown>
+					## Exercise
+				</div>
+				<div class="container" data-markdown>
+					* Objectives: Learn to use the oneMath GEMM USM API
 					* Boiler-plate code already provided to:
-					   * Initialize matrices on host
-					   * Compute reference result on host
-					   * Compare the host and device results
+					  * Initialize matrices on host
+					  * Compute reference result on host
+					  * Compare the host and device results
 					* Please **complete the TODO tasks** marked in the `source_*.cpp`
-					   * Create buffers or transfer data with USM
-					   * Compute GEMM by calling the oneMath API
-					   * Use the provided `VerifyResult` function
+					  * Transfer data to the device with USM
+					  * Compute GEMM by calling the oneMath API
+					  * Use the provided `VerifyResult` function
 					* If stuck, have a look at `solution_*.cpp`
-					</div>
-			  </section>
-			</div>
+				</div>
+			</section>
 		</div>
-  </body>
+	</div>
+</body>
+
 </html>

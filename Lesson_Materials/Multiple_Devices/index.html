@@ -161,76 +161,8 @@ auto sharedContext = context{intelPlatform};
 					<div class="container" data-markdown>
 						* Often in heterogeneous applications it's necessary to
 						move data from one device to another.
-						* In the USM model this is done explicit via `memcpy` as
+						* In the USM model this is done explicitly via `memcpy` as
 						we've seen before.
-						* In the buffer/accessor model this is done
-						automatically based on dependency analysis.
-					</div>
-				</section>
-				<!--Slide 12-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Accessing data on a device
-					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							* Remember that a `buffer` will move data to a
-							device when required by an `accessor`.
-						</div>
-						<div class="col" data-markdown>
-							![Buffer Copied](../../Static/images/buffer-hostmemory-accessor-cg-device.png "Buffer Copied")
-						</div>
-					</div>
-				</section>
-				<!--Slide 13-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Accessing data on another device (same context)
-					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							* Now if a `buffer` is accessed on a device when the
-							latest copy of the data is on another device, the
-							data will be moved between the devices.
-							* If the two devices are of the same context the
-							data can be copied directly.
-						</div>
-						<div class="col" data-markdown>
-							![Buffer Copied](../../Static/images/buffer-copied.png "Buffer Copied")
-						</div>
-					</div>
-				</section>
-				<!--Slide 14-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Accessing data on another device (different context)
-					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							* If the devices are of different `context`s the
-							data must be copied via host memory.
-							* It's important to consider this as it could incur
-							further overhead when moving data between devices.
-						</div>
-						<div class="col" data-markdown>
-							![Buffer Copied](../../Static/images/copy-via-host.png "Buffer Copied")
-						</div>
-					</div>
-				</section>
-				<!--Slide 15-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Moving between devices (buffer/accessor)
-					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							![SYCL](../../Static/images/moving_data_between_devices.svg "SYCL")
-						</div>
-						<div class="col" data-markdown>
-							* If a `buffer` is accessed by kernel functions in two different devices commands are enqueued to automatically move the data to the devices it is being accessed on.
-							* If both of those devices are associated with the same context (i.e. same vendor) then the copy is direct.
-							* Otherwise the copy will generally go via the host and has additional overhead.
-						</div>
 					</div>
 				</section>
 				<!--Slide 16-->

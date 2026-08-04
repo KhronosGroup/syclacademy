@@ -346,7 +346,7 @@ cmake ../ "-GUnix Makefiles" -DSYCL_ACADEMY_USE_DPCPP=ON -DSYCL_ACADEMY_ENABLE_S
 
 [video-playlist]: https://youtube.com/playlist?list=PLCssnq0MpRdM-IUAYtNSPYck6u3oz7OZQ
 
-[lesson0-slides]: ./Lesson_Materials/Fast_Track/
+[lesson-0-slides]: ./Lesson_Materials/Fast_Track/
 <!-- Functors dont really fit with the lesson, so I am commenting this out for now -->
 <!-- [lesson-0-exercise]: ./Code_Exercises/Functors/README.md -->
 <!-- [lesson-0-source]:   ./Code_Exercises/Functors/source.cpp -->

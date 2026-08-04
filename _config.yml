@@ -12,5 +12,3 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
   # node_modules intentionally NOT listed, so it gets published.
-  
-favicon: /favicon.ico

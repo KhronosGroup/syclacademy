@@ -96,195 +96,57 @@
 						</div>
 					</div>
 				</section>
-				<!--Slide 7-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Composing command groups
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-<mark>gpuQueue.submit([&amp;](handler &amp;cgh){</mark>
-  
-  /* Command group function */
-  
-<mark>});</mark>
-							</code></pre>
-						</div>
-						<div class="col-right-1" data-markdown>
-							* The `submit` member function takes a C++ function object, which takes a reference to a `handler`.
-							* The function object can be a lambda expression or a class with a function call operator.
-							* The body of the function object represents the command group function.
-						</div>
-					</div>
-				</section>
-				<!--Slide 8-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Composing command groups
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-<mark>gpuQueue.submit([&amp;](handler &amp;cgh){</mark>
-  
-  /* Command group function */
-  
-<mark>});</mark>
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* The command group function is processed exactly once when `submit` is called.
-							* At this point all the commands and requirements declared inside the command group function are processed to produce a command group.
-							* The command group is then submitted asynchronously to the scheduler.
-						</div>
-					</div>
-				</section>
-				<!--Slide 9-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Composing command groups
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-gpuQueue.submit([&amp;](handler &amp;cgh){
-
-  /* Command group function */
-  
-})<mark>.wait();</mark>
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* The `queue` will not wait for commands to complete on destruction.
-							* However `submit` returns an `event` to allow you to synchronize with the completion of the commands.
-							* Here we call `wait` on the `event` to immediately wait for it to complete.
-							* There are other ways to do this, that will be covered in later lectures.
-						</div>
-					</div>
-				</section>
-				<!--Slide 10-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Scheduling
-					</div>
-					<div class="container" data-markdown>
-						![SYCL](../../Static/images/scheduling.svg "SYCL")
-					</div>
-					<div class="container" data-markdown>
-						* Once `submit` has created a command group it will submit it to the scheduler.
-						* The scheduler will then execute the commands on the target device
-							once all dependencies and requirements are satisfied.
-					</div>
-				</section>
-				<!--Slide 11-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Scheduling
-					</div>
-					<div class="container">
-						<div class="col" data-markdown>
-							![SYCL](../../Static/images/common_scheduler.svg "SYCL")
-						</div>
-					</div>
-					<div class="container" data-markdown>
-						* The same scheduler is used for all queues.
-						* This allows sharing dependency information.
-					</div>
-				</section>
-				<!--Slide 12-->
+				<!--Slide 7: Enqueueing a kernel (consolidated: old slides 7,8,9,12,13,14,15,18)-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Enqueueing SYCL Kernel Functions
 					</div>
 					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-class my_kernel;
+						<div class="col-left-3">
+							<pre><code class="language-cpp" data-line-numbers="|9,11|9-11|11" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
 
-gpuQueue.submit([&amp;](handler &amp;cgh){
+int main() {
+  constexpr int N = 5;
+  sycl::queue q;
 
-  <mark>cgh.single_task&lt;my_kernel&gt;([=]() {</mark>
-    /* kernel code */
-  <mark>});</mark>
-}).wait();
+  int *data = sycl::malloc_shared&lt;int&gt;(N, q);
+
+  q.<mark class="fragment" data-fragment-index="0">parallel_for</mark>(N, <mark class="fragment" data-fragment-index="1">[=](sycl::id&lt;1&gt; idx) {</mark>
+    <mark class="fragment" data-fragment-index="1">data[idx] = idx + 1;</mark>
+  <mark class="fragment" data-fragment-index="1">}</mark>)<mark class="fragment" data-fragment-index="2">.wait();</mark>
+
+  for (int i = 0; i &lt; N; ++i)
+    assert(data[i] == i + 1);
+
+  sycl::free(data, q);
+}
 							</code></pre>
 						</div>
-						<div class="col" data-markdown>
-							* SYCL kernel functions are defined using one of the kernel function invoke APIs provided by the `handler`.
-							* These add a SYCL kernel function command to the command group.
-							* There can only be one SYCL kernel function command in a command group.
-							* Here we use `single_task`.
+						<div class="col-right-2 stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* SYCL kernel functions are enqueued using one of the kernel invoke APIs.
+								* The `queue` provides shortcut versions of these so you don't have to compose a command group yourself.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* A kernel is enqueued by calling an invoke API on the `queue`.
+								* The `queue` shortcut submits the command for you, so no explicit `handler` or command group is needed.
+								* The first argument describes the iteration space to invoke the kernel over.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* The kernel function is a function object, here a lambda expression.
+								* It is the entry point to the code that runs on the device.
+								* It is captured by-value and must follow the SYCL kernel function rules.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+								* The `queue` will not wait for commands to complete on destruction.
+								* The kernel invoke APIs return an `event` to allow you to synchronize with the completion of the commands.
+								* Here we call `wait` on the returned `event` to immediately wait for it to complete.
+							</div>
 						</div>
 					</div>
 				</section>
-				<!--Slide 13-->
-				<section>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-class my_kernel;
-
-gpuQueue.submit([&amp;](handler &amp;cgh){
-								
-  cgh.single_task&lt;my_kernel&gt;(<mark>[=]() {</mark>
-    <mark>/* kernel code */</mark>
-  <mark>}</mark>); 
-}).wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* The kernel function invoke APIs take a function object representing the kernel function.
-							* This can be a lambda expression or a class with a function call operator.
-							* This is the entry point to the code that is compiled to execute on the device.
-						</div>
-					</div>
-				</section>
-				<!--Slide 14-->
-				<section>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-class my_kernel;
-
-gpuQueue.submit([&amp;](handler &amp;cgh){
-								
-  cgh.single_task&lt;my_kernel&gt;(<mark>[=]() {</mark>
-    <mark>/* kernel code */</mark>
-  <mark>}</mark>); 
-}).wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Different kernel invoke APIs take different parameters describing the iteration space to be invoked in.
-							* Different kernel invoke APIs can also expect different arguments to be passed to the function object.
-							* The `single_task` function describes a kernel function that is invoked exactly once, so there are no additional parameters or arguments.
-						</div>
-					</div>
-				</section>
-				<!--Slide 15-->
-				<section>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-<mark>class my_kernel;</mark>
-
-gpuQueue.submit([&amp;](handler &amp;cgh){
-								
-  cgh.single_task&lt;<mark>my_kernel</mark>&gt;([=]() {
-    /* kernel code */
-  }); 
-}).wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* The template parameter passed to `single_task` is used to name the kernel function.
-							* This is necessary when defining kernel functions with lambdas to allow the host and device compilers to communicate.
-							* SYCL 2020 allows kernel lambdas to be unnamed, but not all implementations support that yet.
-						</div>
-					</div>
-				</section>
-				<!--Slide 16-->
+				<!--Slide 8 (old slide 16)-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### SYCL kernel function rules
@@ -292,11 +154,9 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 					<div class="container" data-markdown>
 						* Must be defined using a C++ lambda or function object, they cannot be a function pointer or std::function.
 						* Must always capture or store members by-value.
-						* SYCL kernel functions declared with a lambda ~~must be named using a forward declarable C++ type, declared in global scope~~ can be anonymous since SYCL 2020!
-						* SYCL kernel function names follow C++ ODR rules, which means you cannot have two kernels with the same name.
 					</div>
 				</section>
-				<!--Slide 17-->
+				<!--Slide 9 (old slide 17)-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### SYCL kernel function restrictions
@@ -308,81 +168,54 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 						* No recursion
 					</div>
 				</section>
-				<!--Slide 18-->
+				<!--Slide 10: Kernels as function objects (consolidated: old slides 19,20)-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Kernels as function objects
 					</div>
 					<div class="container">
-						<div class="col">
-							<pre><code class="language-cpp" data-line-numbers>
-class my_kernel;
+						<div class="col-left-3">
+							<pre><code class="language-cpp" data-line-numbers="|3-8|16" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
 
-queue gpuQueue;
-gpuQueue.submit([&amp;](handler &amp;cgh){
-
-  cgh.single_task&lt;my_kernel&gt;([=]() {
-    /* kernel code */
-  }); 
-}).wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* All the examples of SYCL kernel functions up until now have been defined using lambda expressions.
-						</div>
-					</div>
-				</section>
-				<!--Slide 19-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Kernels as function objects
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code class="language-cpp" data-line-numbers>
-struct my_kernel { 
-  void operator()() const {
-    /* kernel function */
+struct fill_kernel {
+  int *data;
+  void operator()(sycl::id&lt;1&gt; idx) const {
+    data[idx] = idx + 1;
   }
 };
+
+int main() {
+  constexpr int N = 5;
+  sycl::queue q;
+
+  int *data = sycl::malloc_shared&lt;int&gt;(N, q);
+
+  q.parallel_for(N, <mark class="fragment" data-fragment-index="1">fill_kernel{data}</mark>).wait();
+
+  for (int i = 0; i &lt; N; ++i)
+    assert(data[i] == i + 1);
+  
+  sycl::free(data, q);
+}
 							</code></pre>
 						</div>
-						<div class="col" data-markdown>
-							* As well as defining SYCL kernels using lambda expressions,
-								You can also define a SYCL kernel using a regular C++ function object.
-							* Define a type with a public const-qualified `operator()` member function.
+						<div class="col-right-2 stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* All the examples of SYCL kernel functions up until now have been defined using lambda expressions.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* As well as defining SYCL kernels using lambda expressions, you can also define a SYCL kernel using a regular C++ function object.
+								* Define a type with a public const-qualified `operator()` member function.
+								* Its data members are captured by-value, so here we store the USM pointer the kernel operates on.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* To use a C++ function object you simply construct an instance of the type and pass it to the kernel invoke API.
+							</div>
 						</div>
 					</div>
 				</section>
-				<!--Slide 20-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Kernels as function objects
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code class="language-cpp" data-line-numbers>
-struct my_kernel { 
-  void operator()() const {
-    /* kernel function */
-  }
-};
-							</code></pre>
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-queue gpuQueue;
-gpuQueue.submit([&amp;](handler &amp;cgh){
-								
-  cgh.single_task(<mark>my_kernel{}</mark>); 
-}).wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* To use a C++ function object you simply construct an instance of the type and pass it to `single_task`.
-							* Notice you no longer need to name the SYCL kernel.
-						</div>
-					</div>
-				</section>
-				<!--Slide 21-->
+				<!--Slide 11 (old slide 21)-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Streams
@@ -393,85 +226,64 @@ gpuQueue.submit([&amp;](handler &amp;cgh){
 						* The `stream` is useful for debugging, but should not be relied on in performance critical code.
 					</div>
 				</section>
-				<!--Slide 22-->
+				<!--Slide 12: Streams (consolidated: old slides 22,23,24)-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Streams
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-sycl::stream(size_t bufferSize, size_t workItemBufferSize, handler &amp;cgh);
+						<pre><code class="language-cpp" data-line-numbers="|9|9|9|12-13" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+
+int main() {
+  sycl::queue q;
+
+  int *answer = sycl::malloc_shared&lt;int&gt;(1, q);
+
+  q.submit([&amp;](sycl::handler &amp;cgh) {
+    <mark class="fragment" data-fragment-index="0">sycl::stream os</mark>{<mark class="fragment" data-fragment-index="1">1024</mark>, <mark class="fragment" data-fragment-index="2">1024</mark>, cgh};
+
+    cgh.single_task([=]() {
+      <mark class="fragment" data-fragment-index="3">*answer = 40 + 2;
+      os &lt;&lt; "The answer is " &lt;&lt; *answer &lt;&lt; "\n";</mark>
+    });
+  }).wait();
+
+  assert(*answer == 42);
+
+  sycl::free(answer, q);
+}
 						</code></pre>
 					</div>
-					<div class="container" data-markdown>
-						* A `stream` must be constructed in the command group function, as a `handler` is required.
-						* The constructor also takes a `size_t` parameter specifying the total size of the buffer that will store the text.
-						* It also takes a second `size_t` parameter specifying the work-item buffer size.
-						* The work-item buffer size represents the cache that each invocation of the kernel function (in the case of `single_task` 1) has for composing a stream of text.
-					</div>
-				</section>
-				<!--Slide 23-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Streams
-					</div>
 					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-class my_kernel;
-
-queue gpuQueue;
-gpuQueue.submit([&amp;](handler &amp;cgh){
-
-  <mark>auto os = sycl::stream(1024, 1024, cgh);</mark>
-
-  cgh.single_task&lt;my_kernel&gt;([=]() {
-    /* kernel code */
-  }); 
-}).wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Here we construct a `stream` in our command group function with a buffer size of `1024` and a work-item size of also `1024`.
-							* This means that the total text that the stream can receive is 1024 bytes.
-						</div>
-					</div>
-				</section>
-				<!--Slide 24-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Streams
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-class my_kernel;
-
-queue gpuQueue;
-gpuQueue.submit([&amp;](handler &amp;cgh){
-
-  auto os = sycl::stream(1024, 1024, cgh);
-
-  cgh.single_task&lt;my_kernel&gt;([=]() {
-    <mark>os &lt;&lt; "Hello world!\n";</mark>
-  }); 
-}).wait();
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Next we capture the `stream` in the kernel function's lambda expression.
-							* Then we can print `"Hello World!"` to the console using the `&lt;&lt;` operator.
-							* This is where the work-item size comes in, this is the cache available to store text on the right-hand-size of the `&lt;&lt;` operator.
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* A `stream` requires a `handler`, so here we compose a command group with `submit` rather than using a `queue` shortcut.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* We construct a `stream` in the command group function: `sycl::stream{bufferSize, workItemBufferSize, cgh}`.
+								* Here both sizes are `1024`, so the stream can receive a total of 1024 bytes of text.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* The first `size_t` is the total buffer size that stores the text.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+								* The second `size_t` is the work-item buffer size.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="3" data-markdown>
+								* We capture the `stream` in the kernel and print with the `&lt;&lt;` operator, computing `40 + 2` on the device.
+								* The work-item size is the cache available for the text on the right-hand-side of each `&lt;&lt;`.
+							</div>
 						</div>
 					</div>
 				</section>
-				<!--Slide 22-->
+				<!--Slide 13 (old slide 25)-->
 				<section>
 					<div class="hbox" data-markdown>
 						## Questions
 					</div>
 				</section>
-				<!--Slide 23-->
+				<!--Slide 14 (old slide 26)-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Exercise

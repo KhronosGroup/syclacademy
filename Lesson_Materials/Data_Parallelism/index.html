@@ -68,31 +68,47 @@
 						<div class="col">
 							Sequential CPU code
 							<pre><code class="language-cpp" data-trim data-line-numbers>
-void calc(const int in[], int out[]) {
-  // all iterations are run in the same
-  // thread in a loop
-  for (int i = 0; i &lt; 1024; i++){
-    out[i] = in[i] * in[i];
-  }
-}
+#include &lt;vector&gt;
 
-// calc is invoked just once and all
-// iterations are performed inline
-calc(in, out);
+int main() {
+  constexpr int N = 1024;
+  std::vector&lt;int&gt; in(N), out(N);
+  for (int i = 0; i &lt; N; ++i) in[i] = i;
+
+  // all iterations run in one
+  // thread, in a loop
+  for (int i = 0; i &lt; N; ++i)
+    out[i] = in[i] * in[i];
+
+  for (int i = 0; i &lt; N; ++i)
+    assert(out[i] == i * i);
+}
 							</code></pre>
 						</div>
 						<div class="col">
 							Parallel SPMD code
 							<pre><code class="language-cpp" data-trim data-line-numbers>
-void calc(const int in[], int out[], int id) {
-  // function is described in terms of
-  // a single iteration
-  out[id] = in[id] * in[id];
-}
+#include &lt;sycl/sycl.hpp&gt;
 
-// parallel_for invokes calc multiple
-// times in parallel
-parallel_for(calc, in, out, 1024);
+int main() {
+  constexpr int N = 1024;
+  sycl::queue q;
+  int *in = sycl::malloc_shared&lt;int&gt;(N, q);
+  int *out = sycl::malloc_shared&lt;int&gt;(N, q);
+  for (int i = 0; i &lt; N; ++i) in[i] = i;
+
+  // the body describes a
+  // single iteration
+  q.parallel_for(N, [=](sycl::id&lt;1&gt; i) {
+    out[i] = in[i] * in[i];
+  }).wait();
+
+  for (int i = 0; i &lt; N; ++i)
+    assert(out[i] == i * i);
+
+  sycl::free(in, q);
+  sycl::free(out, q);
+}
 							</code></pre>
 						</div>
 					</div>
@@ -260,75 +276,103 @@ parallel_for(calc, in, out, 1024);
 				<!--Slide 14-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Parallel_for
+						#### Parallel_for with a range
 					</div>
 					<div class="container">
-						<div class="col">
-							<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
-q.<mark>parallel_for</mark>(<mark>nd_range{{1024, 16}, {32, 4}}</mark>,
-                          [=](<mark>nd_item&lt;2&gt; item)</mark>{
-  // SYCL kernel function is executed 
-  // on a range of work-items
-});
-							</code></pre>
-						</div>
+						<pre><code class="language-cpp" data-line-numbers="|13|14|15" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;vector&gt;
+
+int main() {
+  constexpr int N = 1024;
+  sycl::queue q;
+
+  int *a = sycl::malloc_shared&lt;int&gt;(N, q);
+  int *b = sycl::malloc_shared&lt;int&gt;(N, q);
+  int *r = sycl::malloc_shared&lt;int&gt;(N, q);
+  for (int i = 0; i &lt; N; ++i) { a[i] = i; b[i] = i; }
+
+  q.parallel_for(<mark class="fragment" data-fragment-index="0">sycl::range{N}</mark>,
+                 [=](<mark class="fragment" data-fragment-index="1">sycl::id&lt;1&gt; i</mark>) {
+    <mark class="fragment" data-fragment-index="2">r[i] = a[i] + b[i];</mark>
+  }).wait();
+
+  for (int i = 0; i &lt; N; ++i)
+    assert(r[i] == 2 * i);
+
+  sycl::free(a, q);
+  sycl::free(b, q);
+  sycl::free(r, q);
+}
+						</code></pre>
 					</div>
-					<div class="container" data-markdown>
-					  * In SYCL, kernel functions can be enqueued to execute
-					  over a range of work-items using `parallel_for`
-					  * The first argument to `parallel_for` is an `nd_range` or
-					  a `range` which describes the iteration space over which
-					  the kernel is to be executed
-					  * The kernel function has to take an `nd_item` or `item`,
-					  respectively, as the parameter (or any type they can be
-					  implicitly converted to, commonly from `item` to `id`)
+					<div class="container">
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* Kernels are enqueued over a range of work-items using `parallel_for`.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* The first argument is a `range` describing the iteration space, here `N` work-items.
+								* The runtime chooses the local range for you.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* With a `range`, the kernel takes an `item` or, as here, an `id` giving the index within the global range.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+								* Each work-item runs the body once for its own index.
+							</div>
+						</div>
 					</div>
 				</section>
 				<!--Slide 16-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Expressing parallelism
+						#### Parallel_for with an nd_range
 					</div>
 					<div class="container">
-						<div style="font-size: 90%; display: grid; grid-template-columns: 45% 55%; grid-template-rows: 1fr 1fr 1fr;">
-							<div style="margin: auto 0; vertical-align: middle;">
-								<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
-q.parallel_for(<mark>nd_range&lt;1&gt;{1024,32}</mark>,
-  [=](<mark>nd_item&lt;1&gt; ndItem</mark>){
-    /* kernel function code */
-    id globalId = ndItem.get_global_id();
-    id localId = ndItem.get_local_id();
-});
-								</code></pre>
+						<pre><code class="language-cpp" data-line-numbers="|5,14|15|16" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;vector&gt;
+
+int main() {
+  constexpr int N = 1024, workGroupSize = 128;
+  sycl::queue q;
+
+  int *a = sycl::malloc_shared&lt;int&gt;(N, q);
+  int *b = sycl::malloc_shared&lt;int&gt;(N, q);
+  int *r = sycl::malloc_shared&lt;int&gt;(N, q);
+  for (int i = 0; i &lt; N; ++i) { a[i] = i; b[i] = i; }
+
+  q.parallel_for(
+      <mark class="fragment" data-fragment-index="0">sycl::nd_range&lt;1&gt;{N, workGroupSize}</mark>,
+      [=](<mark class="fragment" data-fragment-index="1">sycl::nd_item&lt;1&gt; item</mark>) {
+    <mark class="fragment" data-fragment-index="2">sycl::id&lt;1&gt; i = item.get_global_id();</mark>
+    r[i] = a[i] + b[i];
+  }).wait();
+
+  for (int i = 0; i &lt; N; ++i)
+    assert(r[i] == 2 * i);
+
+  sycl::free(a, q);
+  sycl::free(b, q);
+  sycl::free(r, q);
+}
+						</code></pre>
+					</div>
+					<div class="container">
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* `parallel_for` has overloads for the different ways of describing the iteration space.
 							</div>
-							<div style="margin: auto 0; vertical-align: middle;" data-markdown>
-								* Overload taking an `nd_range` object specifies the global and local range
-								* An `nd_item` parameter represents the global and local range and index
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* The `nd_range` overload specifies both the global range and the local (work-group) range.
 							</div>
-							<div style="margin: auto 0; vertical-align: middle;">
-								<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
-q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
-  [=](<mark>item&lt;1&gt; item</mark>){
-    /* kernel function code */
-    id globalId = item.get_id();
-});
-								</code></pre>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* The kernel takes an `nd_item`, which represents both the global and local range and index.
+								* The `range` overloads instead take an `item` (global range + index) or an `id` (index only), where the runtime chooses the local range.
 							</div>
-							<div style="margin: auto 0; vertical-align: middle;" data-markdown>
-								* Overload taking a `range` object specifies the global range, runtime decides local range
-								* An `item` parameter represents the global range and the index within the global range
-							</div>
-							<div style="margin: auto 0; vertical-align: middle;">
-								<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
-q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
-  [=](<mark>id&lt;1&gt; globalId</mark>){
-    /* kernel function code */
-});
-								</code></pre>
-							</div>
-							<div style="margin: auto 0; vertical-align: middle;" data-markdown>
-								* Overload taking a `range` object specifies the global range, runtime decides local range
-								* An `id` parameter represents the index within the global range
+							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+								* Query the work-item's position with `get_global_id`, then index the data as before.
 							</div>
 						</div>
 					</div>
@@ -392,59 +436,6 @@ q.parallel_for(<mark>range&lt;1&gt;{1024}</mark>,
 						</div>
 						<div class="col" data-markdown>
 							![Memory Regions](../../Static/images/memory-regions.png "Memory Regions")
-						</div>
-					</div>
-				</section>
-				<!--Slide 22-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Accessing Data
-					</div>
-					<div class="container" data-markdown>
-										</div>
-				</section>
-				<!--Slide 23-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Accessing Data
-					</div>
-					<div class="container">
-						<div class="col-left-3">
-							<pre><code class="language-cpp" data-trim data-line-numbers data-noescape>
-#include&lt;sycl/sycl.hpp&gt;
-#include&lt;vector&gt;
-
-int main() {
-std::vector&lt;float&gt; hA{ 3.14 4.38 6.9, 10.2 }, hB{ 6.5, 11.4, 0.2, 9.12 };
-
-queue gpuQueue(gpu_selector{});
-
-float* dA = malloc_shared&lt;float&gt;(hA.size(), gpuQueue);
-float* dB = malloc_shared&lt;float&gt;(hB.size(), gpuQueue);
-float* out = malloc_shared&lt;float&gt;(hA.size(), gpuQueue);
-
-event cpy_evt_1 = gpuQueue.copy(hA.data(), dA, hA.size());
-event cpy_evt_2 = gpuQueue.copy(hB.data(), dB, hB.size());
-
-gpuQueue.parallel_for(range&amp;&lt;1&gt;(dA.size()) {cpy_evt_1, cpy_evt_2},
-    [=](id&amp;lt1&gt; i){
-    <mark>out[i] = inA[i] + inB[i];</mark>
-});
-
-gpuQueue.wait();
-
-/* ... */
-
-}
-							</code></pre>
-						</div>
-						<div class="col-right-2" data-markdown>
-							*  The subscript operator can take an **id**
-							* Here we access the data by
-							passing in the `id` passed to the SYCL kernel
-							function into the subscript operator
-							* `.get_id(dim)` takes a **size_t** to get the index for a single dimension
-							  * E.g. a 3D item: `itm.get_id(0)`, `itm.get_id(1)`, `itm.get_id(2)` for x, y, z
 						</div>
 					</div>
 				</section>

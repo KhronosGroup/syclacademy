@@ -33,8 +33,8 @@
 						#### Memory Models
 					</div>
 					<div class="container" data-markdown>
-						* In SYCL the USM (unified shared memory) model can be used to manage data.
-						* Which model you choose can have an effect on how you enqueue kernel functions.
+						* In SYCL, the USM (unified shared memory) model manages data using familiar C++ pointers.
+						* Memory is allocated, transferred and freed explicitly through the SYCL `queue`.
 					</div>
 				</section>
 				<!--Slide 3-->
@@ -67,7 +67,7 @@
 				<!--Slide 3B-->
 				<section>
 					<div class="hbox" data-markdown>
-#### USM Allocation Types
+#### Allocation Types
 					</div>
 					<div class="container" data-markdown>
 * There are different ways USM memory can be allocated: host, device and shared.
@@ -80,88 +80,143 @@
 | shared | Allocations shared between both | ✓              | ✓              | migrates as required |
 					</div>
 				</section>
-				<!--Slide 3-->
+				<!--Slide 4-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Using USM - Malloc Device
+						#### Malloc Device
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-// Allocate memory on device
-T *device_ptr = sycl::malloc_device&lt;T&gt;(n, myQueue);
+						<pre><code class="language-cpp" data-line-numbers="|10-12|14-15|16|18-20|22|24-26" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;vector&gt;
 
-// Copy data to device
-myQueue.memcpy(device_ptr, cpu_ptr, n * sizeof(T));
+int main() {
+  constexpr int N = 5;
+  std::vector&lt;int&gt; a{1, 2, 3, 4, 5}, b{5, 4, 3, 2, 1}, r(N);
+  std::vector&lt;int&gt; expected{6, 6, 6, 6, 6};
+  sycl::queue q;
 
-// ...
-// Do some computation on device
-// ...
+  int *devA = <mark class="fragment" data-fragment-index="0">sycl::malloc_device&lt;int&gt;(N, q)</mark>;
+  int *devB = <mark class="fragment" data-fragment-index="0">sycl::malloc_device&lt;int&gt;(N, q)</mark>;
+  int *devR = <mark class="fragment" data-fragment-index="0">sycl::malloc_device&lt;int&gt;(N, q)</mark>;
 
-// Copy data back to CPU
-myQueue.memcpy(result_ptr, device_ptr, n * sizeof(T)).wait();
+  q.<mark class="fragment" data-fragment-index="1">copy</mark>(a.data(), devA, N);
+  q.<mark class="fragment" data-fragment-index="1">copy</mark>(b.data(), devB, N);
+  q.wait();
 
-// Free allocated data
-sycl::free(device_ptr, myQueue);
+  q.parallel_for(N, [=](sycl::id&lt;1&gt; idx) {
+    <mark class="fragment" data-fragment-index="3">devR[idx] = devA[idx] + devB[idx];</mark>
+  }).wait();
+
+  q.<mark class="fragment" data-fragment-index="4">copy</mark>(devR, r.data(), N).wait();
+
+  <mark class="fragment" data-fragment-index="5">sycl::free</mark>(devA, q);
+  <mark class="fragment" data-fragment-index="5">sycl::free</mark>(devB, q);
+  <mark class="fragment" data-fragment-index="5">sycl::free</mark>(devR, q);
+
+  assert(r == expected);
+}
 						</code></pre>
 					</div>
-					<div class="container" data-markdown>
-						* It is important to free memory after it has been
-						used to avoid memory leaks.
+					<div class="container">
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* Device allocations follow a copy-in, compute, copy-out pattern.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* `malloc_device` allocates memory in a device's memory.
+								* Since these allocations are in a remote memory, the only thing acessible on the host 
+							  is the USM pointers returned by the `sycl::malloc_device` calls.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* Data needed for the kernel's execution must be copied to the device before execution 
+								begins.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+								* Copying data to a device is an asynchronous operation, so we explicitly tell the host to
+								wait for the events to be resolved.
+								* Copying `a` and `b` can happen concurrently, so we don't need to wait, but
+								the kernel cannot execute until the contents of `a` and `b` are in device memory.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="3" data-markdown>
+								* The kernel reads and writes the device pointers.
+								* You a USM pointer with a subscript `operator[]`, in this example we are passing the 
+								`sycl::id` of the work item. 
+							</div>
+							<div class="fragment current-visible" data-fragment-index="4" data-markdown>
+								* Kernel execution is asynchronous from the host, just like copying memory. 
+								* Calling `wait` forces the host to synchronize with the device, this prevents race 
+								conditions.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="5" data-markdown>
+								* Free device allocations when done to avoid memory leaks.
+							</div>
+						</div>
 					</div>
 				</section>
+				<!--Slide 5-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Using USM - Malloc Shared
+						#### Malloc Shared
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers>
-// Allocate shared memory
-T *shared_ptr = sycl::malloc_shared&lt;T&gt;(n, myQueue);
+						<pre><code class="language-cpp" data-line-numbers="|9-11|13-16|18-20" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;vector&gt;
 
-// Shared memory can be accessed on host as well as device
-for (auto i = 0; i &lt; n; ++i)
-  shared_ptr[i] = i;
+int main() {
+  constexpr int N = 5;
+  std::vector&lt;int&gt; expected{6, 6, 6, 6, 6};
+  sycl::queue q;
 
-// ...
-// Do some computation on device
-// ...
+  int *a = <mark class="fragment" data-fragment-index="0">sycl::malloc_shared&lt;int&gt;(N, q)</mark>;
+  int *b = <mark class="fragment" data-fragment-index="0">sycl::malloc_shared&lt;int&gt;(N, q)</mark>;
+  int *r = <mark class="fragment" data-fragment-index="0">sycl::malloc_shared&lt;int&gt;(N, q)</mark>;
 
-// Free allocated data
-sycl::free(shared_ptr, myQueue);
+  <mark class="fragment" data-fragment-index="1">for (int i = 0; i &lt; N; ++i) {</mark>
+    <mark class="fragment" data-fragment-index="1">a[i] = i + 1;</mark>
+    <mark class="fragment" data-fragment-index="1">b[i] = N - i;</mark>
+  <mark class="fragment" data-fragment-index="1">}</mark>
+
+  q.parallel_for(N, [=](sycl::id&lt;1&gt; idx) {
+    <mark class="fragment" data-fragment-index="2">r[idx] = a[idx] + b[idx];</mark>
+  }).wait();
+
+  std::vector&lt;int&gt; result(r, r + N);
+  assert(result == expected);
+
+  sycl::free(a, q);
+  sycl::free(b, q);
+  sycl::free(r, q);
+}
 						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* Shared memory is accessible on host and device.
-						* Performance of shared memory accesses may be poor depending on platform.
-					</div>
-				</section>
-				<!--Slide 19-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### operator[]
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp" data-line-numbers>
-gpuQueue.submit([&amp;](handler &amp;cgh){
-  cgh.single_task&lt;mykernel&gt;([=]{
-    <mark>out[0] = inA[0] + inB[0];</mark>
-  });
-});
-						</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* Data can be accessed from within a kernel function by
-						calling `operator[]`.
-						* `operator[]` for USM pointers must take a `size_t`.
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* Shared memory removes the explicit copies of the device example.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* `malloc_shared` allocates memory that migrates between host and device automatically.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* Shared memory is host-accessible, so we write the inputs directly, with no `copy`.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+								* The device accesses the same pointers.
+								* The data must still be copied between host and device, but you don't define that explicitly, the runtime decides when.
+								* Shared memory accesses may be slower depending on platform.
+							</div>
+						</div>
 					</div>
 				</section>
-				<!--Slide 20-->
+				<!--Slide 6-->
 				<section>
 					<div class="hbox" data-markdown>
 						## Questions
 					</div>
 				</section>
-				<!--Slide 21-->
+				<!--Slide 7-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Exercise

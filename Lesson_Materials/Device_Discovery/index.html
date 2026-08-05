@@ -150,7 +150,7 @@ int main() {
 						#### Using device selectors
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers="|4-9|12|13|16,19" data-fragment-index="0" data-noescape data-trim>
+						<pre><code class="language-cpp" data-line-numbers="|4-9|12|13|16,18" data-fragment-index="0" data-noescape data-trim>
 #include &lt;sycl/sycl.hpp&gt;
 #include &lt;iostream&gt;
 
@@ -177,6 +177,7 @@ int main() {
 							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
 								* A device selector scores each device, and the highest score is chosen.
 							</div>
+
 							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
 								* A device selector is any callable taking a `const device &amp;` and returning a score.
 								* A device with a negative score will never be chosen.

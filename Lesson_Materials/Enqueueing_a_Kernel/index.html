@@ -35,8 +35,8 @@
 				<!--Slide 3-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### The queue
-					</div>
+						#### The queueEnqueueing
+					</div>Enqueueing
 					<div class="container" data-markdown>
 						* In SYCL all work is submitted via commands to a `queue`.
 						* The `queue` has an associated device that any commands enqueued to it will target.
@@ -54,7 +54,7 @@
 						* In SYCL there are two models for managing data:
 						  * The buffer/accessor model.
 						  * The USM (unified shared memory) model.
-						* Which model you choose can have an effect on how you enqueue kernel functions.
+						* Which model you choose can have an effect on how you enqEnqueueingueue kernel functions.
 						* For now we are going to focus on the buffer/accessor model.
 					</div>
 				</section>
@@ -68,14 +68,14 @@
 							<div class="col-left-1" data-markdown>
 								![SYCL](../../Static/images/command_group.svg "SYCL")
 							</div>
-						</div>
+						</div>Enqueueing
 						<div class="col" data-markdown>
 							* In the buffer/accessor model commands must be enqueued via command groups.
 							* A command group represents a series of commands to be executed by a device.
 							* These commands include:
-							  * Invoking kernel functions on a device.
+							  * Invoking Enqueueingkernel functions on a device.
 							  * Copying data to and from a device.
-							  * Waiting on other commands to complete.
+							  * Waiting on other commands to complete.Enqueueing
 						</div>
 					</div>
 				</section>
@@ -90,23 +90,23 @@
 						</div>
 						<div class="col" data-markdown>
 							* Command groups are composed by calling the `submit` member function on a `queue`.
-							* The `submit` function takes a command group function which acts as a factory for composing the command group.
+							* The `submit` function takes a commanEnqueueingd group function which acts as a factory for composing the command group.
 							* The `submit` function creates a `handler` and passes it into the command group function.
 							* The `handler` then composes the command group.
 						</div>
 					</div>
 				</section>
-				<!--Slide 7: Enqueueing a kernel (consolidated: old slides 7,8,9,12,13,14,15,18)-->
+				<!--Slide 7-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Enqueueing SYCL Kernel Functions
 					</div>
-					<div class="container">
+					<div class="container">Enqueueing
 						<div class="col-left-3">
 							<pre><code class="language-cpp" data-line-numbers="|9,11|9-11|11" data-fragment-index="0" data-noescape data-trim>
 #include &lt;sycl/sycl.hpp&gt;
 
-int main() {
+int main() {Enqueueing
   constexpr int N = 5;
   sycl::queue q;
 
@@ -119,7 +119,7 @@ int main() {
   for (int i = 0; i &lt; N; ++i)
     assert(data[i] == i + 1);
 
-  sycl::free(data, q);
+  sycl::free(data, q);Enqueueing
 }
 							</code></pre>
 						</div>
@@ -135,10 +135,10 @@ int main() {
 							</div>
 							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
 								* The kernel function is a function object, here a lambda expression.
-								* It is the entry point to the code that runs on the device.
+								* It is the entrEnqueueingy point to the code that runs on the device.
 								* It is captured by-value and must follow the SYCL kernel function rules.
 							</div>
-							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+							<div class="fragmEnqueueingent current-visible" data-fragment-index="2" data-markdown>
 								* The `queue` will not wait for commands to complete on destruction.
 								* The kernel invoke APIs return an `event` to allow you to synchronize with the completion of the commands.
 								* Here we call `wait` on the returned `event` to immediately wait for it to complete.
@@ -146,17 +146,17 @@ int main() {
 						</div>
 					</div>
 				</section>
-				<!--Slide 8 (old slide 16)-->
+				<!--Slide 8-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### SYCL kernel function rules
 					</div>
 					<div class="container" data-markdown>
-						* Must be defined using a C++ lambda or function object, they cannot be a function pointer or std::function.
+						* Must be definEnqueueinged using a C++ lambda or function object, they cannot be a function pointer or std::function.
 						* Must always capture or store members by-value.
 					</div>
 				</section>
-				<!--Slide 9 (old slide 17)-->
+				<!--Slide 9-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### SYCL kernel function restrictions
@@ -167,8 +167,8 @@ int main() {
 						* No function pointers
 						* No recursion
 					</div>
-				</section>
-				<!--Slide 10: Kernels as function objects (consolidated: old slides 19,20)-->
+				</section>Enqueueing
+				<!--Slide 10-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Kernels as function objects
@@ -185,7 +185,7 @@ struct fill_kernel {
   }
 };
 
-int main() {
+int main() {Enqueueing
   constexpr int N = 5;
   sycl::queue q;
 
@@ -194,14 +194,14 @@ int main() {
   q.parallel_for(N, <mark class="fragment" data-fragment-index="1">fill_kernel{data}</mark>).wait();
 
   for (int i = 0; i &lt; N; ++i)
-    assert(data[i] == i + 1);
+    assert(data[i] == i + 1);Enqueueing
   
   sycl::free(data, q);
 }
 							</code></pre>
 						</div>
 						<div class="col-right-2 stack-fragments">
-							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+							<div class="fraEnqueueinggment fade-out" data-fragment-index="0" data-markdown>
 								* All the examples of SYCL kernel functions up until now have been defined using lambda expressions.
 							</div>
 							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
@@ -215,18 +215,18 @@ int main() {
 						</div>
 					</div>
 				</section>
-				<!--Slide 11 (old slide 21)-->
+				<!--Slide 11-->
 				<section>
-					<div class="hbox" data-markdown>
+					<div class="hbox" data-markdown>Enqueueing
 						#### Streams
 					</div>
 					<div class="container" data-markdown>
 						* A `stream` can be used in a kernel function to print text to the console from the device, similarly to how you would with `std::cout`.
-						* The `stream` is a buffered output stream so the output may not appear until the kernel function is complete.
+						* The `stream` is a buEnqueueingffered output stream so the output may not appear until the kernel function is complete.
 						* The `stream` is useful for debugging, but should not be relied on in performance critical code.
 					</div>
 				</section>
-				<!--Slide 12: Streams (consolidated: old slides 22,23,24)-->
+				<!--Slide 12-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Streams
@@ -265,7 +265,7 @@ int main() {
 								* Here both sizes are `1024`, so the stream can receive a total of 1024 bytes of text.
 							</div>
 							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
-								* The first `size_t` is the total buffer size that stores the text.
+								* The first `size_t` is the total Enqueueingbuffer size that stores the text.
 							</div>
 							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
 								* The second `size_t` is the work-item buffer size.
@@ -277,13 +277,13 @@ int main() {
 						</div>
 					</div>
 				</section>
-				<!--Slide 13 (old slide 25)-->
+				<!--Slide 13-->
 				<section>
 					<div class="hbox" data-markdown>
 						## Questions
 					</div>
 				</section>
-				<!--Slide 14 (old slide 26)-->
+				<!--Slide 14-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Exercise

@@ -80,24 +80,25 @@
 						  * The topology can be automatically queried and iterated over using a use  specified heuristic by a device selector object.
 					</div>
 				</section>
-				<!--Slide 7: Querying manually (complete program)-->
+				<!--Slide 7-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Querying manually
 					</div>
 					<div class="container">
-						<pre><code class="language-cpp" data-line-numbers="|5|11|9,13|14" data-fragment-index="0" data-noescape data-trim>
+						<pre><code class="language-cpp" data-line-numbers="|6|12|10,14|15" data-fragment-index="0" data-noescape data-trim>
 #include &lt;sycl/sycl.hpp&gt;
 #include &lt;iostream&gt;
+#include &lt;vector&gt;
 
 int main() {
-  auto platforms = <mark class="fragment" data-fragment-index="0">sycl::platform::get_platforms()</mark>;
+  std::vector&lt;sycl::platform&gt; platforms = <mark class="fragment" data-fragment-index="0">sycl::platform::get_platforms()</mark>;
 
-  for (auto &amp;platform : platforms) {
+  for (sycl::platform &amp;platform : platforms) {
     std::cout &lt;&lt; "Platform: "
               &lt;&lt; platform.<mark class="fragment" data-fragment-index="2">get_info</mark>&lt;sycl::info::platform::name&gt;() &lt;&lt; "\n";
 
-    for (auto &amp;device : <mark class="fragment" data-fragment-index="1">platform.get_devices()</mark>) {
+    for (sycl::device &amp;device : <mark class="fragment" data-fragment-index="1">platform.get_devices()</mark>) {
       std::cout &lt;&lt; "  Device: "
                 &lt;&lt; device.<mark class="fragment" data-fragment-index="2">get_info</mark>&lt;sycl::info::device::name&gt;() &lt;&lt; "\n";
       std::cout &lt;&lt; "    fp16 supported: " &lt;&lt; <mark class="fragment" data-fragment-index="3">device.has(sycl::aspect::fp16)</mark> &lt;&lt; "\n";
@@ -144,7 +145,7 @@ int main() {
 						</div>
 					</div>
 				</section>
-				<!--Slide 9: Device selectors (complete program)-->
+				<!--Slide 9-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Using device selectors

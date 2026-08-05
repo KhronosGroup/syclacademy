@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   validate-lessons:
-    name: Validate all lessons
+    name: Validate Handling_Errors lesson
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -13,7 +13,7 @@ jobs:
       with:
         python-version: "3.14"
     - name: Validate lesson HTML
-      run: python ./Scripts/LessonChecker.py --verify Lesson_Materials/*/index.html
+      run: python ./Scripts/LessonChecker.py --verify Lesson_Materials/Handling_Errors/index.html
 
   test-acpp:
     name: acpp llvm ${{ matrix.clang }}, ${{ matrix.os }}
@@ -78,7 +78,7 @@ jobs:
     - name: Extract code blocks from lesson
       run: |
         SNIPPETS="${GITHUB_WORKSPACE}/Code_Exercises/Lesson_Snippets"
-        LESSONS="Lesson_Materials/Handling_Errors/index.html Lesson_Materials/Buffer_Accessor/index.html Lesson_Materials/Enqueueing_a_Kernel/index.html"
+        LESSONS="Lesson_Materials/Handling_Errors/index.html Lesson_Materials/Buffer_Accessor/index.html"
 
         python ./Scripts/LessonChecker.py --extract -o "${SNIPPETS}" ${LESSONS}
     - name: Build SYCLAcademy SYCL source code

@@ -56,7 +56,6 @@
 					</div>
 				</section>
 				<!--Slide 5-->
-				<!--Slide 6-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Platform and device classes
@@ -69,8 +68,8 @@
 							![SYCL](../../Static/images/devices-1.png "SYCL-Devices")
 						</div>
 					</div>
-				<!--Slide 7-->
 				</section>
+				<!--Slide 6-->
 				<section class="hbox">
 					<div class="hbox" data-markdown>
 						#### Querying the topology
@@ -81,72 +80,54 @@
 						  * The topology can be automatically queried and iterated over using a use  specified heuristic by a device selector object.
 					</div>
 				</section>
+				<!--Slide 7: Querying manually (complete program)-->
+				<section>
+					<div class="hbox" data-markdown>
+						#### Querying manually
+					</div>
+					<div class="container">
+						<pre><code class="language-cpp" data-line-numbers="|5|11|9,13|14" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;iostream&gt;
+
+int main() {
+  auto platforms = <mark class="fragment" data-fragment-index="0">sycl::platform::get_platforms()</mark>;
+
+  for (auto &amp;platform : platforms) {
+    std::cout &lt;&lt; "Platform: "
+              &lt;&lt; platform.<mark class="fragment" data-fragment-index="2">get_info</mark>&lt;sycl::info::platform::name&gt;() &lt;&lt; "\n";
+
+    for (auto &amp;device : <mark class="fragment" data-fragment-index="1">platform.get_devices()</mark>) {
+      std::cout &lt;&lt; "  Device: "
+                &lt;&lt; device.<mark class="fragment" data-fragment-index="2">get_info</mark>&lt;sycl::info::device::name&gt;() &lt;&lt; "\n";
+      std::cout &lt;&lt; "    fp16 supported: " &lt;&lt; <mark class="fragment" data-fragment-index="3">device.has(sycl::aspect::fp16)</mark> &lt;&lt; "\n";
+    }
+  }
+}
+						</code></pre>
+					</div>
+					<div class="container">
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* The runtime discovers the platforms and their devices, and you can traverse them manually.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* The `platform` class provides the static function `get_platforms`, which returns every platform in the system.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* Each `platform` provides `get_devices`, which returns the devices associated with that platform.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+								* Information about a platform or device is queried with the `get_info` member function template.
+								* The info being queried is specified by the template parameter, such as its name.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="3" data-markdown>
+								* Capabilities of a device are represented by aspects, queried with the `has` member function.
+							</div>
+						</div>
+					</div>
+				</section>
 				<!--Slide 8-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Querying manually
-					</div>
-					<div class="container">
-						<div class="col-left-1">
-							<pre><code class="language-cpp" data-line-numbers>
-auto platforms = platform::get_platforms();
-
-							</code></pre>
-						</div> 
-						<div class="col-right-1" data-markdown>
-						![SYCL](../../Static/images/devices-5.png "SYCL-Devices")
-						</div>
-					</div>
-					<div class="smaller-size-font" data-markdown>
-							* The platform class provides the static function `get_platforms`.
-							  * It retrieves a vector of all available platforms in the system.
-					</div>
-				</section>
-				<!--Slide 9-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Querying manually
-					</div>
-					<div class="container">
-						<div class="col-left-1">
-							<pre><code class="language-cpp" data-line-numbers>
-auto intelDevices = intelPlatform.get_devices();
-
-							</code></pre>
-						</div>
-						<div class="col-right-1" data-markdown>
-						![SYCL](../../Static/images/devices-6.png "SYCL-Devices")
-						</div>
-					</div>
-					<div class="smaller-size-font" data-markdown>
-							* The platform class provides the member function
-							`get_devices` that returns a vector of all devices
-							associated with that platform.
-					</div>
-				</section>
-				<!--Slide 10-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Querying manually
-					</div>
-					<div class="container">
-						<div class="col-left-1">
-							<pre><code class="language-cpp" data-line-numbers>
-auto devices = device::get_devices();
-
-							</code></pre>
-						</div>
-						<div class="col-right-1" data-markdown>
-						![SYCL](../../Static/images/devices-7.png "SYCL-Devices")
-						</div>
-					</div>
-					<div class="smaller-size-font" data-markdown>
-							* The device class also provides the static
-							function `get_devices` that returns a vector of all
-							available devices in the system.
-					</div>
-				</section>
-				<!--Slide 11-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Querying with a device selector
@@ -163,163 +144,62 @@ auto devices = device::get_devices();
 						</div>
 					</div>
 				</section>
-				<!--Slide 12-->
+				<!--Slide 9: Device selectors (complete program)-->
 				<section>
 					<div class="hbox" data-markdown>
-						#### Querying with a device selector
+						#### Using device selectors
 					</div>
 					<div class="container">
-						<div class="col-left-1">
-							<pre><code class="language-cpp" data-line-numbers>
-auto gpuDevice = device(gpu_selector_v); 
-							</code></pre>
-						</div>
-						<div class="col-right-1" data-markdown>
-						![Device Topology](../../Static/images/topology-1.png "Device-Topology")
-						</div>
-					</div>
-					<div class="container" data-markdown>
-							* A device selector takes a parameter of type `const device &amp;` and gives it a "score".
-							* Used to query all devices and return the one with the highest "score".
-							* A device with a negative score will never be chosen.
-					</div>
-				</section>
-				<!--Slide 13-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Querying the topology using a device selector
-					</div>
-					<div class="container">
-						<div class="col-left-1">
-							<pre><code class="language-cpp" data-line-numbers>
-auto chosenDevice = device();
-auto chosenDevice = device(default_selector_v);
-							</code></pre>
-						</div>
-						<div class="col-right-1" data-markdown>
-						![Device Topology](../../Static/images/topology-1.png "Device-Topology")
-						</div>
-					</div>
-					<div class="container" data-markdown>
-							* The `default_selector_v` is a standard device selector.
-							* Chooses a device based on an implementation defined heuristic.
-							* A default constructed device or platform will use this selector.
-					</div>
-				</section>
-				<!--Slide 14-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Creating a custom device selector
-					</div>
-					<div class="container">
-						<pre><code data-noescape class="language-cpp" data-line-numbers>
-<mark>int my_gpu_selector(const device&amp; dev) {</mark>
+						<pre><code class="language-cpp" data-line-numbers="|4-9|12|13|16,19" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;iostream&gt;
 
-<mark>}</mark>
-						</code></pre>
-					</div>
-					<div class="hbox" data-markdown>
-						* A device selector can be any callable object.
-						* A device selector must have a function call operator which takes a reference to a device.
-					</div>
-				</section>
-				<!--Slide 15-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Creating a custom device selector
-					</div>
-					<div class="container">
-						<pre><code data-noescape class="language-cpp" data-line-numbers>
-int my_gpu_selector(const device&amp; dev) {
-  <mark>if (dev.is_gpu()){</mark>
-    <mark>return 1;</mark>
-  <mark>}</mark>
-  <mark>else {</mark>
-    <mark>return -1;</mark>
-  <mark>}</mark>
+<mark class="fragment" data-fragment-index="0">int my_device_selector(const sycl::device &amp;dev) {</mark>
+  <mark class="fragment" data-fragment-index="0">if (dev.is_gpu()) {</mark>
+    <mark class="fragment" data-fragment-index="0">return 2;</mark>
+  <mark class="fragment" data-fragment-index="0">}</mark>
+  <mark class="fragment" data-fragment-index="0">return 1;</mark>
+<mark class="fragment" data-fragment-index="0">}</mark>
+
+int main() {
+  sycl::queue defaultQueue{<mark class="fragment" data-fragment-index="1">sycl::default_selector_v</mark>};
+  sycl::queue customQueue{<mark class="fragment" data-fragment-index="2">my_device_selector</mark>};
+
+  std::cout &lt;&lt; "Default selector chose: "
+            &lt;&lt; defaultQueue.<mark class="fragment" data-fragment-index="3">get_device()</mark>.get_info&lt;sycl::info::device::name&gt;() &lt;&lt; "\n";
+  std::cout &lt;&lt; "Custom selector chose: "
+            &lt;&lt; customQueue.<mark class="fragment" data-fragment-index="3">get_device()</mark>.get_info&lt;sycl::info::device::name&gt;() &lt;&lt; "\n";
 }
 						</code></pre>
 					</div>
-					<div class="hbox" data-markdown>
-						* The body of the function call operator defines the heuristic for selecting devices
-						* This is where you write the logic for scoring each device
-					</div>
-				</section>
-				<!--Slide 16-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Creating a custom device selector
-					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp" data-line-numbers>
-int my_gpu_selector(const device&amp; dev) {
-  if (dev.is_gpu()){
-    return 1;
-  }
-  else {
-    return -1;
-  }
-}
-
-int main(int argc, char *argv[]) {
-  <mark>auto gpuQueue = queue{my_gpu_selector};</mark>
-
-}
-						</code></pre>
-					</div>
-					<div class="hbox" data-markdown>
-						* Now that there is a device selector that chooses a specific device we can use that to construct a queue.
-					</div>
-				</section>
-				<!--Slide 17-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Platform/device info
-					</div>
-					<div class="container">
-						<div class="col-left-1">
-							<pre><code class="language-cpp" data-line-numbers>
-auto plt = dev.get_platform();
-auto platformName
-  = dev.get_info&lt;info::device::name&gt;();
-							</code></pre>
-						</div>
-						<div class="col-right-2" data-markdown>
-						![SYCL](../../Static/images/topology-2.png "SYCL-Devices")
-						</div>
-					</div>
-					<div class="container" data-markdown>
-							* Information about platforms and devices can be queried using the template member function `get_info`.
-							* The info that you are querying is specified by the template parameter.
-							* You can also query a device for its associated platform with the `get_platform` member function.
-					</div>
-				</section>
-				<!--Slide 18-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Aspects
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code class="language-cpp" data-line-numbers>
-bool supportsFp16 = dev.has(aspect::fp16);
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Capabilities of a device or platform are
-							represented by aspects.
-							* These can be queried via the `has` member
-							function.
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* A device selector scores each device, and the highest score is chosen.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* A device selector is any callable taking a `const device &amp;` and returning a score.
+								* A device with a negative score will never be chosen.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* SYCL provides standard selectors such as `default_selector_v` and `gpu_selector_v`.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="2" data-markdown>
+								* Pass your own selector to the `queue` constructor to target the device you want.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="3" data-markdown>
+								* Query the device a `queue` chose with `get_device`.
+							</div>
 						</div>
 					</div>
 				</section>
-				<!--Slide 19-->
+				<!--Slide 10-->
 				<section>
 					<div class="hbox" data-markdown>
 						## Questions
 					</div>
 				</section>
-				<!--Slide 20-->
+				<!--Slide 11-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Exercise

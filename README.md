@@ -78,6 +78,7 @@ may not match completely.
 
 | Lesson | Title | Slides | Exercise | Source | Solution |
 |--------|-------|--------|----------|--------|----------|
+| 00 | Fast Track | [slides][lesson-0-slides] |  |  |  |
 | 01 | What is SYCL | [slides][lesson-1-slides] | [exercise][lesson-1-exercise] | [source][lesson-1-source] | [solution][lesson-1-solution] |
 | 02 | Enqueueing a Kernel | [slides][lesson-2-slides] | [exercise][lesson-2-exercise] | [source][lesson-2-source] | [solution][lesson-2-solution] |
 | 03 | Managing Data | [slides][lesson-3-slides] | [exercise][lesson-3-exercise] | [source][lesson-3-source] | [solution][lesson-3-solution] |
@@ -98,7 +99,7 @@ may not match completely.
 | 18 | Further Optimisations | [slides][lesson-18-slides] | [exercise][lesson-18-exercise] | [source][lesson-18-source] | [solution][lesson-18-solution] |
 | 19 | Matrix Transpose | [slides][lesson-19-slides] | [exercise][lesson-19-exercise] | [source][lesson-19-source] | [solution][lesson-19-solution] |
 | 20 | More SYCL Features | [slides][lesson-20-slides] | [exercise][lesson-20-exercise] | [source][lesson-20-source] | [solution][lesson-20-solution] |
-| 21 | Functors | [slides][lesson-21-slides] | [exercise][lesson-21-exercise] | [source][lesson-21-source] | [solution][lesson-21-solution] |
+| 21 | Buffer Accessor Model | [slides][lesson-21-slides] |  |  |  |
 
 ### oneMath
 
@@ -345,6 +346,12 @@ cmake ../ "-GUnix Makefiles" -DSYCL_ACADEMY_USE_DPCPP=ON -DSYCL_ACADEMY_ENABLE_S
 
 [video-playlist]: https://youtube.com/playlist?list=PLCssnq0MpRdM-IUAYtNSPYck6u3oz7OZQ
 
+[lesson-0-slides]: ./Lesson_Materials/Fast_Track/
+<!-- Functors dont really fit with the lesson, so I am commenting this out for now -->
+<!-- [lesson-0-exercise]: ./Code_Exercises/Functors/README.md -->
+<!-- [lesson-0-source]:   ./Code_Exercises/Functors/source.cpp -->
+<!-- [lesson-0-solution]: ./Code_Exercises/Functors/solution.cpp -->
+
 [lesson-1-slides]: ./Lesson_Materials/What_is_SYCL/
 [lesson-1-exercise]: ./Code_Exercises/What_is_SYCL/README.md
 [lesson-1-source]:   ./Code_Exercises/What_is_SYCL/source.cpp
@@ -445,10 +452,7 @@ cmake ../ "-GUnix Makefiles" -DSYCL_ACADEMY_USE_DPCPP=ON -DSYCL_ACADEMY_ENABLE_S
 [lesson-20-source]:   ./Code_Exercises/More_SYCL_Features
 [lesson-20-solution]: ./Code_Exercises/More_SYCL_Features
 
-[lesson-21-slides]: ./Lesson_Materials/Fast_Track/
-[lesson-21-exercise]: ./Code_Exercises/Functors/README.md
-[lesson-21-source]:   ./Code_Exercises/Functors/source.cpp
-[lesson-21-solution]: ./Code_Exercises/Functors/solution.cpp
+[Lesson-21-slides]: ./Lesson_Materials/Buffer_Accessor/index.html
 
 [lesson-22-slides]: ./Lesson_Materials/oneMath_gemm/
 

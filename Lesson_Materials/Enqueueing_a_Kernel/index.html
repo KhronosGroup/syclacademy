@@ -51,11 +51,8 @@
 						#### Precursor
 					</div>
 					<div class="container" data-markdown>
-						* In SYCL there are two models for managing data:
-						  * The buffer/accessor model.
-						  * The USM (unified shared memory) model.
+						* In SYCL the USM (unified shared memory) model can be used to manage data.
 						* Which model you choose can have an effect on how you enqueue kernel functions.
-						* For now we are going to focus on the buffer/accessor model.
 					</div>
 				</section>
 				<!--Slide 5-->
@@ -70,7 +67,7 @@
 							</div>
 						</div>
 						<div class="col" data-markdown>
-							* In the buffer/accessor model commands must be enqueued via command groups.
+							* Commands are enqueued via command groups.
 							* A command group represents a series of commands to be executed by a device.
 							* These commands include:
 							  * Invoking kernel functions on a device.

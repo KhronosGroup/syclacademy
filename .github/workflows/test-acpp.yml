@@ -80,7 +80,8 @@ jobs:
         SNIPPETS="${GITHUB_WORKSPACE}/Code_Exercises/Lesson_Snippets"
         LESSONS="Lesson_Materials/Handling_Errors/index.html 
         Lesson_Materials/Buffer_Accessor/index.html 
-        Lesson_Materials/Enqueueing_a_Kernel/index.html"
+        Lesson_Materials/Enqueueing_a_Kernel/index.html
+        "
 
         python ./Scripts/LessonChecker.py --extract -o "${SNIPPETS}" ${LESSONS}
     - name: Build SYCLAcademy SYCL source code

@@ -36,11 +36,9 @@
 						#### Moving data with USM
 					</div>
 					<div class="container" data-markdown>
-						The USM data movement model is used to move data and create dependencies between kernel functions in SYCL
+						With USM you move data and create dependencies between kernel functions explicitly
 					</div>
 					<div class="container" data-markdown>
-						USM data movement model
-						<br/>
 						* Manual chaining of dependencies
 						* Explicit data movement
 					</div>
@@ -95,113 +93,52 @@
 						</div>
 					</div>
 				</section>
-				<!--Slide 11-->
+				<!--Slide 7-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Data flow with USM
 					</div>
 					<div class="container">
-						<div class="col">
-							<pre><code class="language-cpp" data-line-numbers>
-auto devicePtr =
-  sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
+						<pre><code class="language-cpp" data-line-numbers="|10,12,16|12,16,20" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;vector&gt;
 
-auto e1 = gpuQueue.memcpy(devicePtr, data, sizeof(int));
+int main() {
+  constexpr int N = 1024;
+  std::vector&lt;int&gt; data(N, 1);
+  sycl::queue q;
+  int *dev = sycl::malloc_device&lt;int&gt;(N, q);
 
-auto e2 = gpuQueue.parallel_for&lt;kernel_a&gt;(
-  sycl::range{1024}, e1, [=](sycl::id&lt;1&gt; idx) {
-    devicePtr[idx] = /* some computation */
+  sycl::event e1 = q.copy(data.data(), dev, N);
+
+  sycl::event <mark class="fragment" data-fragment-index="0">e2</mark> = q.parallel_for(N, <mark class="fragment" data-fragment-index="1">e1</mark>, [=](sycl::id&lt;1&gt; i) {
+    dev[i] *= 2;
   });
 
-auto e3 = gpuQueue.parallel_for&lt;kernel_b&gt;(
-  sycl::range{1024}, e2, [=](sycl::id&lt;1&gt; idx) {
-    devicePtr[idx] = /* some computation */
+  sycl::event <mark class="fragment" data-fragment-index="0">e3</mark> = q.parallel_for(N, <mark class="fragment" data-fragment-index="1">e2</mark>, [=](sycl::id&lt;1&gt; i) {
+    dev[i] += 1;
   });
 
-auto e4 = gpuQueue.memcpy(data, devicePtr,
-                          sizeof(int), e3);
+  q.copy(dev, data.data(), N, <mark class="fragment" data-fragment-index="1">e3</mark>).wait();
+  assert(data == std::vector&lt;int&gt;(N, 3));
 
-e4.wait();
-
-sycl::free(devicePtr, gpuQueue);
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* The USM data management model data model is prescriptive
-							* Dependencies are defined explicitly by passing around `event` objects
-							* Data movement is performed explicitly by enqueuing `memcpy` operations
-							* The user is responsible for ensuring data dependencies and consistency are maintained
-						</div>
-					</div>
-				</section>
-				<!--Slide 12-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Data flow with USM
+  sycl::free(dev, q);
+}
+						</code></pre>
 					</div>
 					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-auto devicePtr =
-  sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
-
-<mark>auto e1</mark> = gpuQueue.memcpy(devicePtr, data, sizeof(int));
-
-<mark>auto e2</mark> = gpuQueue.parallel_for&lt;kernel_a&gt;(
-  sycl::range{1024}, <mark>e1</mark>, [=](sycl::id&lt;1&gt; idx) {
-    devicePtr[idx] = /* some computation */
-  });
-
-<mark>auto e3</mark> = gpuQueue.parallel_for&lt;kernel_b&gt;(
-  sycl::range{1024}, <mark>e2</mark>, [=](sycl::id&lt;1&gt; idx) {
-    devicePtr[idx] = /* some computation */
-  });
-
-<mark>auto e4</mark> = gpuQueue.memcpy(data, devicePtr,
-                          sizeof(int), <mark>e3</mark>);
-
-<mark>e4.wait();</mark>
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* Each command enqueued to the `queue` produces an `event` object which can be used to synchronize with the completion of that command
-							* Passing those `event` objects when enqueueing other commands creates dependencies
-						</div>
-					</div>
-				</section>
-				<!--Slide 13-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Data flow with USM
-					</div>
-					<div class="container">
-						<div class="col">
-							<pre><code data-noescape class="language-cpp" data-line-numbers>
-auto devicePtr =
-  sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
-
-<mark>auto e1 = gpuQueue.memcpy(devicePtr, data, sizeof(int));</mark>
-
-auto e2 = gpuQueue.parallel_for&lt;kernel_a&gt;(
-  sycl::range{1024}, e1, [=](sycl::id&lt;1&gt; idx) {
-    devicePtr[idx] = /* some computation */
-  });
-
-auto e3 = gpuQueue.parallel_for&lt;kernel_b&gt;(
-  sycl::range{1024}, e2, [=](sycl::id&lt;1&gt; idx) {
-    devicePtr[idx] = /* some computation */
-  });
-
-auto e4 = gpuQueue.memcpy(data, devicePtr,
-                          sizeof(int), e3);
-
-e4.wait();
-
-sycl::free(devicePtr, gpuQueue);
-							</code></pre>
-						</div>
-						<div class="col" data-markdown>
-							* The `memcpy` member functions are used to enqueue data movement commands, moving the data to the GPU and then back again
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* With USM you define dependencies explicitly by passing around `event` objects.
+								* Data movement is performed explicitly with `copy`.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* Every command enqueued to the `queue` returns an `event` representing its completion.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* Passing an `event` when enqueuing another command makes it wait on that command first.
+								* Kernel B waits on Kernel A, and the copy-back waits on Kernel B, giving the read-after-write chain.
+							</div>
 						</div>
 					</div>
 				</section>
@@ -222,72 +159,53 @@ sycl::free(devicePtr, gpuQueue);
 						</div>
 					</div>
 				</section>
-				<!--Slide 16-->
+				<!--Slide 9-->
 				<section>
 					<div class="hbox" data-markdown>
 						#### Concurrent data flow with USM
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp" data-line-numbers>
-auto devicePtrA = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
-auto devicePtrB = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
+						<pre><code class="language-cpp" data-line-numbers="|14,15|17,18" data-fragment-index="0" data-noescape data-trim>
+#include &lt;sycl/sycl.hpp&gt;
+#include &lt;vector&gt;
 
-<mark>auto e1</mark> = gpuQueue.memcpy(devicePtrA, dataA, sizeof(int));
-auto e2 = gpuQueue.memcpy(devicePtrB, dataB, sizeof(int));
+int main() {
+  constexpr int N = 1024;
+  std::vector&lt;int&gt; dataA(N, 1), dataB(N);
+  sycl::queue q;
+  int *devA = sycl::malloc_device&lt;int&gt;(N, q);
+  int *devB = sycl::malloc_device&lt;int&gt;(N, q);
 
-<mark>auto e3</mark> = gpuQueue.parallel_for&lt;kernel_a&gt;(sycl::range{1024}, <mark>e1</mark>, [=](sycl::id&lt;1&gt; idx) {
-  devicePtrA[idx] = /* some computation */ });
+  sycl::event e1 = q.copy(dataA.data(), devA, N);
+  sycl::event e2 = q.copy(dataB.data(), devB, N);
 
-auto e4 = gpuQueue.parallel_for&lt;kernel_b&gt;(sycl::range{1024}, e2, [=](sycl::id&lt;1&gt; idx) {
-  devicePtrB[idx] = /* some computation */ });
+  sycl::event e3 = q.parallel_for(N, <mark class="fragment" data-fragment-index="0">e1</mark>, [=](sycl::id&lt;1&gt; i) { devA[i] *= 2; });
+  sycl::event e4 = q.parallel_for(N, <mark class="fragment" data-fragment-index="0">e2</mark>, [=](sycl::id&lt;1&gt; i) { devB[i] += 1; });
 
-<mark>auto e5</mark> = gpuQueue.memcpy(dataA), devicePtrA, sizeof(int), <mark>e3</mark>);
+  q.copy(devA, dataA.data(), N, <mark class="fragment" data-fragment-index="1">e3</mark>).wait();
+  q.copy(devB, dataB.data(), N, <mark class="fragment" data-fragment-index="1">e4</mark>).wait();
 
-auto e6 = gpuQueue.memcpy(dataB, devicePtrB, sizeof(int), e4);
+  assert(dataA == std::vector&lt;int&gt;(N, 2));
+  assert(dataB == std::vector&lt;int&gt;(N, 2));
 
-<mark>e5.wait();</mark> e6.wait();
-
-sycl::free(devicePtrA, gpuQueue);
-sycl::free(devicePtrB, gpuQueue);
-							</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* Dependencies are defined explicitly
-						* We don't create dependencies between kernel functions but we do create dependencies on the data movement
-					</div>
-				</section>
-				<!--Slide 17-->
-				<section>
-					<div class="hbox" data-markdown>
-						#### Concurrent data flow with USM
+  sycl::free(devA, q);
+  sycl::free(devB, q);
+}
+						</code></pre>
 					</div>
 					<div class="container">
-						<pre><code data-noescape class="language-cpp" data-line-numbers>
-auto devicePtrA = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
-auto devicePtrB = sycl::malloc_device&lt;int&gt;(1024, gpuQueue);
-
-auto e1 = gpuQueue.memcpy(devicePtrA, dataA, sizeof(int));
-<mark>auto e2</mark> = gpuQueue.memcpy(devicePtrB, dataB, sizeof(int));
-
-auto e3 = gpuQueue.parallel_for&lt;kernel_a&gt;(sycl::range{1024}, e1, [=](sycl::id&lt;1&gt; idx) {
-  devicePtrA[idx] = /* some computation */ });
-
-<mark>auto e4</mark> = gpuQueue.parallel_for&lt;kernel_b&gt;(sycl::range{1024}, <mark>e2</mark>, [=](sycl::id&lt;1&gt; idx) {
-  devicePtrB[idx] = /* some computation */ });
-
-auto e5 = gpuQueue.memcpy(dataA), devicePtrA, sizeof(int), e3);
-
-<mark>auto e6</mark> = gpuQueue.memcpy(dataB, devicePtrB, sizeof(int), <mark>e4</mark>);
-
-e5.wait(); <mark>e6.wait();</mark>
-
-sycl::free(devicePtrA, gpuQueue);
-sycl::free(devicePtrB, gpuQueue);
-							</code></pre>
-					</div>
-					<div class="container" data-markdown>
-						* The dependencies of each chain of commands is independant of the other
-						* The two kernels and their respective copies collectively can be executed in any order
+						<div class="stack-fragments">
+							<div class="fragment fade-out" data-fragment-index="0" data-markdown>
+								* Two independent chains never share an `event`, so the runtime is free to overlap them.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="0" data-markdown>
+								* Each kernel depends only on its own copy: Kernel A on `e1`, Kernel B on `e2`.
+							</div>
+							<div class="fragment current-visible" data-fragment-index="1" data-markdown>
+								* Each copy-back depends only on its own kernel, so the two chains never meet.
+								* The two chains can execute in any order, or concurrently if the device allows.
+							</div>
+						</div>
 					</div>
 				</section>
 				<!--Slide 16-->

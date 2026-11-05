@@ -100,6 +100,7 @@ may not match completely.
 | 19 | Matrix Transpose | [slides][lesson-19-slides] | [exercise][lesson-19-exercise] | [source][lesson-19-source] | [solution][lesson-19-solution] |
 | 20 | More SYCL Features | [slides][lesson-20-slides] | [exercise][lesson-20-exercise] | [source][lesson-20-source] | [solution][lesson-20-solution] |
 | 21 | Buffer Accessor Model | [slides][lesson-21-slides] |  |  |  |
+| 22 | SYCL in CMake | [slides][lesson-22-slides] |  |  |  |
 
 ### oneMath
 
@@ -110,7 +111,7 @@ DPC++ build of SYCL-Academy, but whether to build them can be controlled through
 
 | Lesson | Title | Slides | Exercise | Source | Solution |
 |--------|-------|--------|----------|--------|----------|
-| 22 | OneMath GEMM | [slides][lesson-23-slides] | [execise][lesson-23-exercise] | [source][lesson-23-source] | [solution][lesson-23-solution] |
+| 23 | OneMath GEMM | [slides][lesson-23-slides] | [execise][lesson-23-exercise] | [source][lesson-23-source] | [solution][lesson-23-solution] |
 
 ## Building the Exercises
 
@@ -454,7 +455,7 @@ cmake ../ "-GUnix Makefiles" -DSYCL_ACADEMY_USE_DPCPP=ON -DSYCL_ACADEMY_ENABLE_S
 
 [Lesson-21-slides]: ./Lesson_Materials/Buffer_Accessor/index.html
 
-[lesson-22-slides]: ./Lesson_Materials/oneMath_gemm/
+[lesson-22-slides]: ./Lesson_Materials/SYCL_in_CMake/
 
 [lesson-23-slides]: ./Lesson_Materials/oneMath_gemm/
 [lesson-23-exercise]: ./Code_Exercises/oneMath_gemm/README.md

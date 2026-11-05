@@ -1,0 +1,179 @@
+<!doctype html>
+
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="../../Static/css/reveal.css"/>
+    <link rel="stylesheet" href="../../Static/css/theme/white.css"/>
+    <link rel="stylesheet" href="../../Static/css/custom.css"/>
+    <link rel="stylesheet" href="../../Static/css/atom-one-light.css"/>
+    <script src="../../node_modules/reveal.js/dist/reveal.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/markdown.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/highlight.js" defer></script>
+    <script src="../../node_modules/reveal.js/dist/plugin/notes.js" defer></script>
+    <script src="../../js/plugins/merge-html.js" defer></script>
+    <script src="../../js/setup.js" defer></script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!--Slide 1-->
+        <section class="hbox">
+          <div class="hbox" data-markdown>
+            ## SYCL in CMake
+          </div>
+        </section>
+        <!--Slide 2-->
+        <section class="hbox" data-markdown>
+          ## Learning Objectives
+          * Learn how CMake 4.5 treats SYCL as a language
+          * Learn how to build a SYCL hello world with a `FILE_SET`
+          * Learn how to pick a SYCL compiler and pass SYCL-only flags
+        </section>
+        <!--Slide 3-->
+        <section>
+          <div class="hbox" data-markdown>
+            #### Before CMake 4.5
+          </div>
+          <div class="container" data-markdown>
+            * Each implementation shipped its own CMake integration:
+              * DPC++: `find_package(IntelSYCL)` + `add_sycl_to_target(...)`
+              * AdaptiveCpp: `find_package(AdaptiveCpp)` + `add_sycl_to_target(...)`
+              * or `-fsycl` added by hand to `CMAKE_CXX_FLAGS`
+            * Every C++ file in the project was then compiled as SYCL, even
+            files with no kernels
+          </div>
+        </section>
+        <!--Slide 4-->
+        <section>
+          <div class="hbox" data-markdown>
+            #### SYCL is a CMake language
+          </div>
+          <div class="container" data-markdown>
+            * Since CMake 4.5, SYCL is a language like `CXX`, `CUDA` or `HIP`
+            * CMake finds `icpx` / `acpp` and adds `-fsycl` for you
+            * Use `CMAKE_SYCL_COMPILER` and `CMAKE_SYCL_FLAGS`, the same way you
+            use `CMAKE_CXX_COMPILER` and `CMAKE_CXX_FLAGS`
+            * The feature is still experimental: you opt in with a UUID before
+            `project()`
+          </div>
+        </section>
+        <!--Slide 5-->
+        <section>
+          <div class="hbox" data-markdown>
+            #### Hello world: one SYCL file, one C++ file
+          </div>
+          <div class="container">
+            <div class="col">
+              <div data-markdown>
+                `main.cpp` (SYCL)
+              </div>
+              <pre><code class="language-cpp" data-trim data-line-numbers>
+#include &lt;cassert&gt;
+#include &lt;cstdio&gt;
+
+#include &lt;sycl/sycl.hpp&gt;
+
+int answer();  // defined in answer.cpp
+
+int main() {
+  sycl::queue q;
+  int* x = sycl::malloc_shared&lt;int&gt;(1, q);
+  q.single_task([=] { *x = 42; }).wait();
+  assert(*x == answer());
+  std::printf("x = %d\n", *x);
+  sycl::free(x, q);
+}
+              </code></pre>
+            </div>
+            <div class="col">
+              <div data-markdown>
+                `answer.cpp` (plain C++)
+              </div>
+              <pre><code class="language-cpp" data-trim data-line-numbers>
+int answer() { return 42; }
+              </code></pre>
+            </div>
+          </div>
+          <div class="container" data-markdown>
+            * Only `main.cpp` has a kernel, so only `main.cpp` needs the SYCL compiler
+          </div>
+        </section>
+        <!--Slide 6-->
+        <section>
+          <div class="hbox" data-markdown>
+            #### Hello world: CMakeLists.txt
+          </div>
+          <div class="container" data-markdown>
+            ```cmake
+cmake_minimum_required(VERSION 4.5)
+set(CMAKE_EXPERIMENTAL_SYCL "c0d1fb10-2ece-420e-9d29-7d7f2b300f25")
+project(hello LANGUAGES CXX SYCL)
+
+add_executable(hello)
+target_sources(hello PRIVATE FILE_SET SYCL FILES main.cpp)
+target_sources(hello PRIVATE answer.cpp)   # plain C++
+            ```
+          </div>
+          <div class="container" data-markdown>
+            * `LANGUAGES CXX SYCL`: enable SYCL next to C++
+            * `FILE_SET SYCL`: compile `main.cpp` as SYCL, even though it is a `.cpp` file
+            * `answer.cpp` is outside the set: it stays plain C++
+            * Files with the `.sycl` extension are compiled as SYCL automatically
+          </div>
+        </section>
+        <!--Slide 7-->
+        <section>
+          <div class="hbox" data-markdown>
+            #### Build and run
+          </div>
+          <div class="container" data-markdown>
+            For example, with `icpx` the build looks something like:
+          </div>
+          <div class="container" data-markdown>
+            ```sh
+$ cmake -B build
+-- The CXX compiler identification is IntelLLVM 2026.1.0
+-- The SYCL compiler identification is IntelLLVM 2026.1.0
+$ cmake --build build -v
+icpx -o answer.cpp.o -c answer.cpp          # note: no -fsycl
+icpx -fsycl -x c++ -fno-gpu-rdc -o main.cpp.o -c main.cpp
+icpx -fsycl answer.cpp.o main.cpp.o -o hello -lsycl -lsycl-devicelib-host
+$ ./build/hello
+x = 42
+            ```
+          </div>
+          <div class="container" data-markdown>
+            * `answer.cpp` is compiled **without** `-fsycl`
+            * SYCL compilation does extra work compared to pure C++, so it is slower:
+            only the files in the SYCL set pay that cost
+          </div>
+        </section>
+        <!--Slide 8-->
+        <section>
+          <div class="hbox" data-markdown>
+            #### Compiler and flags
+          </div>
+          <div class="container" data-markdown>
+            ```sh
+$ cmake -B build -DCMAKE_SYCL_FLAGS=-fsycl-targets=spir64
+$ cmake --build build -v
+icpx -o answer.cpp.o -c answer.cpp
+icpx -fsycl -fsycl-targets=spir64 -x c++ -fno-gpu-rdc -o main.cpp.o -c main.cpp
+            ```
+          </div>
+          <div class="container" data-markdown>
+            * Pick a compiler: `-DCMAKE_SYCL_COMPILER=icpx`
+            * `CMAKE_SYCL_FLAGS` only reaches SYCL sources, not plain C++ files
+          </div>
+        </section>
+        <!--Slide 9-->
+        <section>
+          <div class="hbox" data-markdown>
+            ## Questions
+          </div>
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

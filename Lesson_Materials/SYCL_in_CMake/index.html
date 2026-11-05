@@ -61,25 +61,37 @@
         <!--Slide 5-->
         <section>
           <div class="hbox" data-markdown>
-            #### Hello world: main.cpp
+            #### Hello world: one SYCL file, one C++ file
           </div>
           <div class="container">
-            <pre><code class="language-cpp" data-line-numbers>
+            <div class="col" data-markdown>
+              `main.cpp` (SYCL)
+              ```c++
 #include &lt;cstdio&gt;
 
 #include &lt;sycl/sycl.hpp&gt;
 
+int answer();  // defined in answer.cpp
+
 int main() {
   sycl::queue q;
   int* x = sycl::malloc_shared&lt;int&gt;(1, q);
-  q.single_task([=] { *x = 42; }).wait();
+  const int a = answer();
+  q.single_task([=] { *x = a; }).wait();
   std::printf("x = %d\n", *x);
   sycl::free(x, q);
 }
-            </code></pre>
+              ```
+            </div>
+            <div class="col" data-markdown>
+              `answer.cpp` (plain C++)
+              ```c++
+int answer() { return 42; }
+              ```
+            </div>
           </div>
           <div class="container" data-markdown>
-            * This is a plain SYCL program. Nothing in the source is specific to CMake.
+            * Only `main.cpp` has a kernel, so only `main.cpp` needs the SYCL compiler
           </div>
         </section>
         <!--Slide 6-->
@@ -95,37 +107,17 @@ project(hello LANGUAGES CXX SYCL)
 
 add_executable(hello)
 target_sources(hello PRIVATE FILE_SET SYCL FILES main.cpp)
+target_sources(hello PRIVATE answer.cpp)   # plain C++
             ```
           </div>
           <div class="container" data-markdown>
             * `LANGUAGES CXX SYCL`: enable SYCL next to C++
             * `FILE_SET SYCL`: compile `main.cpp` as SYCL, even though it is a `.cpp` file
+            * `answer.cpp` is outside the set: it stays plain C++
             * Files with the `.sycl` extension are compiled as SYCL automatically
           </div>
         </section>
         <!--Slide 7-->
-        <section>
-          <div class="hbox" data-markdown>
-            #### Why a FILE_SET?
-          </div>
-          <div class="container" data-markdown>
-            ```cmake
-add_executable(app)
-target_sources(app PRIVATE FILE_SET SYCL FILES kernels.cpp)
-target_sources(app PRIVATE io.cpp parser.cpp)   # plain C++
-            ```
-            ```sh
-icpx       -c io.cpp       # no -fsycl
-icpx -fsycl -x c++ -c kernels.cpp
-            ```
-          </div>
-          <div class="container" data-markdown>
-            * SYCL compilation runs a host pass and a device pass, so it is slower
-            * Only the files in the SYCL set pay that cost
-            * Your files keep their `.cpp` extension
-          </div>
-        </section>
-        <!--Slide 8-->
         <section>
           <div class="hbox" data-markdown>
             #### Build and run
@@ -133,17 +125,38 @@ icpx -fsycl -x c++ -c kernels.cpp
           <div class="container" data-markdown>
             ```sh
 $ cmake -B build
+-- The CXX compiler identification is IntelLLVM 2026.1.0
 -- The SYCL compiler identification is IntelLLVM 2026.1.0
 $ cmake --build build -v
+icpx -o answer.cpp.o -c answer.cpp
 icpx -fsycl -x c++ -fno-gpu-rdc -o main.cpp.o -c main.cpp
-icpx -fsycl main.cpp.o -o hello -lsycl -lsycl-devicelib-host
+icpx -fsycl answer.cpp.o main.cpp.o -o hello -lsycl -lsycl-devicelib-host
 $ ./build/hello
 x = 42
             ```
           </div>
           <div class="container" data-markdown>
+            * `answer.cpp` is compiled **without** `-fsycl`
+            * SYCL compilation runs a host pass and a device pass, so it is slower:
+            only the files in the SYCL set pay that cost
+          </div>
+        </section>
+        <!--Slide 8-->
+        <section>
+          <div class="hbox" data-markdown>
+            #### Compiler and flags
+          </div>
+          <div class="container" data-markdown>
+            ```sh
+$ cmake -B build -DCMAKE_SYCL_FLAGS=-fsycl-targets=spir64
+$ cmake --build build -v
+icpx -o answer.cpp.o -c answer.cpp
+icpx -fsycl -fsycl-targets=spir64 -x c++ -fno-gpu-rdc -o main.cpp.o -c main.cpp
+            ```
+          </div>
+          <div class="container" data-markdown>
             * Pick a compiler: `-DCMAKE_SYCL_COMPILER=icpx`
-            * SYCL-only flags: `-DCMAKE_SYCL_FLAGS="-fsycl-targets=nvptx64-nvidia-cuda"`
+            * `CMAKE_SYCL_FLAGS` only reaches SYCL sources, not plain C++ files
           </div>
         </section>
         <!--Slide 9-->

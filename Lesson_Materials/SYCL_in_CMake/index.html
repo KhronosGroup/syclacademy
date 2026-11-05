@@ -145,7 +145,7 @@ x = 42
           </div>
           <div class="container" data-markdown>
             * `answer.cpp` is compiled **without** `-fsycl`
-            * SYCL compilation runs a host pass and a device pass, so it is slower:
+            * SYCL compilation does extra work compared to pure C++, so it is slower:
             only the files in the SYCL set pay that cost
           </div>
         </section>

@@ -64,9 +64,12 @@
             #### Hello world: one SYCL file, one C++ file
           </div>
           <div class="container">
-            <div class="col" data-markdown>
-              `main.cpp` (SYCL)
-              ```c++
+            <div class="col">
+              <div data-markdown>
+                `main.cpp` (SYCL)
+              </div>
+              <pre><code class="language-cpp" data-trim data-line-numbers>
+#include &lt;cassert&gt;
 #include &lt;cstdio&gt;
 
 #include &lt;sycl/sycl.hpp&gt;
@@ -76,18 +79,20 @@ int answer();  // defined in answer.cpp
 int main() {
   sycl::queue q;
   int* x = sycl::malloc_shared&lt;int&gt;(1, q);
-  const int a = answer();
-  q.single_task([=] { *x = a; }).wait();
+  q.single_task([=] { *x = 42; }).wait();
+  assert(*x == answer());
   std::printf("x = %d\n", *x);
   sycl::free(x, q);
 }
-              ```
+              </code></pre>
             </div>
-            <div class="col" data-markdown>
-              `answer.cpp` (plain C++)
-              ```c++
+            <div class="col">
+              <div data-markdown>
+                `answer.cpp` (plain C++)
+              </div>
+              <pre><code class="language-cpp" data-trim data-line-numbers>
 int answer() { return 42; }
-              ```
+              </code></pre>
             </div>
           </div>
           <div class="container" data-markdown>
@@ -123,12 +128,15 @@ target_sources(hello PRIVATE answer.cpp)   # plain C++
             #### Build and run
           </div>
           <div class="container" data-markdown>
+            For example, with `icpx` the build looks something like:
+          </div>
+          <div class="container" data-markdown>
             ```sh
 $ cmake -B build
 -- The CXX compiler identification is IntelLLVM 2026.1.0
 -- The SYCL compiler identification is IntelLLVM 2026.1.0
 $ cmake --build build -v
-icpx -o answer.cpp.o -c answer.cpp
+icpx -o answer.cpp.o -c answer.cpp          # note: no -fsycl
 icpx -fsycl -x c++ -fno-gpu-rdc -o main.cpp.o -c main.cpp
 icpx -fsycl answer.cpp.o main.cpp.o -o hello -lsycl -lsycl-devicelib-host
 $ ./build/hello
